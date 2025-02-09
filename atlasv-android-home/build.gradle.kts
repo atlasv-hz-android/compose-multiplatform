@@ -79,5 +79,6 @@ fun publishWebSite() {
 afterEvaluate {
     tasks.findByName("jsBrowserProductionWebpack")?.doLast {
         publishWebSite()
+        1
     }
 }

@@ -58,8 +58,8 @@ fun main() {
         }
 
         LaunchedEffect(Unit) {
-            data.value = fetchData("http://127.0.0.1:8080/get_item")
-//            data.value = fetchData("https://fx-editor.ue.r.appspot.com/get_item")
+//            data.value = fetchData("http://127.0.0.1:8080/get_item")
+            data.value = fetchData("https://fx-editor.ue.r.appspot.com/get_item")
         }
     }
 }
