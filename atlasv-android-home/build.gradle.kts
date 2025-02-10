@@ -80,6 +80,7 @@ fun publishWebSite() {
     }
 }
 
-tasks.create("publishWebSite") {
+tasks.create(name = "publishWebSite") {
+    group = "atlasv-publish"
     publishWebSite()
 }.dependsOn("jsBrowserDistribution")
