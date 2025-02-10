@@ -25,6 +25,10 @@ kotlin {
                 implementation(compose.runtime)
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+                val ktorVersion = "2.3.13"
+                implementation("io.ktor:ktor-client-core:$ktorVersion")
+//                implementation("io.ktor:ktor-client-cio:$ktorVersion")
+                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
             }
         }
     }
@@ -76,9 +80,6 @@ fun publishWebSite() {
     }
 }
 
-afterEvaluate {
-    tasks.findByName("jsBrowserProductionWebpack")?.doLast {
-        publishWebSite()
-        1
-    }
-}
+tasks.create("publishWebSite") {
+    publishWebSite()
+}.dependsOn("jsBrowserDistribution")
