@@ -8,7 +8,7 @@ import io.ktor.client.HttpClient
  */
 object HttpEngine {
     private val client = HttpClient()
-    val baseUrl = if (Constants.DEBUG) "http://127.0.0.1:8080/" else "https://fx-editor.ue.r.appspot.com/"
+    val baseUrl = if (Constants.DEBUG) "http://127.0.0.1:8080/" else "https://atlasv-android-team.uc.r.appspot.com/"
     val fileUploader by lazy {
         FileUploader(client = client)
     }
