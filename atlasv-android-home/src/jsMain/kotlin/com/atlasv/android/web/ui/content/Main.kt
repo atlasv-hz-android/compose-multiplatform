@@ -39,10 +39,15 @@ fun main() {
 @Composable
 fun Body() {
     var uploadResult by remember { mutableStateOf<UploadResult?>(null) }
+    var loading by remember { mutableStateOf(false) }
     val onFileInputChange: (SyntheticChangeEvent<String, HTMLInputElement>) -> Unit = {
-        val file: File = it.target.files!!.asList().single()
-        CoroutineScope(Dispatchers.Default).launch {
-            uploadResult = HttpEngine.fileUploader.upload(file)
+        val file: File? = it.target.files?.asList()?.singleOrNull()
+        if (!loading && file != null) {
+            CoroutineScope(Dispatchers.Default).launch {
+                loading = true
+                uploadResult = HttpEngine.fileUploader.upload(file)
+                loading = false
+            }
         }
     }
     Style(CommonStyles)
@@ -51,7 +56,7 @@ fun Body() {
             classes(CommonStyles.vertical)
         },
         content = {
-            FunctionCards(onFileInputChange)
+            FunctionCards(onFileInputChange, loading)
             UploadResultView(uploadResult)
         }
     )
@@ -89,7 +94,10 @@ private fun UploadResultView(uploadResult: UploadResult?) {
 }
 
 @Composable
-private fun FunctionCards(onFileInputChange: (SyntheticChangeEvent<String, HTMLInputElement>) -> Unit) {
+private fun FunctionCards(
+    onFileInputChange: (SyntheticChangeEvent<String, HTMLInputElement>) -> Unit,
+    loading: Boolean
+) {
     Div(
         attrs = {
             classes(CommonStyles.horizontalFlow)
@@ -105,7 +113,7 @@ private fun FunctionCards(onFileInputChange: (SyntheticChangeEvent<String, HTMLI
                             classes(CommonStyles.matCard)
                         },
                         content = {
-                            FileUploadInput(onChange = onFileInputChange)
+                            FileUploadInput(onChange = onFileInputChange, loading)
                         }
                     )
                 }
@@ -115,12 +123,16 @@ private fun FunctionCards(onFileInputChange: (SyntheticChangeEvent<String, HTMLI
 }
 
 @Composable
-private fun FileUploadInput(onChange: (SyntheticChangeEvent<String, HTMLInputElement>) -> Unit) {
-    Input(
-        type = InputType.File,
-        attrs = {
-            onChange { it: SyntheticChangeEvent<String, HTMLInputElement> ->
-                onChange(it)
-            }
-        })
+private fun FileUploadInput(onChange: (SyntheticChangeEvent<String, HTMLInputElement>) -> Unit, loading: Boolean) {
+    if (!loading) {
+        Input(
+            type = InputType.File,
+            attrs = {
+                onChange { it: SyntheticChangeEvent<String, HTMLInputElement> ->
+                    onChange(it)
+                }
+            })
+    } else {
+        Text("上传中，请稍候...")
+    }
 }
