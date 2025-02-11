@@ -1,26 +1,24 @@
 package com.atlasv.android.web.ui.content
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.atlasv.android.web.core.network.HttpEngine
-import com.atlasv.android.web.data.model.UploadResult
+import com.atlasv.android.web.data.model.UploadRecordData
+import com.atlasv.android.web.data.repo.FileUploadRepository
 import com.atlasv.android.web.ui.style.CommonStyles
+import com.atlasv.android.web.ui.style.TextStyles
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.web.attributes.ATarget
 import org.jetbrains.compose.web.attributes.InputType
-import org.jetbrains.compose.web.attributes.target
-import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.css.Style
-import org.jetbrains.compose.web.css.justifyContent
-import org.jetbrains.compose.web.css.paddingBottom
-import org.jetbrains.compose.web.css.paddingTop
+import org.jetbrains.compose.web.css.paddingLeft
+import org.jetbrains.compose.web.css.paddingRight
 import org.jetbrains.compose.web.css.px
-import org.jetbrains.compose.web.dom.A
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Input
 import org.jetbrains.compose.web.dom.Text
@@ -38,59 +36,41 @@ fun main() {
 
 @Composable
 fun Body() {
-    var uploadResult by remember { mutableStateOf<UploadResult?>(null) }
+    var uploadRecordData by remember { mutableStateOf<UploadRecordData?>(null) }
     var loading by remember { mutableStateOf(false) }
     val onFileInputChange: (SyntheticChangeEvent<String, HTMLInputElement>) -> Unit = {
         val file: File? = it.target.files?.asList()?.singleOrNull()
         if (!loading && file != null) {
             CoroutineScope(Dispatchers.Default).launch {
                 loading = true
-                uploadResult = HttpEngine.fileUploader.upload(file)
+                HttpEngine.fileUploader.upload(file)
                 loading = false
+                launch {
+                    uploadRecordData = FileUploadRepository.instance.queryHistory()
+                }
             }
         }
     }
     Style(CommonStyles)
+    Style(TextStyles)
     Div(
         attrs = {
             classes(CommonStyles.vertical)
+            style {
+                paddingLeft(16.px)
+                paddingRight(16.px)
+            }
         },
         content = {
             FunctionCards(onFileInputChange, loading)
-            UploadResultView(uploadResult)
+            UploadHistory(uploadRecordData)
         }
     )
-}
-
-@Composable
-private fun UploadResultView(uploadResult: UploadResult?) {
-    if (uploadResult == null) {
-        return
+    LaunchedEffect(Unit) {
+        CoroutineScope(Dispatchers.Default).launch {
+            uploadRecordData = FileUploadRepository.instance.queryHistory()
+        }
     }
-    Div(
-        attrs = {
-            classes(CommonStyles.horizontal)
-            style {
-                paddingTop(12.px)
-                paddingBottom(12.px)
-                justifyContent(JustifyContent.Center)
-            }
-        },
-        content = {
-            if (uploadResult.isSuccess()) {
-                A(
-                    attrs = {
-                        target(ATarget.Blank)
-                    },
-                    href = uploadResult.fileUrl
-                ) {
-                    Text(uploadResult.fileUrl)
-                }
-            } else {
-                Text("上传失败：${uploadResult.code}: ${uploadResult.message}")
-            }
-        }
-    )
 }
 
 @Composable
