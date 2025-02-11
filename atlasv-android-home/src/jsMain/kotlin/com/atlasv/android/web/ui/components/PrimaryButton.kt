@@ -1,7 +1,7 @@
-package com.atlasv.android.web.components
+package com.atlasv.android.web.ui.components
 
 import androidx.compose.runtime.Composable
-import com.atlasv.android.web.style.CommonStyles
+import com.atlasv.android.web.ui.style.CommonStyles
 import kotlinx.browser.window
 import org.jetbrains.compose.web.attributes.ATarget
 import org.jetbrains.compose.web.css.percent

@@ -1,7 +1,7 @@
-package com.atlasv.android.web.components
+package com.atlasv.android.web.ui.components
 
 import androidx.compose.runtime.Composable
-import com.atlasv.android.web.style.CommonStyles
+import com.atlasv.android.web.ui.style.CommonStyles
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
 

@@ -1,4 +1,4 @@
-package com.atlasv.android.web.constant
+package com.atlasv.android.web.ui.content
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -7,7 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.atlasv.android.web.core.network.HttpEngine
 import com.atlasv.android.web.data.model.UploadResult
-import com.atlasv.android.web.style.CommonStyles
+import com.atlasv.android.web.ui.style.CommonStyles
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -1,4 +1,4 @@
-package com.atlasv.android.web.style
+package com.atlasv.android.web.ui.style
 
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.Color

@@ -1,10 +1,10 @@
-package com.atlasv.android.web.components
+package com.atlasv.android.web.ui.components
 
 import androidx.compose.runtime.Composable
-import com.atlasv.android.web.style.WtCards
-import com.atlasv.android.web.style.WtCols
-import com.atlasv.android.web.style.WtOffsets
-import com.atlasv.android.web.style.WtTexts
+import com.atlasv.android.web.ui.style.WtCards
+import com.atlasv.android.web.ui.style.WtCols
+import com.atlasv.android.web.ui.style.WtOffsets
+import com.atlasv.android.web.ui.style.WtTexts
 import org.jetbrains.compose.web.attributes.ATarget
 import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.dom.*

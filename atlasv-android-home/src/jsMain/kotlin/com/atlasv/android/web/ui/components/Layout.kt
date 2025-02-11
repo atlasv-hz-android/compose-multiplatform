@@ -1,13 +1,13 @@
-package com.atlasv.android.web.components
+package com.atlasv.android.web.ui.components
 
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Main
 import org.jetbrains.compose.web.dom.Section
-import com.atlasv.android.web.style.WtContainer
-import com.atlasv.android.web.style.WtOffsets
-import com.atlasv.android.web.style.WtSections
+import com.atlasv.android.web.ui.style.WtContainer
+import com.atlasv.android.web.ui.style.WtOffsets
+import com.atlasv.android.web.ui.style.WtSections
 
 @Composable
 fun Layout(content: @Composable () -> Unit) {

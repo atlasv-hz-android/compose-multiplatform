@@ -37,6 +37,9 @@ kotlin {
 fun publishWebSite() {
     val productionExecutableDir = project.file("build/dist/js/productionExecutable/")
     val indexFile = File(productionExecutableDir, "index.html")
+    if (!indexFile.exists()) {
+        return
+    }
     copy {
         from(indexFile.also {
             var indexContent = indexFile.readText()
