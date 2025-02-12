@@ -25,6 +25,17 @@ object TextStyles : StyleSheet() {
         fontSize(18.px)
     }
 
+    val text4 by style {
+        color(Color("#333333"))
+        fontSize(16.px)
+    }
+
+    val text4Blue by style {
+        color(Color.blue)
+        fontSize(16.px)
+    }
+
+
     val subText by style {
         color(Color("#555555"))
         fontSize(16.px)
