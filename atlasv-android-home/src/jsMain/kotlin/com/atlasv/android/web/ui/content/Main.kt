@@ -7,9 +7,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.atlasv.android.web.core.network.HttpEngine
+import com.atlasv.android.web.data.model.ProductResponse
 import com.atlasv.android.web.data.model.StorageObjectResponse
 import com.atlasv.android.web.data.model.UploadRecordData
 import com.atlasv.android.web.data.repo.FileUploadRepository
+import com.atlasv.android.web.data.repo.ProductRepository
 import com.atlasv.android.web.data.repo.XLogRepository
 import com.atlasv.android.web.ui.style.CommonStyles
 import com.atlasv.android.web.ui.style.TextStyles
@@ -40,6 +42,7 @@ fun main() {
 fun Body() {
     var uploadRecordData by remember { mutableStateOf<UploadRecordData?>(null) }
     var xLogResponse by remember { mutableStateOf<StorageObjectResponse?>(null) }
+    var productResponse by remember { mutableStateOf<ProductResponse?>(null) }
     var loading by remember { mutableStateOf(false) }
     val onFileInputChange: (SyntheticChangeEvent<String, HTMLInputElement>) -> Unit = {
         val file: File? = it.target.files?.asList()?.singleOrNull()
@@ -70,6 +73,9 @@ fun Body() {
             XLogListView(xLogResponse, onClick = {
 
             })
+            ProductListView(productResponse, onClick = {
+
+            })
         }
     )
     LaunchedEffect(Unit) {
@@ -77,6 +83,9 @@ fun Body() {
             uploadRecordData = FileUploadRepository.instance.queryHistory()
             launch {
                 xLogResponse = XLogRepository.instance.queryLogs()
+            }
+            launch {
+                productResponse = ProductRepository.instance.queryProducts()
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.atlasv.android.web.data.model
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 
 /**
  * Created by weiping on 2025/2/10
@@ -15,11 +14,5 @@ data class UploadRecordData(
 ) {
     fun isSuccess(): Boolean {
         return code == 200
-    }
-
-    companion object {
-        fun parse(text: String): UploadRecordData {
-            return Json.decodeFromString(text)
-        }
     }
 }

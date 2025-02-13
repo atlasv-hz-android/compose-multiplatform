@@ -6,6 +6,7 @@ import com.atlasv.android.web.data.model.StorageObjectResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
+import kotlinx.serialization.json.Json
 
 /**
  * Created by weiping on 2025/2/12
@@ -13,7 +14,7 @@ import io.ktor.client.statement.bodyAsText
 class XLogRepository(private val client: HttpClient) {
 
     suspend fun queryLogs(): StorageObjectResponse {
-        return StorageObjectResponse.parse(client.get("${baseUrl}list_files").bodyAsText())
+        return Json.decodeFromString(client.get("${baseUrl}list_files").bodyAsText())
     }
 
     companion object {
