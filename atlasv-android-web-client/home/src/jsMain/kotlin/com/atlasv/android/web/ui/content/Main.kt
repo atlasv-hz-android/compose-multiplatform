@@ -102,7 +102,7 @@ private fun FunctionCards(
         },
         content = {
             Div(
-                {
+                attrs = {
                     classes(CommonStyles.p33)
                 },
                 content = {

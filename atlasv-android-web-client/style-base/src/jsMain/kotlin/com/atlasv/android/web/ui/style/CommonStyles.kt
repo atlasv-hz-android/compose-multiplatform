@@ -1,6 +1,36 @@
 package com.atlasv.android.web.ui.style
 
-import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.AlignItems
+import org.jetbrains.compose.web.css.Color
+import org.jetbrains.compose.web.css.DisplayStyle
+import org.jetbrains.compose.web.css.FlexDirection
+import org.jetbrains.compose.web.css.FlexWrap
+import org.jetbrains.compose.web.css.JustifyContent
+import org.jetbrains.compose.web.css.LineStyle
+import org.jetbrains.compose.web.css.StyleSheet
+import org.jetbrains.compose.web.css.alignItems
+import org.jetbrains.compose.web.css.backgroundColor
+import org.jetbrains.compose.web.css.border
+import org.jetbrains.compose.web.css.borderRadius
+import org.jetbrains.compose.web.css.boxSizing
+import org.jetbrains.compose.web.css.color
+import org.jetbrains.compose.web.css.display
+import org.jetbrains.compose.web.css.flexDirection
+import org.jetbrains.compose.web.css.flexFlow
+import org.jetbrains.compose.web.css.flexWrap
+import org.jetbrains.compose.web.css.fontSize
+import org.jetbrains.compose.web.css.fontWeight
+import org.jetbrains.compose.web.css.height
+import org.jetbrains.compose.web.css.justifyContent
+import org.jetbrains.compose.web.css.margin
+import org.jetbrains.compose.web.css.padding
+import org.jetbrains.compose.web.css.paddingBottom
+import org.jetbrains.compose.web.css.paddingTop
+import org.jetbrains.compose.web.css.percent
+import org.jetbrains.compose.web.css.px
+import org.jetbrains.compose.web.css.rgba
+import org.jetbrains.compose.web.css.style
+import org.jetbrains.compose.web.css.width
 
 /**
  * weiping@atlasv.com
@@ -22,7 +52,6 @@ object CommonStyles : StyleSheet() {
 
     val horizontalFlow by style {
         display(DisplayStyle.Flex)
-        justifyContent(JustifyContent.Center)
         flexFlow(FlexDirection.Row, FlexWrap.Wrap)
     }
 
@@ -76,31 +105,16 @@ object CommonStyles : StyleSheet() {
 
     val p33 by style {
         width(33.33.percent)
-        display(DisplayStyle.Flex)
-        flexDirection(FlexDirection.Column)
-        alignItems(AlignItems.Center)
-        justifyContent(JustifyContent.Center)
+    }
+
+    val cardHover by style {
         this.hover {
-            backgroundColor(Color.transparent)
+            backgroundColor(CommonColors.cardHover)
         }
     }
 
-    val p100 by style {
-        width(100.percent)
-        display(DisplayStyle.Flex)
-        flexDirection(FlexDirection.Column)
-        alignItems(AlignItems.Center)
-        justifyContent(JustifyContent.Center)
-    }
-
     val p70 by style {
-        margin(10.px)
         width(70.percent)
-        maxWidth(1000.px)
-        display(DisplayStyle.Flex)
-        flexDirection(FlexDirection.Column)
-        alignItems(AlignItems.Center)
-        justifyContent(JustifyContent.SpaceAround)
     }
 
     val p100HoverGreen by style {
@@ -131,12 +145,6 @@ object CommonStyles : StyleSheet() {
         alignItems(AlignItems.Center)
         backgroundColor(Color.white)
         property("box-shadow", "1px 1px ${rgba(0, 0, 0, .2)}")
-    }
-    val cardTitle by style {
-        fontSize(200.percent)
-        color(Color.black)
-        justifyContent(JustifyContent.Center)
-        fontWeight(500)
     }
 
     val primaryButton by style {

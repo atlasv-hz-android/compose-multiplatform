@@ -12,4 +12,6 @@ pluginManagement {
     }
 }
 include(":home")
+include(":page-home")
+include(":page-perf-overview")
 include(":style-base")
