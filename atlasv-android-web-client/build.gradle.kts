@@ -21,3 +21,7 @@ subprojects {
         google()
     }
 }
+
+subprojects {
+
+}

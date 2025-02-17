@@ -20,7 +20,6 @@ kotlin {
     sourceSets {
         val jsMain by getting {
             dependencies {
-                implementation(npm("highlight.js", "10.7.2"))
                 implementation(compose.html.core)
                 implementation(compose.runtime)
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
