@@ -23,5 +23,62 @@ subprojects {
 }
 
 subprojects {
+    fun publishWebSite() {
+        val productionExecutableDir = project.file("build/dist/js/productionExecutable/")
+        val indexFile = File(productionExecutableDir, "index.html")
+        if (!indexFile.exists()) {
+            return
+        }
+        val jsFile = File(productionExecutableDir, "${project.name}.js")
+        if (!jsFile.exists()) {
+            return
+        }
+        copy {
+            from(indexFile.also {
+                var indexContent = indexFile.readText()
+                indexContent = indexContent.replace("\"${project.name}.js\"", "\"static/js/${project.name}.js\"")
+                productionExecutableDir.listFiles { file ->
+                    file.name.endsWith(".css")
+                }?.forEach { cssFile ->
+                    indexContent =
+                        indexContent.replace("\"${cssFile.name}\"", "\"static/${project.name}/${cssFile.name}\"")
+                    indexContent =
+                        indexContent.replace("\"/${cssFile.name}\"", "\"static/${project.name}/${cssFile.name}\"")
+                }
+                it.writeText(indexContent)
+            })
+            into("../../../atlasv-android-web/templates/")
+            rename {
+                it.replaceBeforeLast(".", project.name)
+            }
+        }
 
+        copy {
+            from(jsFile.also {
+                var jsFileContent = jsFile.readText()
+                productionExecutableDir.listFiles { file ->
+                    file.name != jsFile.name && file.name != indexFile.name
+                }?.forEach {
+                    jsFileContent = jsFileContent.replace("\"${it.name}\"", "\"static/${project.name}/${it.name}\"")
+                }
+                jsFile.writeText(jsFileContent)
+            })
+            into("../../../atlasv-android-web/static/js")
+        }
+        copy {
+            from(productionExecutableDir) {
+                exclude("index.html")
+                exclude(jsFile.name)
+                exclude(jsFile.name + ".map")
+            }
+            into("../../../atlasv-android-web/static/${project.name}")
+        }
+    }
+
+    if (project.name != "style-base") {
+        project.tasks.create(name = "publishWebSite") {
+            group = "atlasv-publish"
+            publishWebSite()
+        }.dependsOn("jsBrowserDistribution")
+    }
 }
