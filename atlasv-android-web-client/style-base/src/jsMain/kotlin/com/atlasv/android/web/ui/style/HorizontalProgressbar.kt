@@ -1,4 +1,4 @@
-package com.atlasv.android.web.style
+package com.atlasv.android.web.ui.style
 
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.web.dom.Div

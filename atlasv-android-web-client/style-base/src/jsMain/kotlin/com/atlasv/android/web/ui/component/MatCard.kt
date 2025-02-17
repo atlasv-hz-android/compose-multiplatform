@@ -1,4 +1,4 @@
-package com.atlasv.android.web.ui.components
+package com.atlasv.android.web.ui.component
 
 import androidx.compose.runtime.Composable
 import com.atlasv.android.web.ui.style.CommonStyles

@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.atlasv.android.web.core.network.HttpEngine
 import com.atlasv.android.web.data.model.StorageObject
 import com.atlasv.android.web.data.model.StorageObjectResponse
-import com.atlasv.android.web.ui.components.Divider
+import com.atlasv.android.web.ui.component.Divider
 import com.atlasv.android.web.ui.style.CommonStyles
 import com.atlasv.android.web.ui.style.TextStyles
 import io.ktor.http.encodeURLQueryComponent

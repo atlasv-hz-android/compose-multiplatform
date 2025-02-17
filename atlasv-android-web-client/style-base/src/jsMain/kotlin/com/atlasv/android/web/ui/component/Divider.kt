@@ -1,4 +1,4 @@
-package com.atlasv.android.web.component
+package com.atlasv.android.web.ui.component
 
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.web.css.height
