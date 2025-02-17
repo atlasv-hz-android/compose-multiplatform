@@ -12,6 +12,7 @@ pluginManagement {
     }
 }
 include(":home")
+include(":common")
 include(":page-home")
 include(":page-perf-overview")
 include(":style-base")

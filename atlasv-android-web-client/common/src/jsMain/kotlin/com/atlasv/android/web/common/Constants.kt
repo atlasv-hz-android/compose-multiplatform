@@ -1,4 +1,4 @@
-package com.atlasv.android.web.constant
+package com.atlasv.android.web.common
 
 /**
  * Created by weiping on 2025/2/10

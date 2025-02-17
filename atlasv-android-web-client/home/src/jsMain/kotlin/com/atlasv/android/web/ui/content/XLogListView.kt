@@ -1,7 +1,7 @@
 package com.atlasv.android.web.ui.content
 
 import androidx.compose.runtime.Composable
-import com.atlasv.android.web.core.network.HttpEngine
+import com.atlasv.android.web.common.HttpEngine
 import com.atlasv.android.web.data.model.StorageObject
 import com.atlasv.android.web.data.model.StorageObjectResponse
 import com.atlasv.android.web.ui.component.Divider

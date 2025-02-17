@@ -1,6 +1,7 @@
 package com.atlasv.android.web.ui.content
 
 import androidx.compose.runtime.Composable
+import com.atlasv.android.web.common.HttpEngine
 import com.atlasv.android.web.ui.component.MaterialCardGrid
 import com.atlasv.android.web.ui.style.CommonStyles
 import kotlinx.browser.window
@@ -60,7 +61,7 @@ private fun FunctionCards() {
                     Text(value = "性能监控")
                 },
                 onClick = {
-                    window.open(url = "https://d.android.com/", target = ATarget.Blank.targetStr)
+                    window.open(url = "${HttpEngine.baseUrl}perf-overview", target = ATarget.Blank.targetStr)
                 }
             )
         }

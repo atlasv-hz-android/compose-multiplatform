@@ -28,6 +28,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-serialization:$ktorVersion")
                 implementation(project(":style-base"))
+                implementation(project(":common"))
             }
         }
     }

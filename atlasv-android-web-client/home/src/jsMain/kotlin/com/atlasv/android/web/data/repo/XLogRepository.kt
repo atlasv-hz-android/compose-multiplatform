@@ -1,7 +1,7 @@
 package com.atlasv.android.web.data.repo
 
-import com.atlasv.android.web.core.network.HttpEngine
-import com.atlasv.android.web.core.network.HttpEngine.baseUrl
+import com.atlasv.android.web.common.HttpEngine
+import com.atlasv.android.web.common.HttpEngine.baseUrl
 import com.atlasv.android.web.data.model.StorageObjectResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get

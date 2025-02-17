@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.atlasv.android.web.core.network.HttpEngine
+import com.atlasv.android.web.core.network.FileUploader
 import com.atlasv.android.web.data.model.ProductResponse
 import com.atlasv.android.web.data.model.StorageObjectResponse
 import com.atlasv.android.web.data.model.UploadRecordData
@@ -49,7 +49,7 @@ fun Body() {
         if (!loading && file != null) {
             CoroutineScope(Dispatchers.Default).launch {
                 loading = true
-                HttpEngine.fileUploader.upload(file)
+                FileUploader.instance.upload(file)
                 loading = false
                 launch {
                     uploadRecordData = FileUploadRepository.instance.queryHistory()

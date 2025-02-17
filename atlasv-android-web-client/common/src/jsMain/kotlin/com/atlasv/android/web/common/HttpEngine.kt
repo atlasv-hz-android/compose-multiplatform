@@ -1,6 +1,5 @@
-package com.atlasv.android.web.core.network
+package com.atlasv.android.web.common
 
-import com.atlasv.android.web.constant.Constants
 import io.ktor.client.HttpClient
 
 /**
@@ -9,7 +8,4 @@ import io.ktor.client.HttpClient
 object HttpEngine {
     val client = HttpClient()
     val baseUrl = if (Constants.DEBUG) "http://127.0.0.1:8080/" else "https://atlasv-android-team.uc.r.appspot.com/"
-    val fileUploader by lazy {
-        FileUploader(client = client)
-    }
 }

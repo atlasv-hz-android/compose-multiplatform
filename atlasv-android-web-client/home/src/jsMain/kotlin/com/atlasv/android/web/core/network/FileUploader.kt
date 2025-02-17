@@ -1,6 +1,7 @@
 package com.atlasv.android.web.core.network
 
-import com.atlasv.android.web.core.network.HttpEngine.baseUrl
+import com.atlasv.android.web.common.HttpEngine
+import com.atlasv.android.web.common.HttpEngine.baseUrl
 import com.atlasv.android.web.core.util.asMultiPartFormDataContent
 import com.atlasv.android.web.data.model.UploadResult
 import io.ktor.client.HttpClient
@@ -20,5 +21,11 @@ class FileUploader(private val client: HttpClient) {
             setBody(file.asMultiPartFormDataContent())
         }
         return UploadResult.parse(response.bodyAsText())
+    }
+
+    companion object {
+        val instance by lazy {
+            FileUploader(client = HttpEngine.client)
+        }
     }
 }
