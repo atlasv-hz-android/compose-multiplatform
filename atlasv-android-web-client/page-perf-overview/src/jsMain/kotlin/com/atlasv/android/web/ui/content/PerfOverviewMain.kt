@@ -6,14 +6,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.atlasv.android.web.data.model.VitalPerfRateResponse
 import com.atlasv.android.web.data.repo.PerfRepo
 import com.atlasv.android.web.ui.style.CommonStyles
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.css.Style
+import org.jetbrains.compose.web.css.paddingTop
+import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.renderComposable
 
 fun main() {
@@ -24,15 +26,17 @@ fun main() {
 
 @Composable
 fun Body() {
-    var data by remember { mutableStateOf<String?>(null) }
-
+    var data by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
     Style(CommonStyles)
     Div(
         attrs = {
-            classes(CommonStyles.vertical)
+            classes(CommonStyles.vertical, CommonStyles.alignItemsCenter)
+            style {
+                paddingTop(40.px)
+            }
         },
         content = {
-            Text(value = data.orEmpty())
+            PerfDataTable(data)
         }
     )
     LaunchedEffect(Unit) {

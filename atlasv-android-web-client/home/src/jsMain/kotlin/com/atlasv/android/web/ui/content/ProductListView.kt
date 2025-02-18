@@ -30,7 +30,7 @@ fun ProductListView(data: ProductResponse?, onClick: (ProductEntity) -> Unit) {
 
 @Composable
 private fun ProductListItemView(item: ProductEntity, onClick: (ProductEntity) -> Unit) {
-    Divider(6)
+    Divider(6.px)
     Div({
         classes(TextStyles.text4)
         classes(CommonStyles.horizontal)

@@ -36,7 +36,7 @@ fun XLogListView(data: StorageObjectResponse?, onClick: (StorageObject) -> Unit)
 
 @Composable
 private fun XLogListItemView(item: StorageObject, onClick: (StorageObject) -> Unit) {
-    Divider(6)
+    Divider(6.px)
     Div({
         classes(TextStyles.text4)
         classes(CommonStyles.horizontal)

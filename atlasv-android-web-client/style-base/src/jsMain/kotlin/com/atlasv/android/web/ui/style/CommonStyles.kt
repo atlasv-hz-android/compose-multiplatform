@@ -107,6 +107,10 @@ object CommonStyles : StyleSheet() {
         width(33.33.percent)
     }
 
+    val p10 by style {
+        width(10.percent)
+    }
+
     val cardHover by style {
         this.hover {
             backgroundColor(CommonColors.cardHover)
@@ -143,6 +147,19 @@ object CommonStyles : StyleSheet() {
         width(98.percent)
         justifyContent(JustifyContent.Center)
         alignItems(AlignItems.Center)
+        backgroundColor(Color.white)
+        property("box-shadow", "1px 1px ${rgba(0, 0, 0, .2)}")
+    }
+
+
+    val card by style {
+        boxSizing("border-box")
+        borderRadius(12.px)
+        border {
+            color(Color.lightgray)
+            width(1.px)
+            style(LineStyle.Solid)
+        }
         backgroundColor(Color.white)
         property("box-shadow", "1px 1px ${rgba(0, 0, 0, .2)}")
     }

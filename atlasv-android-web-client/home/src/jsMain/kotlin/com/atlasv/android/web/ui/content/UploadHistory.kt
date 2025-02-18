@@ -33,7 +33,7 @@ fun UploadHistory(data: UploadRecordData?) {
 
 @Composable
 private fun UploadRecordItemView(item: UploadRecordItem) {
-    Divider(12)
+    Divider(12.px)
     Div({
         classes(TextStyles.subText2)
     }) {
