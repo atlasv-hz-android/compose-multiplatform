@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.atlasv.android.web.data.model.VitalPerfRateResponse
+import com.atlasv.android.web.data.model.VitalPerfRateResponseGroup
 import com.atlasv.android.web.data.repo.PerfRepo
 import com.atlasv.android.web.ui.style.CommonStyles
 import kotlinx.coroutines.CoroutineScope
@@ -26,7 +26,7 @@ fun main() {
 
 @Composable
 fun Body() {
-    var data by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
+    var data by remember { mutableStateOf<VitalPerfRateResponseGroup?>(null) }
     Style(CommonStyles)
     Div(
         attrs = {
