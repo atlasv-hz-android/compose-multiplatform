@@ -10,22 +10,23 @@ import io.ktor.client.statement.bodyAsText
  * Created by weiping on 2025/2/17
  */
 class PerfRepo(private val httpEngine: HttpEngine) {
-    suspend fun getAnr(dimension: PerfDimensionType?): VitalPerfRateResponse? {
-        return HttpEngine.json.decodeFromString(
-            httpEngine.client.get("${baseUrl}api/perf/get_user_perceived_anr_rate".appendDimension(dimension))
-                .bodyAsText()
-        )
+    suspend fun getAnr(appPackage: String, dimension: PerfDimensionType?): VitalPerfRateResponse? {
+        val url = "${baseUrl}api/perf/get_user_perceived_anr_rate?app_package=$appPackage"
+            .appendDimension(dimension)
+        return HttpEngine.json.decodeFromString(httpEngine.client.get(url).bodyAsText())
     }
 
-    suspend fun getCrash(dimension: PerfDimensionType?): VitalPerfRateResponse? {
+    suspend fun getCrash(appPackage: String, dimension: PerfDimensionType?): VitalPerfRateResponse? {
+        val url = "${baseUrl}api/perf/get_user_perceived_crash_rate?app_package=$appPackage"
+            .appendDimension(dimension)
         return HttpEngine.json.decodeFromString(
-            httpEngine.client.get("${baseUrl}api/perf/get_user_perceived_crash_rate".appendDimension(dimension))
+            httpEngine.client.get(url)
                 .bodyAsText()
         )
     }
 
     private fun String.appendDimension(dimension: PerfDimensionType?): String {
-        return this + if (dimension == null) "" else "?dimension=${dimension.value}"
+        return this + if (dimension == null) "" else "&dimension=${dimension.value}"
     }
 
     companion object {

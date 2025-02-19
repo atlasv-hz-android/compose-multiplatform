@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
  * Created by weiping on 2025/2/18
  */
 @Serializable
-data class VitalPerfRateResponse(val rows: List<VitalPerfRateModel>) {
+data class VitalPerfRateResponse(val rows: List<VitalPerfRateModel>, val appNickname: String) {
     fun flattenByDimensions(): List<VitalPerfRateResponse> {
         val dimensions = this.rows.asSequence().map {
             it.dimensions.orEmpty()

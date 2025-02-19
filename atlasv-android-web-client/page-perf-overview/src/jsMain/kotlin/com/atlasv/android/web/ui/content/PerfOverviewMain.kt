@@ -6,10 +6,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.atlasv.android.web.common.constant.AppEnum
 import com.atlasv.android.web.data.model.VitalPerfRateResponse
 import com.atlasv.android.web.data.model.mergeByDistinctUsers
 import com.atlasv.android.web.data.repo.PerfDimensionType
 import com.atlasv.android.web.data.repo.PerfRepo
+import com.atlasv.android.web.ui.component.Checkbox
+import com.atlasv.android.web.ui.component.Divider
 import com.atlasv.android.web.ui.style.CommonStyles
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,20 +31,31 @@ fun main() {
 
 @Composable
 fun Body() {
+    var simplifyMode by remember {
+        mutableStateOf(true)
+    }
     var anrNoDimensionData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
     var anrDimensionData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
     val anrDimensionDataFlattened = anrDimensionData?.flattenByDimensions().orEmpty()
     val lowRamAnrData = anrDimensionDataFlattened.mergeByDistinctUsers(dimensionLabel = "低端机")
     val anrData: List<VitalPerfRateResponse> =
-        listOfNotNull(anrNoDimensionData) + anrDimensionData?.flattenByDimensions().orEmpty() + listOfNotNull(
-            lowRamAnrData
-        )
+        if (!simplifyMode) {
+            listOfNotNull(anrNoDimensionData) + anrDimensionDataFlattened
+        } else {
+            listOfNotNull(anrNoDimensionData) + listOfNotNull(
+                lowRamAnrData
+            )
+        }
 
     var crashNoDimensionData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
     var crashDimensionData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
     val crashDimensionDataFlattened = crashDimensionData?.flattenByDimensions().orEmpty()
     val lowRamCrashData = crashDimensionDataFlattened.mergeByDistinctUsers(dimensionLabel = "低端机")
-    val crashData = listOfNotNull(crashNoDimensionData) + crashDimensionDataFlattened + listOfNotNull(lowRamCrashData)
+    val crashData = if (!simplifyMode) {
+        listOfNotNull(crashNoDimensionData) + crashDimensionDataFlattened
+    } else {
+        listOfNotNull(crashNoDimensionData) + listOfNotNull(lowRamCrashData)
+    }
     Style(CommonStyles)
     Div(
         attrs = {
@@ -51,23 +65,56 @@ fun Body() {
             }
         },
         content = {
+            OptionsView(
+                checked = simplifyMode,
+                onSimplifyModeChange = {
+                    simplifyMode = !simplifyMode
+                }
+            )
+            Divider(height = 12.px)
             PerfDataTable(anrData, crashData)
         }
     )
     LaunchedEffect(Unit) {
         CoroutineScope(Dispatchers.Default).launch {
             launch {
-                anrNoDimensionData = PerfRepo.instance.getAnr(dimension = null)?.sortedByDateDescending()
+                anrNoDimensionData = PerfRepo.instance.getAnr(
+                    appPackage = AppEnum.ShotCut.packageName, dimension = null
+                )?.sortedByDateDescending()
             }
             launch {
-                anrDimensionData = PerfRepo.instance.getAnr(dimension = PerfDimensionType.RamBucket)
+                anrDimensionData = PerfRepo.instance.getAnr(
+                    appPackage = AppEnum.ShotCut.packageName,
+                    dimension = PerfDimensionType.RamBucket
+                )
             }
             launch {
-                crashNoDimensionData = PerfRepo.instance.getCrash(dimension = null)?.sortedByDateDescending()
+                crashNoDimensionData =
+                    PerfRepo.instance.getCrash(appPackage = AppEnum.ShotCut.packageName, dimension = null)
+                        ?.sortedByDateDescending()
             }
             launch {
-                crashDimensionData = PerfRepo.instance.getCrash(dimension = PerfDimensionType.RamBucket)
+                crashDimensionData = PerfRepo.instance.getCrash(
+                    appPackage = AppEnum.ShotCut.packageName,
+                    dimension = PerfDimensionType.RamBucket
+                )
             }
         }
     }
+}
+
+@Composable
+private fun OptionsView(checked: Boolean, onSimplifyModeChange: (Boolean) -> Unit) {
+    Div(
+        attrs = {
+            classes(CommonStyles.horizontal, CommonStyles.p70)
+        },
+        content = {
+            Checkbox(
+                checked = checked,
+                onCheckedChange = onSimplifyModeChange,
+                label = "精简模式"
+            )
+        }
+    )
 }

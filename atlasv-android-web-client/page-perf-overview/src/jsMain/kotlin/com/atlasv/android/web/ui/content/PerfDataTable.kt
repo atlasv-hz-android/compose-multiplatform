@@ -48,6 +48,7 @@ fun PerfDataTable(anrData: List<VitalPerfRateResponse>, crashData: List<VitalPer
             }
             anrData.forEachIndexed { index, anrResponse ->
                 PerfDataRow(
+                    appName = anrResponse.appNickname,
                     anrResponse.rows,
                     perfType = "ANR",
                     isFirstRow = index == 0,
@@ -59,6 +60,7 @@ fun PerfDataTable(anrData: List<VitalPerfRateResponse>, crashData: List<VitalPer
             }
             crashData.forEachIndexed { index, crashResponse ->
                 PerfDataRow(
+                    appName = crashResponse.appNickname,
                     crashResponse.rows,
                     perfType = "Crash",
                     isFirstRow = index == 0,
@@ -126,7 +128,13 @@ private fun PerfDataHeadRow(rows: List<VitalPerfRateModel>) {
 }
 
 @Composable
-private fun PerfDataRow(rows: List<VitalPerfRateModel>, perfType: String, isFirstRow: Boolean, isLastRow: Boolean) {
+private fun PerfDataRow(
+    appName: String,
+    rows: List<VitalPerfRateModel>,
+    perfType: String,
+    isFirstRow: Boolean,
+    isLastRow: Boolean
+) {
     Div(
         attrs = {
             classes(CommonStyles.horizontal)
@@ -141,7 +149,7 @@ private fun PerfDataRow(rows: List<VitalPerfRateModel>, perfType: String, isFirs
                             }
                         },
                         content = {
-                            Text("ShotCut")
+                            Text(appName)
                         }
                     )
                 },

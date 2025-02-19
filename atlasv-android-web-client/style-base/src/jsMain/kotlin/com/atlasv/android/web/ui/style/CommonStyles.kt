@@ -179,4 +179,9 @@ object CommonStyles : StyleSheet() {
         color(Color.white)
         property("box-shadow", "1px 1px ${rgba(0, 0, 0, .2)}")
     }
+
+    val checkBox by style {
+        width(20.px)
+        height(20.px)
+    }
 }
