@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.atlasv.android.web.data.model.VitalPerfRateResponseGroup
+import com.atlasv.android.web.data.model.VitalPerfRateResponse
 import com.atlasv.android.web.data.repo.PerfRepo
 import com.atlasv.android.web.ui.style.CommonStyles
 import kotlinx.coroutines.CoroutineScope
@@ -26,7 +26,8 @@ fun main() {
 
 @Composable
 fun Body() {
-    var data by remember { mutableStateOf<VitalPerfRateResponseGroup?>(null) }
+    var anrData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
+    var crashData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
     Style(CommonStyles)
     Div(
         attrs = {
@@ -36,12 +37,17 @@ fun Body() {
             }
         },
         content = {
-            PerfDataTable(data)
+            PerfDataTable(anrData, crashData)
         }
     )
     LaunchedEffect(Unit) {
         CoroutineScope(Dispatchers.Default).launch {
-            data = PerfRepo.instance.get()
+            launch {
+                anrData = PerfRepo.instance.getAnr()
+            }
+            launch {
+                crashData = PerfRepo.instance.getCrash()
+            }
         }
     }
 }

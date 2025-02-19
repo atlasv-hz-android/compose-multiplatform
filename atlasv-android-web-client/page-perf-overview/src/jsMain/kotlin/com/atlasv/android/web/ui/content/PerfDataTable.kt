@@ -2,7 +2,7 @@ package com.atlasv.android.web.ui.content
 
 import androidx.compose.runtime.Composable
 import com.atlasv.android.web.data.model.VitalPerfRateModel
-import com.atlasv.android.web.data.model.VitalPerfRateResponseGroup
+import com.atlasv.android.web.data.model.VitalPerfRateResponse
 import com.atlasv.android.web.ui.component.Divider
 import com.atlasv.android.web.ui.style.CommonColors
 import com.atlasv.android.web.ui.style.CommonStyles
@@ -30,14 +30,14 @@ import org.w3c.dom.HTMLDivElement
  */
 
 @Composable
-fun PerfDataTable(data: VitalPerfRateResponseGroup?) {
-    data ?: return
-    val anrRows = data.anr.rows.sortedByDescending {
+fun PerfDataTable(anrData: VitalPerfRateResponse?, crashData: VitalPerfRateResponse?) {
+    val anrRows = anrData?.rows?.sortedByDescending {
         it.startTime.getSortWeight()
-    }
-    val crashRows = data.crash.rows.sortedByDescending {
+    }.orEmpty()
+
+    val crashRows = crashData?.rows?.sortedByDescending {
         it.startTime.getSortWeight()
-    }
+    }.orEmpty()
     Div(
         attrs = {
             classes(CommonStyles.p70, CommonStyles.card, CommonStyles.vertical)
