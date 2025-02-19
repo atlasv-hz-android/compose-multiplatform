@@ -1,8 +1,8 @@
 package com.atlasv.android.web.ui.content
 
 import androidx.compose.runtime.Composable
+import com.atlasv.android.web.data.model.AppPerfData
 import com.atlasv.android.web.data.model.VitalPerfRateModel
-import com.atlasv.android.web.data.model.VitalPerfRateResponse
 import com.atlasv.android.web.ui.component.Divider
 import com.atlasv.android.web.ui.style.CommonColors
 import com.atlasv.android.web.ui.style.CommonStyles
@@ -31,8 +31,8 @@ import org.w3c.dom.HTMLDivElement
  */
 
 @Composable
-fun PerfDataTable(anrData: List<VitalPerfRateResponse>, crashData: List<VitalPerfRateResponse>) {
-    val isEmpty = anrData.all { it.rows.isEmpty() } && crashData.all { it.rows.isEmpty() }
+fun PerfDataTable(appPerfDataList: List<AppPerfData>, simplifyMode: Boolean) {
+    val isEmpty = appPerfDataList.isEmpty()
     Div(
         attrs = {
             classes(CommonStyles.p70, CommonStyles.card, CommonStyles.vertical)
@@ -42,37 +42,53 @@ fun PerfDataTable(anrData: List<VitalPerfRateResponse>, crashData: List<VitalPer
             }
         },
         content = {
-            anrData.firstOrNull()?.rows?.also { anrRows ->
-                PerfDataHeadRow(anrRows)
-                Divider(height = 1.px, color = CommonColors.dividerColorDark)
+            HeadRow(appPerfDataList)
+            appPerfDataList.forEachIndexed { index, appPerfDataItem ->
+                PerfDataContentView(appPerfDataItem, simplifyMode)
+                if (index != appPerfDataList.lastIndex) {
+                    Divider(height = 2.px, color = CommonColors.dividerColorDark)
+                }
             }
-            anrData.forEachIndexed { index, anrResponse ->
-                PerfDataRow(
-                    appName = anrResponse.appNickname,
-                    anrResponse.rows,
-                    perfType = "ANR",
-                    isFirstRow = index == 0,
-                    isLastRow = index == anrData.lastIndex
-                )
-            }
-            if (anrData.isNotEmpty() && crashData.isNotEmpty()) {
-                Divider(height = 2.px, color = CommonColors.dividerColorDark)
-            }
-            crashData.forEachIndexed { index, crashResponse ->
-                PerfDataRow(
-                    appName = crashResponse.appNickname,
-                    crashResponse.rows,
-                    perfType = "Crash",
-                    isFirstRow = index == 0,
-                    isLastRow = index == crashData.lastIndex
-                )
-            }
-
             if (isEmpty) {
                 LoadingView()
             }
         }
     )
+}
+
+@Composable
+private fun PerfDataContentView(appPerfDataItem: AppPerfData, simplifyMode: Boolean) {
+    val anrData = appPerfDataItem.getAnrData(simplifyMode)
+    val crashData = appPerfDataItem.getCrashData(simplifyMode)
+    anrData.forEachIndexed { index, anrResponse ->
+        PerfDataRow(
+            appName = anrResponse.appNickname,
+            anrResponse.rows,
+            perfType = "ANR",
+            isFirstRow = index == 0,
+            isLastRow = index == anrData.lastIndex
+        )
+    }
+    if (anrData.isNotEmpty() && crashData.isNotEmpty()) {
+        Divider(height = 1.5.px, color = CommonColors.dividerColorDark)
+    }
+    crashData.forEachIndexed { index, crashResponse ->
+        PerfDataRow(
+            appName = crashResponse.appNickname,
+            crashResponse.rows,
+            perfType = "Crash",
+            isFirstRow = index == 0,
+            isLastRow = index == crashData.lastIndex
+        )
+    }
+}
+
+@Composable
+private fun HeadRow(appPerfData: List<AppPerfData>) {
+    appPerfData.firstOrNull()?.anrNoDimensionData?.rows?.also { anrRows ->
+        PerfDataHeadRow(anrRows)
+        Divider(height = 1.px, color = CommonColors.dividerColorDark)
+    }
 }
 
 @Composable

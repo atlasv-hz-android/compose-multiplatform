@@ -7,15 +7,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.atlasv.android.web.common.constant.AppEnum
-import com.atlasv.android.web.data.model.VitalPerfRateResponse
-import com.atlasv.android.web.data.model.mergeByDistinctUsers
-import com.atlasv.android.web.data.repo.PerfDimensionType
+import com.atlasv.android.web.data.model.AppPerfData
 import com.atlasv.android.web.data.repo.PerfRepo
 import com.atlasv.android.web.ui.component.Checkbox
 import com.atlasv.android.web.ui.component.Divider
 import com.atlasv.android.web.ui.style.CommonStyles
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.css.Style
 import org.jetbrains.compose.web.css.paddingTop
@@ -34,27 +34,8 @@ fun Body() {
     var simplifyMode by remember {
         mutableStateOf(true)
     }
-    var anrNoDimensionData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
-    var anrDimensionData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
-    val anrDimensionDataFlattened = anrDimensionData?.flattenByDimensions().orEmpty()
-    val lowRamAnrData = anrDimensionDataFlattened.mergeByDistinctUsers(dimensionLabel = "低端机")
-    val anrData: List<VitalPerfRateResponse> =
-        if (!simplifyMode) {
-            listOfNotNull(anrNoDimensionData) + anrDimensionDataFlattened
-        } else {
-            listOfNotNull(anrNoDimensionData) + listOfNotNull(
-                lowRamAnrData
-            )
-        }
-
-    var crashNoDimensionData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
-    var crashDimensionData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
-    val crashDimensionDataFlattened = crashDimensionData?.flattenByDimensions().orEmpty()
-    val lowRamCrashData = crashDimensionDataFlattened.mergeByDistinctUsers(dimensionLabel = "低端机")
-    val crashData = if (!simplifyMode) {
-        listOfNotNull(crashNoDimensionData) + crashDimensionDataFlattened
-    } else {
-        listOfNotNull(crashNoDimensionData) + listOfNotNull(lowRamCrashData)
+    var appPerfDataList by remember {
+        mutableStateOf<List<AppPerfData>>(emptyList())
     }
     Style(CommonStyles)
     Div(
@@ -72,33 +53,24 @@ fun Body() {
                 }
             )
             Divider(height = 12.px)
-            PerfDataTable(anrData, crashData)
+            PerfDataTable(appPerfDataList, simplifyMode)
         }
     )
     LaunchedEffect(Unit) {
         CoroutineScope(Dispatchers.Default).launch {
-            launch {
-                anrNoDimensionData = PerfRepo.instance.getAnr(
-                    appPackage = AppEnum.ShotCut.packageName, dimension = null
-                )?.sortedByDateDescending()
-            }
-            launch {
-                anrDimensionData = PerfRepo.instance.getAnr(
-                    appPackage = AppEnum.ShotCut.packageName,
-                    dimension = PerfDimensionType.RamBucket
-                )
-            }
-            launch {
-                crashNoDimensionData =
-                    PerfRepo.instance.getCrash(appPackage = AppEnum.ShotCut.packageName, dimension = null)
-                        ?.sortedByDateDescending()
-            }
-            launch {
-                crashDimensionData = PerfRepo.instance.getCrash(
-                    appPackage = AppEnum.ShotCut.packageName,
-                    dimension = PerfDimensionType.RamBucket
-                )
-            }
+            val apps = listOf(AppEnum.ShotCut, AppEnum.ShotCut)
+            apps.map { app ->
+                async {
+                    val appPerfData: AppPerfData = PerfRepo.instance.loadAppPerfData(app.packageName)
+                    if (!appPerfDataList.any { it.appPackage == appPerfData.appPackage }) {
+                        appPerfDataList = (appPerfDataList + appPerfData).sortedByDescending { item ->
+                            apps.indexOfFirst {
+                                it.packageName == item.appPackage
+                            }
+                        }
+                    }
+                }
+            }.awaitAll()
         }
     }
 }
