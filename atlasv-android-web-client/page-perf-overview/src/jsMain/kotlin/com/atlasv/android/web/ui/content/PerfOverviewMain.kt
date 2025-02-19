@@ -58,12 +58,12 @@ fun Body() {
     )
     LaunchedEffect(Unit) {
         CoroutineScope(Dispatchers.Default).launch {
-            val apps = listOf(AppEnum.ShotCut, AppEnum.ShotCut)
+            val apps = AppEnum.entries
             apps.map { app ->
                 async {
                     val appPerfData: AppPerfData = PerfRepo.instance.loadAppPerfData(app.packageName)
                     if (!appPerfDataList.any { it.appPackage == appPerfData.appPackage }) {
-                        appPerfDataList = (appPerfDataList + appPerfData).sortedByDescending { item ->
+                        appPerfDataList = (appPerfDataList + appPerfData).sortedBy { item ->
                             apps.indexOfFirst {
                                 it.packageName == item.appPackage
                             }

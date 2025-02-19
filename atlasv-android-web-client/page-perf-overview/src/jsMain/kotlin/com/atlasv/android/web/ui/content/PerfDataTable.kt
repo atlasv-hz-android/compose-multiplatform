@@ -46,7 +46,7 @@ fun PerfDataTable(appPerfDataList: List<AppPerfData>, simplifyMode: Boolean) {
             appPerfDataList.forEachIndexed { index, appPerfDataItem ->
                 PerfDataContentView(appPerfDataItem, simplifyMode)
                 if (index != appPerfDataList.lastIndex) {
-                    Divider(height = 2.px, color = CommonColors.dividerColorDark)
+                    Divider(height = 4.px, color = CommonColors.dividerColorDark)
                 }
             }
             if (isEmpty) {
@@ -198,13 +198,13 @@ private fun PerfDataGridItem(
         attrs = {
             classes(CommonStyles.horizontal, CommonStyles.p10, CommonStyles.justifyContentCenter)
             style {
-                fontSize(14.px)
+                fontSize(13.px)
                 fontWeight(fontWeight)
                 border {
                     color(CommonColors.dividerColorDark)
                     style(LineStyle.Solid)
-                    paddingTop(8.px)
-                    paddingBottom(8.px)
+                    paddingTop(6.px)
+                    paddingBottom(6.px)
                 }
                 borderWidth(
                     top = 0.px,
