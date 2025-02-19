@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class VitalPerfRateModel(
     val metrics: List<VitalPerfRateMetric>,
+    val dimensions: List<PerfDimensionModel>?,
     val startTime: DateModel
 )
-
 

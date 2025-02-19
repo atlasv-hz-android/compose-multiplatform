@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.atlasv.android.web.data.model.VitalPerfRateResponse
+import com.atlasv.android.web.data.repo.PerfDimensionType
 import com.atlasv.android.web.data.repo.PerfRepo
 import com.atlasv.android.web.ui.style.CommonStyles
 import kotlinx.coroutines.CoroutineScope
@@ -26,8 +27,12 @@ fun main() {
 
 @Composable
 fun Body() {
-    var anrData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
+    var anrNoDimensionData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
+    var anrDimensionData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
+    val anrData: List<VitalPerfRateResponse> =
+        listOfNotNull(anrNoDimensionData) + anrDimensionData?.flatterByDimensions().orEmpty()
     var crashData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
+    var crashDimensionData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
     Style(CommonStyles)
     Div(
         attrs = {
@@ -43,10 +48,16 @@ fun Body() {
     LaunchedEffect(Unit) {
         CoroutineScope(Dispatchers.Default).launch {
             launch {
-                anrData = PerfRepo.instance.getAnr()
+                anrNoDimensionData = PerfRepo.instance.getAnr(dimension = null)?.sortedByDateDescending()
             }
             launch {
-                crashData = PerfRepo.instance.getCrash()
+                anrDimensionData = PerfRepo.instance.getAnr(dimension = PerfDimensionType.RamBucket)
+            }
+            launch {
+                crashData = PerfRepo.instance.getCrash(dimension = null)?.sortedByDateDescending()
+            }
+            launch {
+                crashDimensionData = PerfRepo.instance.getCrash(dimension = PerfDimensionType.RamBucket)
             }
         }
     }

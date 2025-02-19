@@ -16,6 +16,7 @@ import org.jetbrains.compose.web.css.borderWidth
 import org.jetbrains.compose.web.css.color
 import org.jetbrains.compose.web.css.fontSize
 import org.jetbrains.compose.web.css.fontWeight
+import org.jetbrains.compose.web.css.height
 import org.jetbrains.compose.web.css.paddingBottom
 import org.jetbrains.compose.web.css.paddingTop
 import org.jetbrains.compose.web.css.px
@@ -30,14 +31,11 @@ import org.w3c.dom.HTMLDivElement
  */
 
 @Composable
-fun PerfDataTable(anrData: VitalPerfRateResponse?, crashData: VitalPerfRateResponse?) {
-    val anrRows = anrData?.rows?.sortedByDescending {
-        it.startTime.getSortWeight()
-    }.orEmpty()
-
+fun PerfDataTable(anrData: List<VitalPerfRateResponse>, crashData: VitalPerfRateResponse?) {
     val crashRows = crashData?.rows?.sortedByDescending {
         it.startTime.getSortWeight()
     }.orEmpty()
+    val isEmpty = anrData.all { it.rows.isEmpty() } && crashData?.rows?.isNotEmpty() != true
     Div(
         attrs = {
             classes(CommonStyles.p70, CommonStyles.card, CommonStyles.vertical)
@@ -47,10 +45,36 @@ fun PerfDataTable(anrData: VitalPerfRateResponse?, crashData: VitalPerfRateRespo
             }
         },
         content = {
-            PerfDataHeadRow(anrRows)
-            Divider(height = 1.px, color = CommonColors.dividerColorDark)
-            PerfDataRow(anrRows)
-            PerfDataRow(crashRows)
+            anrData.firstOrNull()?.rows?.also { anrRows ->
+                PerfDataHeadRow(anrRows)
+                Divider(height = 1.px, color = CommonColors.dividerColorDark)
+            }
+
+            anrData.forEach { anrResponse ->
+                PerfDataRow(anrResponse.rows, perfType = "ANR")
+            }
+            if (crashRows.isNotEmpty()) {
+                PerfDataRow(crashRows, perfType = "Crash")
+            }
+
+            if (isEmpty) {
+                LoadingView()
+            }
+        }
+    )
+}
+
+@Composable
+private fun LoadingView() {
+    Div(
+        attrs = {
+            classes(CommonStyles.horizontal, CommonStyles.justifyContentCenter, CommonStyles.alignItemsCenter)
+            style {
+                height(100.px)
+            }
+        },
+        content = {
+            Text("数据加载中...")
         }
     )
 }
@@ -77,7 +101,10 @@ private fun PerfDataHeadRow(rows: List<VitalPerfRateModel>) {
                 }, fontWeight = 500
             )
             PerfDataGridItem(content = {
-                Text("设备范围")
+                Text("指标")
+            }, fontWeight = 500)
+            PerfDataGridItem(content = {
+                Text("设备维度")
             }, fontWeight = 500)
             rows.forEachIndexed { index, item ->
                 PerfDataGridItem(content = {
@@ -90,7 +117,7 @@ private fun PerfDataHeadRow(rows: List<VitalPerfRateModel>) {
 }
 
 @Composable
-private fun PerfDataRow(rows: List<VitalPerfRateModel>) {
+private fun PerfDataRow(rows: List<VitalPerfRateModel>, perfType: String) {
     Div(
         attrs = {
             classes(CommonStyles.horizontal)
@@ -103,7 +130,10 @@ private fun PerfDataRow(rows: List<VitalPerfRateModel>) {
                 fontWeight = 500
             )
             PerfDataGridItem(content = {
-                Text("全部机型")
+                Text(perfType)
+            })
+            PerfDataGridItem(content = {
+                Text(rows.firstOrNull()?.dimensions?.firstOrNull()?.valueLabel ?: "全部机型")
             })
             rows.forEachIndexed { index, model ->
                 PerfDataGridItem(content = {
