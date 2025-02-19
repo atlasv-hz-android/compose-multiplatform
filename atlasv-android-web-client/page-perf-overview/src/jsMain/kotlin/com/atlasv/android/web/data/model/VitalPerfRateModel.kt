@@ -11,5 +11,13 @@ data class VitalPerfRateModel(
     val metrics: List<VitalPerfRateMetric>,
     val dimensions: List<PerfDimensionModel>?,
     val startTime: DateModel
-)
+) {
+    fun getDistinctUsers(): Int {
+        return metrics.find { it.metric == "distinctUsers" }?.decimalValue?.value?.toInt() ?: 0
+    }
+
+    fun getFirstMetricRate(): Float {
+        return metrics.first().decimalValue.value.toFloat()
+    }
+}
 

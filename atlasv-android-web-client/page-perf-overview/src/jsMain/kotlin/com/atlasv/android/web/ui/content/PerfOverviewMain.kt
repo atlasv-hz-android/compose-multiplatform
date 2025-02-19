@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.atlasv.android.web.data.model.VitalPerfRateResponse
+import com.atlasv.android.web.data.model.mergeByDistinctUsers
 import com.atlasv.android.web.data.repo.PerfDimensionType
 import com.atlasv.android.web.data.repo.PerfRepo
 import com.atlasv.android.web.ui.style.CommonStyles
@@ -29,12 +30,18 @@ fun main() {
 fun Body() {
     var anrNoDimensionData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
     var anrDimensionData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
+    val anrDimensionDataFlattened = anrDimensionData?.flattenByDimensions().orEmpty()
+    val lowRamAnrData = anrDimensionDataFlattened.mergeByDistinctUsers(dimensionLabel = "低端机")
     val anrData: List<VitalPerfRateResponse> =
-        listOfNotNull(anrNoDimensionData) + anrDimensionData?.flatterByDimensions().orEmpty()
+        listOfNotNull(anrNoDimensionData) + anrDimensionData?.flattenByDimensions().orEmpty() + listOfNotNull(
+            lowRamAnrData
+        )
 
     var crashNoDimensionData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
     var crashDimensionData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
-    val crashData = listOfNotNull(crashNoDimensionData) + crashDimensionData?.flatterByDimensions().orEmpty()
+    val crashDimensionDataFlattened = crashDimensionData?.flattenByDimensions().orEmpty()
+    val lowRamCrashData = crashDimensionDataFlattened.mergeByDistinctUsers(dimensionLabel = "低端机")
+    val crashData = listOfNotNull(crashNoDimensionData) + crashDimensionDataFlattened + listOfNotNull(lowRamCrashData)
     Style(CommonStyles)
     Div(
         attrs = {

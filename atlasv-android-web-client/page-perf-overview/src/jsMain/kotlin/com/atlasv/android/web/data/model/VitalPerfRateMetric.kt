@@ -8,7 +8,8 @@ import kotlin.math.roundToInt
  */
 @Serializable
 data class VitalPerfRateMetric(
-    val decimalValue: ValueContainer
+    val decimalValue: ValueContainer,
+    val metric: String
 )
 
 
