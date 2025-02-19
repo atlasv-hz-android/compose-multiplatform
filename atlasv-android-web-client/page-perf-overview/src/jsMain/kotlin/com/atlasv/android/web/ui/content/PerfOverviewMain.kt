@@ -31,8 +31,10 @@ fun Body() {
     var anrDimensionData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
     val anrData: List<VitalPerfRateResponse> =
         listOfNotNull(anrNoDimensionData) + anrDimensionData?.flatterByDimensions().orEmpty()
-    var crashData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
+
+    var crashNoDimensionData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
     var crashDimensionData by remember { mutableStateOf<VitalPerfRateResponse?>(null) }
+    val crashData = listOfNotNull(crashNoDimensionData) + crashDimensionData?.flatterByDimensions().orEmpty()
     Style(CommonStyles)
     Div(
         attrs = {
@@ -54,7 +56,7 @@ fun Body() {
                 anrDimensionData = PerfRepo.instance.getAnr(dimension = PerfDimensionType.RamBucket)
             }
             launch {
-                crashData = PerfRepo.instance.getCrash(dimension = null)?.sortedByDateDescending()
+                crashNoDimensionData = PerfRepo.instance.getCrash(dimension = null)?.sortedByDateDescending()
             }
             launch {
                 crashDimensionData = PerfRepo.instance.getCrash(dimension = PerfDimensionType.RamBucket)

@@ -31,11 +31,8 @@ import org.w3c.dom.HTMLDivElement
  */
 
 @Composable
-fun PerfDataTable(anrData: List<VitalPerfRateResponse>, crashData: VitalPerfRateResponse?) {
-    val crashRows = crashData?.rows?.sortedByDescending {
-        it.startTime.getSortWeight()
-    }.orEmpty()
-    val isEmpty = anrData.all { it.rows.isEmpty() } && crashData?.rows?.isNotEmpty() != true
+fun PerfDataTable(anrData: List<VitalPerfRateResponse>, crashData: List<VitalPerfRateResponse>) {
+    val isEmpty = anrData.all { it.rows.isEmpty() } && crashData.all { it.rows.isEmpty() }
     Div(
         attrs = {
             classes(CommonStyles.p70, CommonStyles.card, CommonStyles.vertical)
@@ -49,12 +46,24 @@ fun PerfDataTable(anrData: List<VitalPerfRateResponse>, crashData: VitalPerfRate
                 PerfDataHeadRow(anrRows)
                 Divider(height = 1.px, color = CommonColors.dividerColorDark)
             }
-
-            anrData.forEach { anrResponse ->
-                PerfDataRow(anrResponse.rows, perfType = "ANR")
+            anrData.forEachIndexed { index, anrResponse ->
+                PerfDataRow(
+                    anrResponse.rows,
+                    perfType = "ANR",
+                    isFirstRow = index == 0,
+                    isLastRow = index == anrData.lastIndex
+                )
             }
-            if (crashRows.isNotEmpty()) {
-                PerfDataRow(crashRows, perfType = "Crash")
+            if (anrData.isNotEmpty() && crashData.isNotEmpty()) {
+                Divider(height = 2.px, color = CommonColors.dividerColorDark)
+            }
+            crashData.forEachIndexed { index, crashResponse ->
+                PerfDataRow(
+                    crashResponse.rows,
+                    perfType = "Crash",
+                    isFirstRow = index == 0,
+                    isLastRow = index == crashData.lastIndex
+                )
             }
 
             if (isEmpty) {
@@ -117,7 +126,7 @@ private fun PerfDataHeadRow(rows: List<VitalPerfRateModel>) {
 }
 
 @Composable
-private fun PerfDataRow(rows: List<VitalPerfRateModel>, perfType: String) {
+private fun PerfDataRow(rows: List<VitalPerfRateModel>, perfType: String, isFirstRow: Boolean, isLastRow: Boolean) {
     Div(
         attrs = {
             classes(CommonStyles.horizontal)
@@ -125,20 +134,29 @@ private fun PerfDataRow(rows: List<VitalPerfRateModel>, perfType: String) {
         content = {
             PerfDataGridItem(
                 content = {
-                    Text("ShotCut")
+                    Div(
+                        attrs = {
+                            style {
+                                color(if (isFirstRow) Color.black else Color.transparent)
+                            }
+                        },
+                        content = {
+                            Text("ShotCut")
+                        }
+                    )
                 },
                 fontWeight = 500
             )
             PerfDataGridItem(content = {
                 Text(perfType)
-            })
+            }, hasBottomBorder = !isLastRow)
             PerfDataGridItem(content = {
                 Text(rows.firstOrNull()?.dimensions?.firstOrNull()?.valueLabel ?: "全部机型")
-            })
+            }, hasBottomBorder = !isLastRow)
             rows.forEachIndexed { index, model ->
                 PerfDataGridItem(content = {
                     Text(model.metrics.firstOrNull()?.decimalValue?.asPercent()?.toString().orEmpty())
-                }, isEndCol = index == rows.lastIndex)
+                }, isEndCol = index == rows.lastIndex, hasBottomBorder = !isLastRow)
             }
         }
     )
@@ -147,6 +165,7 @@ private fun PerfDataRow(rows: List<VitalPerfRateModel>, perfType: String) {
 @Composable
 private fun PerfDataGridItem(
     isEndCol: Boolean = false,
+    hasBottomBorder: Boolean = false,
     content: ContentBuilder<HTMLDivElement>,
     fontWeight: Int = 400,
     backgroundColor: CSSColorValue = Color.transparent
@@ -155,7 +174,7 @@ private fun PerfDataGridItem(
         attrs = {
             classes(CommonStyles.horizontal, CommonStyles.p10, CommonStyles.justifyContentCenter)
             style {
-                fontSize(15.px)
+                fontSize(14.px)
                 fontWeight(fontWeight)
                 border {
                     color(CommonColors.dividerColorDark)
@@ -166,7 +185,7 @@ private fun PerfDataGridItem(
                 borderWidth(
                     top = 0.px,
                     right = if (isEndCol) 0.px else 1.px,
-                    bottom = 0.px,
+                    bottom = if (hasBottomBorder) 1.px else 0.px,
                     left = 0.px,
                 )
                 backgroundColor(backgroundColor)
