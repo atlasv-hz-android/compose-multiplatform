@@ -3,7 +3,7 @@ package com.atlasv.android.web.ui.content
 import androidx.compose.runtime.Composable
 import com.atlasv.android.web.data.model.UploadRecordData
 import com.atlasv.android.web.data.model.UploadRecordItem
-import com.atlasv.android.web.ui.component.Divider
+import com.atlasv.android.web.ui.component.VerticalDivider
 import com.atlasv.android.web.ui.style.TextStyles
 import org.jetbrains.compose.web.attributes.ATarget
 import org.jetbrains.compose.web.attributes.target
@@ -33,7 +33,7 @@ fun UploadHistory(data: UploadRecordData?) {
 
 @Composable
 private fun UploadRecordItemView(item: UploadRecordItem) {
-    Divider(12.px)
+    VerticalDivider(12.px)
     Div({
         classes(TextStyles.subText2)
     }) {
