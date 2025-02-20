@@ -20,10 +20,5 @@ data class VitalPerfRateModel(
         return metrics.first().decimalValue.value.toFloat()
     }
 
-    fun hasDimension(dimension: String, int64Value: Int): Boolean {
-        return dimensions?.any {
-            it.dimension == dimension && it.int64Value == int64Value
-        } == true
-    }
 }
 
