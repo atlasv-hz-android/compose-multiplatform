@@ -10,6 +10,7 @@ import com.atlasv.android.web.data.model.AppPerfData
 import com.atlasv.android.web.data.repo.PerfRepo
 import com.atlasv.android.web.ui.component.Checkbox
 import com.atlasv.android.web.ui.component.HorizontalDivider
+import com.atlasv.android.web.ui.component.PrimaryButton
 import com.atlasv.android.web.ui.component.VerticalDivider
 import com.atlasv.android.web.ui.style.CommonStyles
 import kotlinx.coroutines.CoroutineScope
@@ -38,6 +39,9 @@ fun Body() {
     var appPerfDataList by remember {
         mutableStateOf<List<AppPerfData>>(emptyList())
     }
+    var loading by remember {
+        mutableStateOf(false)
+    }
     Style(CommonStyles)
     Div(
         attrs = {
@@ -50,21 +54,31 @@ fun Body() {
             OptionsView(
                 checked = simplifyMode,
                 screenshotMode = screenshotMode,
+                loading = loading,
                 onSimplifyModeChange = {
                     simplifyMode = !simplifyMode
                 },
                 onScreenShotModeChange = {
                     screenshotMode = !screenshotMode
+                },
+                onClickRefresh = {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        loading = true
+                        appPerfDataList = PerfRepo.createPerfData(PerfRepo.instance.getAllVitalsData())
+                        loading = false
+                    }
                 }
             )
             VerticalDivider(height = 12.px)
-            PerfDataTable(appPerfDataList, simplifyMode, screenshotMode)
+            PerfDataTable(appPerfDataList, simplifyMode, screenshotMode, loading)
             VerticalDivider(height = 24.px)
         }
     )
     LaunchedEffect(Unit) {
         CoroutineScope(Dispatchers.Default).launch {
+            loading = true
             appPerfDataList = PerfRepo.createPerfData(PerfRepo.instance.getAllVitalsData())
+            loading = false
         }
     }
 }
@@ -73,8 +87,10 @@ fun Body() {
 private fun OptionsView(
     checked: Boolean,
     screenshotMode: Boolean,
+    loading: Boolean,
     onSimplifyModeChange: (Boolean) -> Unit,
-    onScreenShotModeChange: (Boolean) -> Unit
+    onScreenShotModeChange: (Boolean) -> Unit,
+    onClickRefresh: () -> Unit
 ) {
     Div(
         attrs = {
@@ -91,6 +107,12 @@ private fun OptionsView(
                 checked = screenshotMode,
                 onCheckedChange = onScreenShotModeChange,
                 label = "小字模式"
+            )
+            HorizontalDivider(width = 20.px)
+            PrimaryButton(
+                text = "刷新",
+                enabled = !loading,
+                onClick = onClickRefresh,
             )
         }
     )

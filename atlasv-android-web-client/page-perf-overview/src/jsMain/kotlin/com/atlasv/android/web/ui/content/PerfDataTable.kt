@@ -31,7 +31,12 @@ import org.w3c.dom.HTMLDivElement
  */
 
 @Composable
-fun PerfDataTable(appPerfDataList: List<AppPerfData>, simplifyMode: Boolean, screenshotMode: Boolean) {
+fun PerfDataTable(
+    appPerfDataList: List<AppPerfData>,
+    simplifyMode: Boolean,
+    screenshotMode: Boolean,
+    loading: Boolean
+) {
     val isEmpty = appPerfDataList.isEmpty()
     Div(
         attrs = {
@@ -52,8 +57,12 @@ fun PerfDataTable(appPerfDataList: List<AppPerfData>, simplifyMode: Boolean, scr
                     )
                 }
             }
-            if (isEmpty) {
-                LoadingView()
+            if (loading) {
+                LoadingView(text = "数据加载中...")
+            } else {
+                if (isEmpty) {
+                    LoadingView(text = "当前数据为空")
+                }
             }
         }
     )
@@ -97,7 +106,7 @@ private fun HeadRow(appPerfData: List<AppPerfData>, screenshotMode: Boolean) {
 }
 
 @Composable
-private fun LoadingView() {
+private fun LoadingView(text: String) {
     Div(
         attrs = {
             classes(CommonStyles.horizontal, CommonStyles.justifyContentCenter, CommonStyles.alignItemsCenter)
@@ -106,7 +115,7 @@ private fun LoadingView() {
             }
         },
         content = {
-            Text("数据加载中...")
+            Text(text)
         }
     )
 }

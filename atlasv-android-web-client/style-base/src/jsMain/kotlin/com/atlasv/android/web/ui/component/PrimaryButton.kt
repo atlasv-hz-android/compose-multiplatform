@@ -2,32 +2,35 @@ package com.atlasv.android.web.ui.component
 
 import androidx.compose.runtime.Composable
 import com.atlasv.android.web.ui.style.CommonStyles
-import kotlinx.browser.window
-import org.jetbrains.compose.web.attributes.ATarget
-import org.jetbrains.compose.web.css.percent
-import org.jetbrains.compose.web.css.width
+import org.jetbrains.compose.web.css.Color
+import org.jetbrains.compose.web.css.backgroundColor
+import org.jetbrains.compose.web.css.color
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
 
 
 @Composable
-fun PrimaryButton(text: String, link: String) {
+fun PrimaryButton(text: String, enabled: Boolean, onClick: () -> Unit) {
     Div(
         attrs = {
-            classes(CommonStyles.p100HoverGreen)
+            if (enabled) {
+                classes(CommonStyles.p100HoverGreen)
+            }
         },
         content = {
             Div(
                 attrs = {
                     classes(CommonStyles.primaryButton)
                     style {
-                        width(98.percent)
+                        if (!enabled) {
+                            backgroundColor(Color.darkgray)
+                            color(Color.lightgray)
+                        }
                     }
                     onClick {
-                        window.open(
-                            url = link,
-                            target = ATarget.Blank.targetStr
-                        )
+                        if (enabled) {
+                            onClick()
+                        }
                     }
                 },
                 content = {
