@@ -5,6 +5,7 @@ package com.atlasv.android.web.data.model
  */
 data class AppPerfData(
     val appPackage: String,
+    val appNickName: String,
     val anrNoDimensionData: VitalPerfRateResponse?,
     val anrDimensionData: VitalPerfRateResponse?,
     val crashNoDimensionData: VitalPerfRateResponse?,

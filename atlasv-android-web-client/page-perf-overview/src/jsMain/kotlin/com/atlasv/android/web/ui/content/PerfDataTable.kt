@@ -62,7 +62,7 @@ private fun PerfDataContentView(appPerfDataItem: AppPerfData, simplifyMode: Bool
     val crashData = appPerfDataItem.getCrashData(simplifyMode)
     anrData.forEachIndexed { index, anrResponse ->
         PerfDataRow(
-            appName = anrResponse.appNickname,
+            appName = appPerfDataItem.appNickName,
             anrResponse.rows,
             perfType = "ANR",
             isFirstRow = index == 0,
@@ -74,7 +74,7 @@ private fun PerfDataContentView(appPerfDataItem: AppPerfData, simplifyMode: Bool
     }
     crashData.forEachIndexed { index, crashResponse ->
         PerfDataRow(
-            appName = crashResponse.appNickname,
+            appName = appPerfDataItem.appNickName,
             crashResponse.rows,
             perfType = "Crash",
             isFirstRow = index == 0,

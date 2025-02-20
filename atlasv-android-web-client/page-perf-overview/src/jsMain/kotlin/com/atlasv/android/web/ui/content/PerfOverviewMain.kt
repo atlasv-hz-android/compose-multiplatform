@@ -6,7 +6,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.atlasv.android.web.common.constant.AppEnum
 import com.atlasv.android.web.data.model.AppPerfData
 import com.atlasv.android.web.data.repo.PerfRepo
 import com.atlasv.android.web.ui.component.Checkbox
@@ -14,8 +13,6 @@ import com.atlasv.android.web.ui.component.Divider
 import com.atlasv.android.web.ui.style.CommonStyles
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.css.Style
 import org.jetbrains.compose.web.css.paddingTop
@@ -58,19 +55,7 @@ fun Body() {
     )
     LaunchedEffect(Unit) {
         CoroutineScope(Dispatchers.Default).launch {
-            val apps = AppEnum.entries
-            apps.map { app ->
-                async {
-                    val appPerfData: AppPerfData = PerfRepo.instance.loadAppPerfData(app.packageName)
-                    if (!appPerfDataList.any { it.appPackage == appPerfData.appPackage }) {
-                        appPerfDataList = (appPerfDataList + appPerfData).sortedBy { item ->
-                            apps.indexOfFirst {
-                                it.packageName == item.appPackage
-                            }
-                        }
-                    }
-                }
-            }.awaitAll()
+            appPerfDataList = PerfRepo.createPerfData(PerfRepo.instance.getAllVitalsData())
         }
     }
 }
