@@ -8,13 +8,23 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class VitalPerfRateResponse(val rows: List<VitalPerfRateModel>, val appNickname: String, val appPackage: String) {
     fun flattenByDimensions(): List<VitalPerfRateResponse> {
-        val dimensions = this.rows.asSequence().map {
+        val dayCount = rows.distinctBy { it.startTime }.size
+        val allDimensions = this.rows.map {
             it.dimensions.orEmpty()
         }.flatten().filter {
             it.int64Value < 3072 // 低端机，Ram<=3G。3072算进了3G-4G的范围，故这里用<
-        }.distinctBy { it.int64Value }.sortedByDescending { it.int64Value }
-            .toList()
-        return dimensions.map { dimension ->
+        }
+        val distinctDimensions = allDimensions.distinctBy {
+            it.int64Value
+        }
+        val validDimensions = distinctDimensions.filter { distinctDimension ->
+            val count = allDimensions.count {
+                it == distinctDimension
+            }
+            count == dayCount
+        }
+
+        return validDimensions.map { dimension ->
             this.copy(
                 rows = rows.filter {
                     it.dimensions?.firstOrNull()?.int64Value == dimension.int64Value

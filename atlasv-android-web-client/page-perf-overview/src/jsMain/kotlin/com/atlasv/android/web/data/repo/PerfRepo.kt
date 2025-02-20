@@ -15,13 +15,13 @@ import kotlinx.coroutines.sync.withPermit
  * Created by weiping on 2025/2/17
  */
 class PerfRepo(private val httpEngine: HttpEngine) {
-
+    private val totalDays = 8
     private val requestSemaphore by lazy {
         Semaphore(permits = 6)
     }
 
     suspend fun getAnr(appPackage: String, dimension: PerfDimensionType?): VitalPerfRateResponse? {
-        val url = "${baseUrl}api/perf/get_user_perceived_anr_rate?app_package=$appPackage"
+        val url = "${baseUrl}api/perf/get_user_perceived_anr_rate?app_package=$appPackage&total_days=$totalDays"
             .appendDimension(dimension)
         return requestSemaphore.withPermit {
             HttpEngine.json.decodeFromString(httpEngine.client.get(url).bodyAsText())
@@ -29,7 +29,7 @@ class PerfRepo(private val httpEngine: HttpEngine) {
     }
 
     suspend fun getCrash(appPackage: String, dimension: PerfDimensionType?): VitalPerfRateResponse? {
-        val url = "${baseUrl}api/perf/get_user_perceived_crash_rate?app_package=$appPackage"
+        val url = "${baseUrl}api/perf/get_user_perceived_crash_rate?app_package=$appPackage&total_days=$totalDays"
             .appendDimension(dimension)
         return requestSemaphore.withPermit {
             HttpEngine.json.decodeFromString(httpEngine.client.get(url).bodyAsText())

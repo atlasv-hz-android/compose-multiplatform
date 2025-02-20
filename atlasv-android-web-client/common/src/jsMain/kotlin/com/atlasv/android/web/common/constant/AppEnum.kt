@@ -9,7 +9,7 @@ enum class AppEnum(val packageName: String) {
     Ttd1(packageName = "tiktok.video.downloader.nowatermark.tiktokdownload"),
     Ttd2(packageName = "tiktok.video.downloader.nowatermark.tiktokdownload.snaptik"),
     Fbd2(packageName = "facebook.video.downloader.savefrom.fb.saver.fast"),
-//    Twd(packageName = "twittervideodownloader.twitter.videoindir.savegif.twdown"),
+    Twd(packageName = "twittervideodownloader.twitter.videoindir.savegif.twdown"),
     Ptd(packageName = "pin.pinterest.video.downloader.forpinterest.pinsaver"),
     ShotCut(packageName = "video.editor.videomaker.effects.fx"),
 }
