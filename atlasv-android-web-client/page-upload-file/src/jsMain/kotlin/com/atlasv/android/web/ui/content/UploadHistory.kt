@@ -5,11 +5,10 @@ import com.atlasv.android.web.data.model.UploadRecordData
 import com.atlasv.android.web.data.model.UploadRecordItem
 import com.atlasv.android.web.ui.component.VerticalDivider
 import com.atlasv.android.web.ui.style.TextStyles
+import kotlinx.browser.window
 import org.jetbrains.compose.web.attributes.ATarget
-import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.paddingTop
 import org.jetbrains.compose.web.css.px
-import org.jetbrains.compose.web.dom.A
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
 
@@ -27,23 +26,22 @@ fun UploadHistory(data: UploadRecordData?) {
         Text("最近上传")
     }
     data.items.forEach {
-        UploadRecordItemView(it)
+        UploadRecordItemView(it, onClick = {
+            window.open(url = it.fileUrl, target = ATarget.Blank.targetStr)
+        })
     }
 }
 
 @Composable
-private fun UploadRecordItemView(item: UploadRecordItem) {
-    VerticalDivider(12.px)
-    Div({
-        classes(TextStyles.subText2)
-    }) {
-        Text(item.createAt)
-    }
-    A(
+private fun UploadRecordItemView(item: UploadRecordItem, onClick: () -> Unit) {
+    VerticalDivider(4.px)
+    Div(
         attrs = {
-            target(ATarget.Blank)
+            classes(TextStyles.text5)
+            onClick {
+                onClick()
+            }
         },
-        href = item.fileUrl
     ) {
         Text(item.fileUrl)
     }

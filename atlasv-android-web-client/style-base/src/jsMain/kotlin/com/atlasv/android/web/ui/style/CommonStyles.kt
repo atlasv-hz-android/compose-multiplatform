@@ -25,6 +25,8 @@ import org.jetbrains.compose.web.css.justifyContent
 import org.jetbrains.compose.web.css.margin
 import org.jetbrains.compose.web.css.padding
 import org.jetbrains.compose.web.css.paddingBottom
+import org.jetbrains.compose.web.css.paddingLeft
+import org.jetbrains.compose.web.css.paddingRight
 import org.jetbrains.compose.web.css.paddingTop
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.px
@@ -122,11 +124,6 @@ object CommonStyles : StyleSheet() {
     }
 
     val p100HoverGreen by style {
-        width(100.percent)
-        display(DisplayStyle.Flex)
-        flexDirection(FlexDirection.Column)
-        alignItems(AlignItems.Center)
-        justifyContent(JustifyContent.Center)
         this.hover {
             backgroundColor(CommonColors.primaryBlueDark)
         }
@@ -167,16 +164,14 @@ object CommonStyles : StyleSheet() {
     val primaryButton by style {
         boxSizing("border-box")
         borderRadius(12.px)
-        display(DisplayStyle.Flex)
-        flexDirection(FlexDirection.Column)
-        height(56.px)
-        width(100.percent)
         backgroundColor(CommonColors.primaryBlue)
-        alignItems(AlignItems.Center)
-        justifyContent(JustifyContent.Center)
-        fontSize(20.px)
+        fontSize(14.px)
         fontWeight(500)
         color(Color.white)
+        paddingTop(4.px)
+        paddingBottom(4.px)
+        paddingLeft(16.px)
+        paddingRight(16.px)
         property("box-shadow", "1px 1px ${rgba(0, 0, 0, .2)}")
     }
 

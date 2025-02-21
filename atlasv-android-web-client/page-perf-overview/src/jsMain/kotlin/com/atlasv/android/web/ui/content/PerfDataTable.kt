@@ -3,7 +3,7 @@ package com.atlasv.android.web.ui.content
 import androidx.compose.runtime.Composable
 import com.atlasv.android.web.data.model.AppPerfData
 import com.atlasv.android.web.data.model.VitalPerfRateModel
-import com.atlasv.android.web.ui.component.Divider
+import com.atlasv.android.web.ui.component.VerticalDivider
 import com.atlasv.android.web.ui.style.CommonColors
 import com.atlasv.android.web.ui.style.CommonStyles
 import org.jetbrains.compose.web.css.CSSColorValue
@@ -31,7 +31,12 @@ import org.w3c.dom.HTMLDivElement
  */
 
 @Composable
-fun PerfDataTable(appPerfDataList: List<AppPerfData>, simplifyMode: Boolean) {
+fun PerfDataTable(
+    appPerfDataList: List<AppPerfData>,
+    simplifyMode: Boolean,
+    screenshotMode: Boolean,
+    loading: Boolean
+) {
     val isEmpty = appPerfDataList.isEmpty()
     Div(
         attrs = {
@@ -42,22 +47,29 @@ fun PerfDataTable(appPerfDataList: List<AppPerfData>, simplifyMode: Boolean) {
             }
         },
         content = {
-            HeadRow(appPerfDataList)
+            HeadRow(appPerfDataList, screenshotMode)
             appPerfDataList.forEachIndexed { index, appPerfDataItem ->
-                PerfDataContentView(appPerfDataItem, simplifyMode)
+                PerfDataContentView(appPerfDataItem, simplifyMode, screenshotMode)
                 if (index != appPerfDataList.lastIndex) {
-                    Divider(height = 4.px, color = CommonColors.dividerColorDark)
+                    VerticalDivider(
+                        height = if (screenshotMode) 2.5.px else 4.px,
+                        color = CommonColors.dividerColorDark
+                    )
                 }
             }
-            if (isEmpty) {
-                LoadingView()
+            if (loading) {
+                LoadingView(text = "数据加载中...")
+            } else {
+                if (isEmpty) {
+                    LoadingView(text = "当前数据为空")
+                }
             }
         }
     )
 }
 
 @Composable
-private fun PerfDataContentView(appPerfDataItem: AppPerfData, simplifyMode: Boolean) {
+private fun PerfDataContentView(appPerfDataItem: AppPerfData, simplifyMode: Boolean, screenshotMode: Boolean) {
     val anrData = appPerfDataItem.getAnrData(simplifyMode)
     val crashData = appPerfDataItem.getCrashData(simplifyMode)
     anrData.forEachIndexed { index, anrResponse ->
@@ -66,11 +78,12 @@ private fun PerfDataContentView(appPerfDataItem: AppPerfData, simplifyMode: Bool
             anrResponse.rows,
             perfType = "ANR",
             isFirstRow = index == 0,
-            isLastRow = index == anrData.lastIndex
+            isLastRow = index == anrData.lastIndex,
+            screenshotMode = screenshotMode
         )
     }
     if (anrData.isNotEmpty() && crashData.isNotEmpty()) {
-        Divider(height = 1.5.px, color = CommonColors.dividerColorDark)
+        VerticalDivider(height = if (screenshotMode) 1.px else 1.5.px, color = CommonColors.dividerColorDark)
     }
     crashData.forEachIndexed { index, crashResponse ->
         PerfDataRow(
@@ -78,21 +91,22 @@ private fun PerfDataContentView(appPerfDataItem: AppPerfData, simplifyMode: Bool
             crashResponse.rows,
             perfType = "Crash",
             isFirstRow = index == 0,
-            isLastRow = index == crashData.lastIndex
+            isLastRow = index == crashData.lastIndex,
+            screenshotMode = screenshotMode
         )
     }
 }
 
 @Composable
-private fun HeadRow(appPerfData: List<AppPerfData>) {
+private fun HeadRow(appPerfData: List<AppPerfData>, screenshotMode: Boolean) {
     appPerfData.firstOrNull()?.anrNoDimensionData?.rows?.also { anrRows ->
-        PerfDataHeadRow(anrRows)
-        Divider(height = 1.px, color = CommonColors.dividerColorDark)
+        PerfDataHeadRow(anrRows, screenshotMode)
+        VerticalDivider(height = 1.px, color = CommonColors.dividerColorDark)
     }
 }
 
 @Composable
-private fun LoadingView() {
+private fun LoadingView(text: String) {
     Div(
         attrs = {
             classes(CommonStyles.horizontal, CommonStyles.justifyContentCenter, CommonStyles.alignItemsCenter)
@@ -101,13 +115,13 @@ private fun LoadingView() {
             }
         },
         content = {
-            Text("数据加载中...")
+            Text(text)
         }
     )
 }
 
 @Composable
-private fun PerfDataHeadRow(rows: List<VitalPerfRateModel>) {
+private fun PerfDataHeadRow(rows: List<VitalPerfRateModel>, screenshotMode: Boolean) {
     Div(
         attrs = {
             classes(CommonStyles.horizontal)
@@ -125,18 +139,28 @@ private fun PerfDataHeadRow(rows: List<VitalPerfRateModel>) {
             PerfDataGridItem(
                 content = {
                     Text("App")
-                }, fontWeight = 500
+                }, fontWeight = 500,
+                screenshotMode = screenshotMode
             )
-            PerfDataGridItem(content = {
-                Text("指标")
-            }, fontWeight = 500)
-            PerfDataGridItem(content = {
-                Text("设备维度")
-            }, fontWeight = 500)
+            PerfDataGridItem(
+                content = {
+                    Text("指标")
+                }, fontWeight = 500,
+                screenshotMode = screenshotMode
+            )
+            PerfDataGridItem(
+                content = {
+                    Text("设备维度")
+                }, fontWeight = 500,
+                screenshotMode = screenshotMode
+            )
             rows.forEachIndexed { index, item ->
-                PerfDataGridItem(content = {
-                    Text("${item.startTime.month}-${item.startTime.day}")
-                }, fontWeight = 500, isEndCol = index == rows.lastIndex)
+                PerfDataGridItem(
+                    content = {
+                        Text("${item.startTime.month}-${item.startTime.day}")
+                    }, fontWeight = 500, isEndCol = index == rows.lastIndex,
+                    screenshotMode = screenshotMode
+                )
             }
         }
     )
@@ -149,7 +173,8 @@ private fun PerfDataRow(
     rows: List<VitalPerfRateModel>,
     perfType: String,
     isFirstRow: Boolean,
-    isLastRow: Boolean
+    isLastRow: Boolean,
+    screenshotMode: Boolean
 ) {
     Div(
         attrs = {
@@ -169,18 +194,28 @@ private fun PerfDataRow(
                         }
                     )
                 },
-                fontWeight = 500
+                fontWeight = 500,
+                screenshotMode = screenshotMode
             )
-            PerfDataGridItem(content = {
-                Text(perfType)
-            }, hasBottomBorder = !isLastRow)
-            PerfDataGridItem(content = {
-                Text(rows.firstOrNull()?.dimensions?.firstOrNull()?.valueLabel ?: "全部机型")
-            }, hasBottomBorder = !isLastRow)
+            PerfDataGridItem(
+                content = {
+                    Text(perfType)
+                }, hasBottomBorder = !isLastRow,
+                screenshotMode = screenshotMode
+            )
+            PerfDataGridItem(
+                content = {
+                    Text(rows.firstOrNull()?.dimensions?.firstOrNull()?.valueLabel ?: "全部机型")
+                }, hasBottomBorder = !isLastRow,
+                screenshotMode = screenshotMode
+            )
             rows.forEachIndexed { index, model ->
-                PerfDataGridItem(content = {
-                    Text(model.metrics.firstOrNull()?.decimalValue?.asPercent()?.toString().orEmpty())
-                }, isEndCol = index == rows.lastIndex, hasBottomBorder = !isLastRow)
+                PerfDataGridItem(
+                    content = {
+                        Text(model.metrics.firstOrNull()?.decimalValue?.asPercent()?.toString().orEmpty())
+                    }, isEndCol = index == rows.lastIndex, hasBottomBorder = !isLastRow,
+                    screenshotMode = screenshotMode
+                )
             }
         }
     )
@@ -192,18 +227,19 @@ private fun PerfDataGridItem(
     hasBottomBorder: Boolean = false,
     content: ContentBuilder<HTMLDivElement>,
     fontWeight: Int = 400,
-    backgroundColor: CSSColorValue = Color.transparent
+    backgroundColor: CSSColorValue = Color.transparent,
+    screenshotMode: Boolean
 ) {
     Div(
         attrs = {
             classes(CommonStyles.horizontal, CommonStyles.p10, CommonStyles.justifyContentCenter)
             style {
-                fontSize(13.px)
+                fontSize(if (screenshotMode) 11.px else 13.px)
                 fontWeight(fontWeight)
                 border {
                     color(CommonColors.dividerColorDark)
                     style(LineStyle.Solid)
-                    paddingTop(6.px)
+                    paddingTop(if (screenshotMode) 4.px else 6.px)
                     paddingBottom(6.px)
                 }
                 borderWidth(

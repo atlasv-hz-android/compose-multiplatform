@@ -9,7 +9,9 @@ import androidx.compose.runtime.setValue
 import com.atlasv.android.web.data.model.AppPerfData
 import com.atlasv.android.web.data.repo.PerfRepo
 import com.atlasv.android.web.ui.component.Checkbox
-import com.atlasv.android.web.ui.component.Divider
+import com.atlasv.android.web.ui.component.HorizontalDivider
+import com.atlasv.android.web.ui.component.PrimaryButton
+import com.atlasv.android.web.ui.component.VerticalDivider
 import com.atlasv.android.web.ui.style.CommonStyles
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,8 +33,14 @@ fun Body() {
     var simplifyMode by remember {
         mutableStateOf(true)
     }
+    var screenshotMode by remember {
+        mutableStateOf(false)
+    }
     var appPerfDataList by remember {
         mutableStateOf<List<AppPerfData>>(emptyList())
+    }
+    var loading by remember {
+        mutableStateOf(false)
     }
     Style(CommonStyles)
     Div(
@@ -45,23 +53,45 @@ fun Body() {
         content = {
             OptionsView(
                 checked = simplifyMode,
+                screenshotMode = screenshotMode,
+                loading = loading,
                 onSimplifyModeChange = {
                     simplifyMode = !simplifyMode
+                },
+                onScreenShotModeChange = {
+                    screenshotMode = !screenshotMode
+                },
+                onClickRefresh = {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        loading = true
+                        appPerfDataList = PerfRepo.createPerfData(PerfRepo.instance.getAllVitalsData())
+                        loading = false
+                    }
                 }
             )
-            Divider(height = 12.px)
-            PerfDataTable(appPerfDataList, simplifyMode)
+            VerticalDivider(height = 12.px)
+            PerfDataTable(appPerfDataList, simplifyMode, screenshotMode, loading)
+            VerticalDivider(height = 24.px)
         }
     )
     LaunchedEffect(Unit) {
         CoroutineScope(Dispatchers.Default).launch {
+            loading = true
             appPerfDataList = PerfRepo.createPerfData(PerfRepo.instance.getAllVitalsData())
+            loading = false
         }
     }
 }
 
 @Composable
-private fun OptionsView(checked: Boolean, onSimplifyModeChange: (Boolean) -> Unit) {
+private fun OptionsView(
+    checked: Boolean,
+    screenshotMode: Boolean,
+    loading: Boolean,
+    onSimplifyModeChange: (Boolean) -> Unit,
+    onScreenShotModeChange: (Boolean) -> Unit,
+    onClickRefresh: () -> Unit
+) {
     Div(
         attrs = {
             classes(CommonStyles.horizontal, CommonStyles.p70)
@@ -71,6 +101,18 @@ private fun OptionsView(checked: Boolean, onSimplifyModeChange: (Boolean) -> Uni
                 checked = checked,
                 onCheckedChange = onSimplifyModeChange,
                 label = "精简模式"
+            )
+            HorizontalDivider(width = 10.px)
+            Checkbox(
+                checked = screenshotMode,
+                onCheckedChange = onScreenShotModeChange,
+                label = "小字模式"
+            )
+            HorizontalDivider(width = 20.px)
+            PrimaryButton(
+                text = "刷新",
+                enabled = !loading,
+                onClick = onClickRefresh,
             )
         }
     )

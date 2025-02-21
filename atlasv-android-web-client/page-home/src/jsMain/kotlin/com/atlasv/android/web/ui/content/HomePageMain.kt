@@ -64,6 +64,14 @@ private fun FunctionCards() {
                     window.open(url = "${HttpEngine.baseUrl}perf-overview", target = ATarget.Blank.targetStr)
                 }
             )
+            MaterialCardGrid(
+                content = {
+                    Text(value = "文件上传")
+                },
+                onClick = {
+                    window.open(url = "${HttpEngine.baseUrl}upload_file_page", target = ATarget.Blank.targetStr)
+                }
+            )
         }
     )
 }

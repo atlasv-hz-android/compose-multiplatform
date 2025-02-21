@@ -6,10 +6,11 @@ import org.jetbrains.compose.web.css.CSSNumeric
 import org.jetbrains.compose.web.css.Color
 import org.jetbrains.compose.web.css.backgroundColor
 import org.jetbrains.compose.web.css.height
+import org.jetbrains.compose.web.css.width
 import org.jetbrains.compose.web.dom.Div
 
 @Composable
-fun Divider(height: CSSNumeric, color: CSSColorValue = Color.transparent) {
+fun VerticalDivider(height: CSSNumeric, color: CSSColorValue = Color.transparent) {
     Div(
         attrs = {
             style {
@@ -19,3 +20,16 @@ fun Divider(height: CSSNumeric, color: CSSColorValue = Color.transparent) {
         }
     )
 }
+
+@Composable
+fun HorizontalDivider(width: CSSNumeric, color: CSSColorValue = Color.transparent) {
+    Div(
+        attrs = {
+            style {
+                width(width)
+                backgroundColor(color)
+            }
+        }
+    )
+}
+

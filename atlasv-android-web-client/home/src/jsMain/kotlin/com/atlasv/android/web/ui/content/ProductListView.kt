@@ -3,7 +3,7 @@ package com.atlasv.android.web.ui.content
 import androidx.compose.runtime.Composable
 import com.atlasv.android.web.data.model.ProductEntity
 import com.atlasv.android.web.data.model.ProductResponse
-import com.atlasv.android.web.ui.component.Divider
+import com.atlasv.android.web.ui.component.VerticalDivider
 import com.atlasv.android.web.ui.style.CommonStyles
 import com.atlasv.android.web.ui.style.TextStyles
 import org.jetbrains.compose.web.css.paddingTop
@@ -30,7 +30,7 @@ fun ProductListView(data: ProductResponse?, onClick: (ProductEntity) -> Unit) {
 
 @Composable
 private fun ProductListItemView(item: ProductEntity, onClick: (ProductEntity) -> Unit) {
-    Divider(6.px)
+    VerticalDivider(6.px)
     Div({
         classes(TextStyles.text4)
         classes(CommonStyles.horizontal)
