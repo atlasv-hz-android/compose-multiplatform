@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.atlasv.android.web.common.HttpEngine
 import com.atlasv.android.web.data.model.StorageObject
 import com.atlasv.android.web.data.model.StorageObjectResponse
-import com.atlasv.android.web.ui.component.Divider
+import com.atlasv.android.web.ui.component.VerticalDivider
 import com.atlasv.android.web.ui.style.CommonStyles
 import com.atlasv.android.web.ui.style.TextStyles
 import io.ktor.http.encodeURLQueryComponent
@@ -36,7 +36,7 @@ fun XLogListView(data: StorageObjectResponse?, onClick: (StorageObject) -> Unit)
 
 @Composable
 private fun XLogListItemView(item: StorageObject, onClick: (StorageObject) -> Unit) {
-    Divider(6.px)
+    VerticalDivider(6.px)
     Div({
         classes(TextStyles.text4)
         classes(CommonStyles.horizontal)

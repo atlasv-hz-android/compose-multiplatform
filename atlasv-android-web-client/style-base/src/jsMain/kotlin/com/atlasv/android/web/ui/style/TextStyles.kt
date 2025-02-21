@@ -30,6 +30,11 @@ object TextStyles : StyleSheet() {
         fontSize(16.px)
     }
 
+    val text5 by style {
+        color(Color("#333333"))
+        fontSize(14.px)
+    }
+
     val text4Blue by style {
         color(Color.blue)
         fontSize(16.px)
