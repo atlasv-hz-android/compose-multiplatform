@@ -10,10 +10,11 @@ import org.jetbrains.compose.web.dom.Text
  */
 
 @Composable
-fun TabItem(text: String) {
+fun TabItem(text: String, selected: Boolean, onClick: () -> Unit) {
     Div(
         attrs = {
-            classes(CommonStyles.tabItem)
+            classes(if (selected) CommonStyles.tabItem else CommonStyles.tabItemUnSelected)
+            onClick { onClick() }
         },
         content = {
             Text(

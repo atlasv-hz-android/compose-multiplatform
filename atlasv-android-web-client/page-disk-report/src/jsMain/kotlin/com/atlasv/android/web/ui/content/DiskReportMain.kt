@@ -1,15 +1,16 @@
 package com.atlasv.android.web.ui.content
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.atlasv.android.web.common.HttpEngine
+import com.atlasv.android.web.common.constant.AppEnum
 import com.atlasv.android.web.data.model.DiskReport
 import com.atlasv.android.web.data.model.DiskReportDetail
 import com.atlasv.android.web.data.repo.DiskReportRepo
+import com.atlasv.android.web.ui.component.HorizontalDivider
 import com.atlasv.android.web.ui.component.MaterialCardGridSmall
 import com.atlasv.android.web.ui.component.TabItem
 import com.atlasv.android.web.ui.component.VerticalDivider
@@ -41,7 +42,13 @@ fun main() {
 
 @Composable
 fun Body() {
-    var data by remember { mutableStateOf<List<DiskReport>>(emptyList()) }
+    var allAppData by remember { mutableStateOf<Map<AppEnum, List<DiskReport>>>(emptyMap()) }
+    var currentApp by remember {
+        mutableStateOf<AppEnum?>(null)
+    }
+    val data: List<DiskReport> = currentApp?.let {
+        allAppData[it]
+    }.orEmpty()
     var reportDetail by remember {
         mutableStateOf<DiskReportDetail?>(null)
     }
@@ -60,11 +67,22 @@ fun Body() {
         },
         content = {
             VerticalDivider(height = 24.px)
-            Reports(data,
-                onClick = {
+            Reports(data, currentApp,
+                onClickReport = {
                     CoroutineScope(Dispatchers.Default).launch {
                         loading = true
                         reportDetail = DiskReportRepo.instance.listReportFiles(it)
+                        loading = false
+                    }
+                },
+                onClickApp = {
+                    if (loading) {
+                        return@Reports
+                    }
+                    currentApp = it
+                    CoroutineScope(Dispatchers.Default).launch {
+                        loading = true
+                        allAppData = allAppData + (it to DiskReportRepo.instance.getReports(currentApp)?.data.orEmpty())
                         loading = false
                     }
                 })
@@ -75,36 +93,41 @@ fun Body() {
             }
         }
     )
-    LaunchedEffect(Unit) {
-        CoroutineScope(Dispatchers.Default).launch {
-            data = DiskReportRepo.instance.getReports()?.data.orEmpty()
-        }
-    }
 }
 
 @Composable
-private fun Reports(reports: List<DiskReport>, onClick: (DiskReport) -> Unit) {
+private fun Reports(
+    reports: List<DiskReport>,
+    currentApp: AppEnum?,
+    onClickReport: (DiskReport) -> Unit,
+    onClickApp: (AppEnum) -> Unit
+) {
     Div(
         attrs = {
             classes(CommonStyles.horizontalFlow)
         },
         content = {
-            TabItem("Fbd2")
+            listOf(
+                AppEnum.Ttd1, AppEnum.Fbd2
+            ).forEach {
+                TabItem(it.name, selected = currentApp == it, onClick = { onClickApp(it) })
+                HorizontalDivider(width = 8.px)
+            }
         }
     )
-    VerticalDivider(height = 8.px)
+    VerticalDivider(height = 16.px)
     val versions: List<Pair<Int, String>> =
         reports.map { it.versionCode to it.versionName }.distinctBy { it.first }.sortedByDescending { it.first }
     versions.forEach { version ->
         ReportItem(version, reports.filter { it.versionCode == version.first }.sortedByDescending { it.sizeG },
-            onClick = onClick
+            onClickReport = onClickReport
         )
         VerticalDivider(height = 20.px)
     }
 }
 
 @Composable
-private fun ReportItem(version: Pair<Int, String>, reports: List<DiskReport>, onClick: (DiskReport) -> Unit) {
+private fun ReportItem(version: Pair<Int, String>, reports: List<DiskReport>, onClickReport: (DiskReport) -> Unit) {
     val (versionCode, versionName) = version
     Div(
         attrs = {
@@ -141,7 +164,7 @@ private fun ReportItem(version: Pair<Int, String>, reports: List<DiskReport>, on
                         )
                     },
                     onClick = {
-                        onClick(report)
+                        onClickReport(report)
                     }
                 )
             }

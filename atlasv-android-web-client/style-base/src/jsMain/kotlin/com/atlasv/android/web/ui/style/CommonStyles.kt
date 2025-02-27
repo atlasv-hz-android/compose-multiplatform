@@ -205,4 +205,20 @@ object CommonStyles : StyleSheet() {
         paddingTop(3.px)
         paddingBottom(3.px)
     }
+
+    val tabItemUnSelected by style {
+        borderRadius(99.px)
+        border {
+            color(Color.darkgray)
+            width(1.px)
+            style(LineStyle.Solid)
+        }
+        backgroundColor(Color.white)
+        color(Color.black)
+        fontSize(13.px)
+        paddingLeft(12.px)
+        paddingRight(12.px)
+        paddingTop(3.px)
+        paddingBottom(3.px)
+    }
 }

@@ -3,6 +3,7 @@ package com.atlasv.android.web.data.repo
 import com.atlasv.android.web.common.Constants
 import com.atlasv.android.web.common.HttpEngine
 import com.atlasv.android.web.common.HttpEngine.baseUrl
+import com.atlasv.android.web.common.constant.AppEnum
 import com.atlasv.android.web.data.model.DiskReport
 import com.atlasv.android.web.data.model.DiskReportDetail
 import com.atlasv.android.web.data.model.DiskReportResponse
@@ -13,9 +14,10 @@ import io.ktor.client.statement.bodyAsText
  * Created by weiping on 2025/2/26
  */
 class DiskReportRepo(private val httpEngine: HttpEngine) {
-    suspend fun getReports(): DiskReportResponse? {
+    suspend fun getReports(appEnum: AppEnum?): DiskReportResponse? {
+        appEnum ?: return null
         return httpEngine.json.decodeFromString(
-            httpEngine.client.get("${baseUrl}api/perf/get_disk_reports?debug=${if (Constants.DEBUG) "1" else "0"}")
+            httpEngine.client.get("${baseUrl}api/perf/get_disk_reports?debug=${if (Constants.DEBUG) "1" else "0"}&app_package=${appEnum.packageName}")
                 .bodyAsText()
         )
     }
