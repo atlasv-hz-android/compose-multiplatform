@@ -108,7 +108,7 @@ private fun Reports(
         },
         content = {
             listOf(
-                AppEnum.Ttd1, AppEnum.Fbd2
+                AppEnum.Ttd1, AppEnum.Ttd2, AppEnum.Fbd2
             ).forEach {
                 TabItem(it.name, selected = currentApp == it, onClick = { onClickApp(it) })
                 HorizontalDivider(width = 8.px)
