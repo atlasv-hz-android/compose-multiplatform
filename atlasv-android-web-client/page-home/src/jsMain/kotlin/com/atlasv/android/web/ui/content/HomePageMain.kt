@@ -66,6 +66,14 @@ private fun FunctionCards() {
             )
             MaterialCardGrid(
                 content = {
+                    Text(value = "磁盘报告")
+                },
+                onClick = {
+                    window.open(url = "${HttpEngine.baseUrl}disk-report", target = ATarget.Blank.targetStr)
+                }
+            )
+            MaterialCardGrid(
+                content = {
                     Text(value = "文件上传")
                 },
                 onClick = {
