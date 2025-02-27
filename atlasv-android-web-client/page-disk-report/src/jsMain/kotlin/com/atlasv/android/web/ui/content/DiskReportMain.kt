@@ -49,9 +49,10 @@ fun Body() {
     val data: List<DiskReport> = currentApp?.let {
         allAppData[it]
     }.orEmpty()
-    var reportDetail by remember {
+    var _reportDetail by remember {
         mutableStateOf<DiskReportDetail?>(null)
     }
+    val reportDetail = _reportDetail?.takeIf { it.appPackage == currentApp?.packageName }
     var loading by remember {
         mutableStateOf(false)
     }
@@ -71,7 +72,7 @@ fun Body() {
                 onClickReport = {
                     CoroutineScope(Dispatchers.Default).launch {
                         loading = true
-                        reportDetail = DiskReportRepo.instance.listReportFiles(it)
+                        _reportDetail = DiskReportRepo.instance.listReportFiles(it)
                         loading = false
                     }
                 },
@@ -82,7 +83,10 @@ fun Body() {
                     currentApp = it
                     CoroutineScope(Dispatchers.Default).launch {
                         loading = true
-                        allAppData = allAppData + (it to DiskReportRepo.instance.getReports(currentApp)?.data.orEmpty())
+                        if (allAppData[it] == null) {
+                            allAppData =
+                                allAppData + (it to DiskReportRepo.instance.getReports(currentApp)?.data.orEmpty())
+                        }
                         loading = false
                     }
                 })
@@ -108,7 +112,7 @@ private fun Reports(
         },
         content = {
             listOf(
-                AppEnum.Ttd1, AppEnum.Ttd2, AppEnum.Fbd2
+                AppEnum.Ins3, AppEnum.Ttd1, AppEnum.Ttd2, AppEnum.Fbd2
             ).forEach {
                 TabItem(it.name, selected = currentApp == it, onClick = { onClickApp(it) })
                 HorizontalDivider(width = 8.px)
