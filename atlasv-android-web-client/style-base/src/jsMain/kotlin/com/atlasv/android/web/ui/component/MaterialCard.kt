@@ -41,3 +41,33 @@ fun MaterialCardGrid(content: ContentBuilder<HTMLDivElement>, onClick: () -> Uni
         }
     )
 }
+
+@Composable
+fun MaterialCardGridSmall(content: ContentBuilder<HTMLDivElement>, onClick: () -> Unit) {
+    Div(
+        attrs = {
+            classes(CommonStyles.p10)
+        },
+        content = {
+            Div(
+                attrs = {
+                    classes(CommonStyles.cardHover)
+                    style {
+                        padding(6.px)
+                    }
+                    onClick {
+                        onClick()
+                    }
+                },
+                content = {
+                    Div(
+                        attrs = {
+                            classes(CommonStyles.matCardSmall)
+                        },
+                        content = content
+                    )
+                },
+            )
+        }
+    )
+}

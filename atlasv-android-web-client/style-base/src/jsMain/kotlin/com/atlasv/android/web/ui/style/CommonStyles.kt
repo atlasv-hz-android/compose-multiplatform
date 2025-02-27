@@ -148,6 +148,21 @@ object CommonStyles : StyleSheet() {
         property("box-shadow", "1px 1px ${rgba(0, 0, 0, .2)}")
     }
 
+    val matCardSmall by style {
+        boxSizing("border-box")
+        borderRadius(12.px)
+        border {
+            color(Color.lightgray)
+            width(1.px)
+            style(LineStyle.Solid)
+        }
+        display(DisplayStyle.Flex)
+        flexDirection(FlexDirection.Column)
+        justifyContent(JustifyContent.Center)
+        alignItems(AlignItems.Center)
+        backgroundColor(Color.white)
+        property("box-shadow", "1px 1px ${rgba(0, 0, 0, .2)}")
+    }
 
     val card by style {
         boxSizing("border-box")
@@ -178,5 +193,32 @@ object CommonStyles : StyleSheet() {
     val checkBox by style {
         width(20.px)
         height(20.px)
+    }
+
+    val tabItem by style {
+        borderRadius(99.px)
+        backgroundColor(CommonColors.primaryBlue)
+        color(Color.white)
+        fontSize(13.px)
+        paddingLeft(12.px)
+        paddingRight(12.px)
+        paddingTop(3.px)
+        paddingBottom(3.px)
+    }
+
+    val tabItemUnSelected by style {
+        borderRadius(99.px)
+        border {
+            color(Color.darkgray)
+            width(1.px)
+            style(LineStyle.Solid)
+        }
+        backgroundColor(Color.white)
+        color(Color.black)
+        fontSize(13.px)
+        paddingLeft(12.px)
+        paddingRight(12.px)
+        paddingTop(3.px)
+        paddingBottom(3.px)
     }
 }
