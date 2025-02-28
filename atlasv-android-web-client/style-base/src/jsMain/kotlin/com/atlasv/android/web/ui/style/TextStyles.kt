@@ -11,49 +11,28 @@ import org.jetbrains.compose.web.css.px
  */
 object TextStyles : StyleSheet() {
     val text1 by style {
-        color(Color.black)
-        fontSize(24.px)
-    }
-
-    val text2 by style {
-        color(Color.black)
-        fontSize(20.px)
-    }
-
-    val text3 by style {
-        color(Color("#333333"))
+        color(CommonColors.mainTextColor)
         fontSize(18.px)
     }
 
-    val text4 by style {
-        color(Color("#333333"))
+    val text2 by style {
+        color(CommonColors.mainTextColor)
         fontSize(16.px)
     }
 
-    val text5 by style {
-        color(Color("#333333"))
+    val text3 by style {
+        color(CommonColors.mainTextColor)
         fontSize(14.px)
     }
-
-    val text4Blue by style {
-        color(Color.blue)
-        fontSize(16.px)
-    }
-
 
     val subText by style {
-        color(Color("#555555"))
-        fontSize(16.px)
+        color(CommonColors.subTextColor)
+        fontSize(13.px)
     }
 
-    val subText2 by style {
-        color(Color("#555555"))
+
+    val textBlue by style {
+        color(Color.blue)
         fontSize(14.px)
-    }
-
-
-    val subText3 by style {
-        color(Color("#555555"))
-        fontSize(12.px)
     }
 }

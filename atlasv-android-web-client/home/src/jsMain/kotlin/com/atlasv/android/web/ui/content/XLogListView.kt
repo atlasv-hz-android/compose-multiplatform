@@ -24,7 +24,7 @@ import org.jetbrains.compose.web.dom.Text
 fun XLogListView(data: StorageObjectResponse?, onClick: (StorageObject) -> Unit) {
     data ?: return
     Div({
-        classes(TextStyles.text2)
+        classes(TextStyles.text1)
         style { paddingTop(32.px) }
     }) {
         Text("日志列表")
@@ -38,12 +38,12 @@ fun XLogListView(data: StorageObjectResponse?, onClick: (StorageObject) -> Unit)
 private fun XLogListItemView(item: StorageObject, onClick: (StorageObject) -> Unit) {
     VerticalDivider(6.px)
     Div({
-        classes(TextStyles.text4)
+        classes(TextStyles.text2)
         classes(CommonStyles.horizontal)
     }) {
         Text(item.path)
         Div({
-            classes(TextStyles.text4Blue)
+            classes(TextStyles.textBlue)
             onClick {
                 onClick(item)
             }

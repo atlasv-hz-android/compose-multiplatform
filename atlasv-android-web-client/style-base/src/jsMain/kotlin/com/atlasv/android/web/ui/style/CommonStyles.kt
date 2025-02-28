@@ -140,7 +140,7 @@ object CommonStyles : StyleSheet() {
         display(DisplayStyle.Flex)
         flexDirection(FlexDirection.Column)
         padding(20.px, 20.px, 12.px)
-        height(208.px)
+        height(160.px)
         width(98.percent)
         justifyContent(JustifyContent.Center)
         alignItems(AlignItems.Center)

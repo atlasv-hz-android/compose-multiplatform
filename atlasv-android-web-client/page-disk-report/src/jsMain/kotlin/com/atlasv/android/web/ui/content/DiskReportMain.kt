@@ -135,7 +135,7 @@ private fun ReportItem(version: Pair<Int, String>, reports: List<DiskReport>, on
     val (versionCode, versionName) = version
     Div(
         attrs = {
-            classes(TextStyles.text4)
+            classes(TextStyles.text2)
         },
         content = {
             Text("$versionName($versionCode)")
@@ -182,7 +182,7 @@ private fun ReportDetailView(detail: DiskReportDetail?) {
     detail.files.forEach { filePath ->
         Div(
             attrs = {
-                classes(TextStyles.text4)
+                classes(TextStyles.text2)
                 onClick {
                     window.open(
                         url = "${HttpEngine.baseUrl}download_file?file_path=${filePath.encodeURLQueryComponent()}&app_package=${detail.appPackage}&bucket=${detail.bucket}"

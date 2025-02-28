@@ -20,7 +20,7 @@ import org.jetbrains.compose.web.dom.Text
 fun UploadHistory(data: UploadRecordData?) {
     data ?: return
     Div({
-        classes(TextStyles.text2)
+        classes(TextStyles.text1)
         style { paddingTop(32.px) }
     }) {
         Text("最近上传")
@@ -37,7 +37,7 @@ private fun UploadRecordItemView(item: UploadRecordItem, onClick: () -> Unit) {
     VerticalDivider(4.px)
     Div(
         attrs = {
-            classes(TextStyles.text5)
+            classes(TextStyles.text3)
             onClick {
                 onClick()
             }
