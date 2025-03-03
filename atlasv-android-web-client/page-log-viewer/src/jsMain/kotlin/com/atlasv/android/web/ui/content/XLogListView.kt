@@ -41,7 +41,7 @@ private fun XLogListItemView(item: StorageObject, onClick: (StorageObject) -> Un
         classes(TextStyles.text2)
         classes(CommonStyles.horizontal)
     }) {
-        Text(item.path)
+        Text("${item.path}(${item.size} B)")
         Div({
             classes(TextStyles.textBlue)
             onClick {

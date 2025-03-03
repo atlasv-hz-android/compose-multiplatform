@@ -8,5 +8,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class StorageObject(
     val bucket: String,
-    val path: String
+    val path: String,
+    val size: Int
 )

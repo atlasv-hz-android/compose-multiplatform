@@ -13,8 +13,11 @@ import kotlinx.serialization.json.Json
  */
 class XLogRepository(private val client: HttpClient) {
 
-    suspend fun queryLogs(): StorageObjectResponse {
-        return Json.decodeFromString(client.get("${baseUrl}list_files").bodyAsText())
+    suspend fun queryLogs(uid: String): StorageObjectResponse? {
+        if (uid.isEmpty()) {
+            return null
+        }
+        return Json.decodeFromString(client.get("${baseUrl}list_logs?uid=$uid").bodyAsText())
     }
 
     companion object {
