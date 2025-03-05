@@ -13,7 +13,8 @@ import kotlinx.serialization.json.Json
  */
 class XLogRepository(private val client: HttpClient) {
 
-    suspend fun queryLogs(uid: String, appPackage: String): StorageObjectResponse? {
+    suspend fun queryLogs(uid: String, appPackage: String?): StorageObjectResponse? {
+        appPackage ?: return null
         if (uid.isEmpty()) {
             return null
         }
