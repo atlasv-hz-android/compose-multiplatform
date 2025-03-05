@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.atlasv.android.web.common.constant.AppEnum
 import com.atlasv.android.web.data.model.StorageObjectResponse
 import com.atlasv.android.web.data.repo.XLogRepository
 import com.atlasv.android.web.ui.component.HorizontalDivider
@@ -55,7 +56,7 @@ fun Body() {
                 onClickSearch = { content ->
                     CoroutineScope(Dispatchers.Default).launch {
                         loading = true
-                        xLogResponse = XLogRepository.instance.queryLogs(uid = content)
+                        xLogResponse = XLogRepository.instance.queryLogs(uid = content, AppEnum.Ins3.packageName)
                         loading = false
                     }
                 },

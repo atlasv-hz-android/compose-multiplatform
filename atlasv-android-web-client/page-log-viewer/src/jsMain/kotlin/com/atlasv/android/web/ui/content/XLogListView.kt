@@ -2,6 +2,7 @@ package com.atlasv.android.web.ui.content
 
 import androidx.compose.runtime.Composable
 import com.atlasv.android.web.common.HttpEngine
+import com.atlasv.android.web.common.constant.AppEnum
 import com.atlasv.android.web.data.model.StorageObject
 import com.atlasv.android.web.data.model.StorageObjectResponse
 import com.atlasv.android.web.ui.component.VerticalDivider
@@ -53,7 +54,7 @@ private fun XLogListItemView(item: StorageObject, onClick: (StorageObject) -> Un
                 attrs = {
                     target(ATarget.Blank)
                 },
-                href = "${HttpEngine.baseUrl}download_xlog?blob_name=${item.path.encodeURLQueryComponent()}"
+                href = "${HttpEngine.baseUrl}download_xlog?blob_name=${item.path.encodeURLQueryComponent()}&app_package=${AppEnum.Ins3.packageName}"
             ) {
                 Text("(下载)")
             }

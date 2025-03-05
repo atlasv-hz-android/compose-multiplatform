@@ -169,11 +169,9 @@ object CommonStyles : StyleSheet() {
         borderRadius(99.px)
         backgroundColor(CommonColors.primaryBlue)
         color(Color.white)
-        fontSize(13.px)
-        paddingLeft(12.px)
-        paddingRight(12.px)
-        paddingTop(3.px)
-        paddingBottom(3.px)
+        fontSize(15.px)
+        paddingTop(6.px)
+        paddingBottom(6.px)
     }
 
     val tabItemUnSelected by style {
@@ -185,11 +183,9 @@ object CommonStyles : StyleSheet() {
         }
         backgroundColor(Color.white)
         color(Color.black)
-        fontSize(13.px)
-        paddingLeft(12.px)
-        paddingRight(12.px)
-        paddingTop(3.px)
-        paddingBottom(3.px)
+        fontSize(15.px)
+        paddingTop(6.px)
+        paddingBottom(6.px)
     }
 
     val textInput by style {
