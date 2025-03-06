@@ -22,8 +22,10 @@ class XLogRepository(private val httpEngine: HttpEngine) {
         if (uid.isEmpty()) {
             return null
         }
-        return httpEngine.json.decodeFromString(
+        return httpEngine.json.decodeFromString<StorageObjectResponse?>(
             client.get("${baseUrl}list_logs?uid=$uid&app_package=${appPackage}").bodyAsText()
+        )?.copy(
+            appPackage = appPackage
         )
     }
 

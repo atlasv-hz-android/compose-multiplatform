@@ -2,7 +2,6 @@ package com.atlasv.android.web.ui.content
 
 import androidx.compose.runtime.Composable
 import com.atlasv.android.web.common.HttpEngine
-import com.atlasv.android.web.common.constant.AppEnum
 import com.atlasv.android.web.data.model.StorageObject
 import com.atlasv.android.web.data.model.StorageObjectResponse
 import com.atlasv.android.web.ui.component.HorizontalDivider
@@ -34,12 +33,12 @@ fun XLogListView(data: StorageObjectResponse?) {
         Text("日志列表")
     }
     data.items.forEach {
-        XLogListItemView(it)
+        XLogListItemView(it, data.appPackage)
     }
 }
 
 @Composable
-private fun XLogListItemView(item: StorageObject) {
+private fun XLogListItemView(item: StorageObject, appPackage: String?) {
     VerticalDivider(6.px)
     Div({
         classes(TextStyles.text2)
@@ -48,8 +47,8 @@ private fun XLogListItemView(item: StorageObject) {
         Text("${item.path}(${item.size} B)")
         HorizontalDivider(width = 10.px)
         listOf(
-            "下载文件" to "${HttpEngine.baseUrl}download_xlog?blob_name=${item.path.encodeURLQueryComponent()}&app_package=${AppEnum.Ins3.packageName}&download=1",
-            "在线查看" to "${HttpEngine.baseUrl}download_xlog?blob_name=${item.path.encodeURLQueryComponent()}&app_package=${AppEnum.Ins3.packageName}",
+            "下载文件" to "${HttpEngine.baseUrl}download_xlog?blob_name=${item.path.encodeURLQueryComponent()}&app_package=${appPackage}&download=1",
+            "在线查看" to "${HttpEngine.baseUrl}download_xlog?blob_name=${item.path.encodeURLQueryComponent()}&app_package=${appPackage}",
         ).take(if (item.size < 5 * 1024 * 1024) 2 else 1).forEach { (text, url) ->
             Div({
                 classes(TextStyles.textBlue, TextStyles.text1)
