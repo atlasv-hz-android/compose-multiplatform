@@ -3,6 +3,7 @@ package com.atlasv.android.web.ui.component
 import androidx.compose.runtime.Composable
 import com.atlasv.android.web.ui.style.CommonStyles
 import org.jetbrains.compose.web.css.Color
+import org.jetbrains.compose.web.css.StyleScope
 import org.jetbrains.compose.web.css.backgroundColor
 import org.jetbrains.compose.web.css.color
 import org.jetbrains.compose.web.dom.Div
@@ -10,7 +11,7 @@ import org.jetbrains.compose.web.dom.Text
 
 
 @Composable
-fun PrimaryButton(text: String, enabled: Boolean, onClick: () -> Unit) {
+fun PrimaryButton(text: String, enabled: Boolean, onClick: () -> Unit, customStyle: StyleScope.() -> Unit = {}) {
     Div(
         attrs = {
             if (enabled) {
@@ -26,6 +27,7 @@ fun PrimaryButton(text: String, enabled: Boolean, onClick: () -> Unit) {
                             backgroundColor(Color.darkgray)
                             color(Color.lightgray)
                         }
+                        customStyle()
                     }
                     onClick {
                         if (enabled) {

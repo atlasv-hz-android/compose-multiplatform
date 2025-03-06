@@ -9,9 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.atlasv.android.web.data.model.ProductResponse
-import com.atlasv.android.web.data.model.StorageObjectResponse
 import com.atlasv.android.web.data.repo.ProductRepository
-import com.atlasv.android.web.data.repo.XLogRepository
 import com.atlasv.android.web.ui.style.CommonStyles
 import com.atlasv.android.web.ui.style.TextStyles
 import kotlinx.coroutines.CoroutineScope
@@ -32,7 +30,6 @@ fun main() {
 
 @Composable
 fun Body() {
-    var xLogResponse by remember { mutableStateOf<StorageObjectResponse?>(null) }
     var productResponse by remember { mutableStateOf<ProductResponse?>(null) }
     var loading by remember { mutableStateOf(false) }
     Style(CommonStyles)
@@ -46,9 +43,6 @@ fun Body() {
             }
         },
         content = {
-            XLogListView(xLogResponse, onClick = {
-
-            })
             ProductListView(productResponse, onClick = {
 
             })
@@ -56,9 +50,6 @@ fun Body() {
     )
     LaunchedEffect(Unit) {
         CoroutineScope(Dispatchers.Default).launch {
-            launch {
-                xLogResponse = XLogRepository.instance.queryLogs()
-            }
             launch {
                 productResponse = ProductRepository.instance.queryProducts()
             }

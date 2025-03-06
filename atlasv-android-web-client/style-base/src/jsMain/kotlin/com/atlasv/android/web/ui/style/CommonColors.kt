@@ -15,4 +15,6 @@ object CommonColors {
     val primaryBlue = Color("#3871E0")
     val primaryBlueDark = Color("#3F64C4")
     val red = Color("#D3302F")
+    val mainTextColor = Color("#191919")
+    val subTextColor = Color("#666666")
 }

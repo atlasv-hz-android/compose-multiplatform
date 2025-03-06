@@ -10,10 +10,10 @@ import com.atlasv.android.web.common.constant.AppEnum
 import com.atlasv.android.web.data.model.DiskReport
 import com.atlasv.android.web.data.model.DiskReportDetail
 import com.atlasv.android.web.data.repo.DiskReportRepo
-import com.atlasv.android.web.ui.component.HorizontalDivider
+import com.atlasv.android.web.ui.component.AppTabLayout
 import com.atlasv.android.web.ui.component.MaterialCardGridSmall
-import com.atlasv.android.web.ui.component.TabItem
 import com.atlasv.android.web.ui.component.VerticalDivider
+import com.atlasv.android.web.ui.model.TabItemData
 import com.atlasv.android.web.ui.style.CommonColors
 import com.atlasv.android.web.ui.style.CommonStyles
 import com.atlasv.android.web.ui.style.TextStyles
@@ -106,18 +106,19 @@ private fun Reports(
     onClickReport: (DiskReport) -> Unit,
     onClickApp: (AppEnum) -> Unit
 ) {
-    Div(
-        attrs = {
-            classes(CommonStyles.horizontalFlow)
+    val apps = listOf(
+        AppEnum.Ins3, AppEnum.Ttd1, AppEnum.Ttd2, AppEnum.Fbd2
+    )
+    AppTabLayout(
+        items = apps.map {
+            TabItemData(text = it.name, id = it.ordinal)
         },
-        content = {
-            listOf(
-                AppEnum.Ins3, AppEnum.Ttd1, AppEnum.Ttd2, AppEnum.Fbd2
-            ).forEach {
-                TabItem(it.name, selected = currentApp == it, onClick = { onClickApp(it) })
-                HorizontalDivider(width = 8.px)
-            }
-        }
+        onItemClick = { id ->
+            onClickApp(AppEnum.entries.find { it.ordinal == id }!!)
+        },
+        selectedIndex = currentApp?.let {
+            apps.indexOf(it)
+        } ?: -1
     )
     VerticalDivider(height = 16.px)
     val versions: List<Pair<Int, String>> =
@@ -135,7 +136,7 @@ private fun ReportItem(version: Pair<Int, String>, reports: List<DiskReport>, on
     val (versionCode, versionName) = version
     Div(
         attrs = {
-            classes(TextStyles.text4)
+            classes(TextStyles.text2)
         },
         content = {
             Text("$versionName($versionCode)")
@@ -182,7 +183,7 @@ private fun ReportDetailView(detail: DiskReportDetail?) {
     detail.files.forEach { filePath ->
         Div(
             attrs = {
-                classes(TextStyles.text4)
+                classes(TextStyles.text2)
                 onClick {
                     window.open(
                         url = "${HttpEngine.baseUrl}download_file?file_path=${filePath.encodeURLQueryComponent()}&app_package=${detail.appPackage}&bucket=${detail.bucket}"

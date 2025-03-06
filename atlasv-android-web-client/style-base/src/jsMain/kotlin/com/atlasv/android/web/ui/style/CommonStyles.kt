@@ -17,7 +17,6 @@ import org.jetbrains.compose.web.css.color
 import org.jetbrains.compose.web.css.display
 import org.jetbrains.compose.web.css.flexDirection
 import org.jetbrains.compose.web.css.flexFlow
-import org.jetbrains.compose.web.css.flexWrap
 import org.jetbrains.compose.web.css.fontSize
 import org.jetbrains.compose.web.css.fontWeight
 import org.jetbrains.compose.web.css.height
@@ -68,41 +67,12 @@ object CommonStyles : StyleSheet() {
         flexDirection(FlexDirection.Column)
     }
 
-    val verticalFlow by style {
-        display(DisplayStyle.Flex)
-        flexDirection(FlexDirection.Column)
-        flexWrap(FlexWrap.Wrap)
-        justifyContent(JustifyContent.Center)
-        alignItems(AlignItems.Center)
-    }
-
     val justifyContentCenter by style {
         justifyContent(JustifyContent.Center)
     }
 
     val alignItemsCenter by style {
         alignItems(AlignItems.Center)
-    }
-
-    val horizontalProgressBarContainer by style {
-        display(DisplayStyle.Flex)
-        flexDirection(FlexDirection.Row)
-        alignItems(AlignItems.Center)
-        justifyContent(JustifyContent.Center)
-        paddingTop(16.px)
-        paddingBottom(16.px)
-    }
-
-    val progressHorizontalP80 by style {
-        width(80.percent)
-    }
-
-    val nextButtonContainer by style {
-        fontSize(120.percent)
-        fontWeight("bold")
-        color(CommonColors.newGreen)
-        paddingTop(10.px)
-        paddingBottom(10.px)
     }
 
     val p33 by style {
@@ -140,7 +110,7 @@ object CommonStyles : StyleSheet() {
         display(DisplayStyle.Flex)
         flexDirection(FlexDirection.Column)
         padding(20.px, 20.px, 12.px)
-        height(208.px)
+        height(160.px)
         width(98.percent)
         justifyContent(JustifyContent.Center)
         alignItems(AlignItems.Center)
@@ -199,11 +169,9 @@ object CommonStyles : StyleSheet() {
         borderRadius(99.px)
         backgroundColor(CommonColors.primaryBlue)
         color(Color.white)
-        fontSize(13.px)
-        paddingLeft(12.px)
-        paddingRight(12.px)
-        paddingTop(3.px)
-        paddingBottom(3.px)
+        fontSize(15.px)
+        paddingTop(6.px)
+        paddingBottom(6.px)
     }
 
     val tabItemUnSelected by style {
@@ -215,10 +183,23 @@ object CommonStyles : StyleSheet() {
         }
         backgroundColor(Color.white)
         color(Color.black)
-        fontSize(13.px)
-        paddingLeft(12.px)
-        paddingRight(12.px)
-        paddingTop(3.px)
-        paddingBottom(3.px)
+        fontSize(15.px)
+        paddingTop(6.px)
+        paddingBottom(6.px)
+    }
+
+    val textInput by style {
+        border {
+            color(Color.darkgray)
+            width(1.px)
+            style(LineStyle.Solid)
+        }
+        paddingTop(10.px)
+        paddingBottom(10.px)
+        paddingLeft(16.px)
+        borderRadius(12.px)
+        fontSize(16.px)
+        color(Color.black)
+        fontWeight(500)
     }
 }

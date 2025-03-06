@@ -18,7 +18,7 @@ import org.jetbrains.compose.web.dom.Text
 fun ProductListView(data: ProductResponse?, onClick: (ProductEntity) -> Unit) {
     data ?: return
     Div({
-        classes(TextStyles.text2)
+        classes(TextStyles.text1)
         style { paddingTop(32.px) }
     }) {
         Text("商品列表")
@@ -32,7 +32,7 @@ fun ProductListView(data: ProductResponse?, onClick: (ProductEntity) -> Unit) {
 private fun ProductListItemView(item: ProductEntity, onClick: (ProductEntity) -> Unit) {
     VerticalDivider(6.px)
     Div({
-        classes(TextStyles.text4)
+        classes(TextStyles.text2)
         classes(CommonStyles.horizontal)
     }) {
         Text(item.productId)
