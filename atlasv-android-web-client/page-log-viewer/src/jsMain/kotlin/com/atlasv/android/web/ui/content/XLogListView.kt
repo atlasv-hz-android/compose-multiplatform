@@ -25,7 +25,7 @@ import org.jetbrains.compose.web.dom.Text
  */
 
 @Composable
-fun XLogListView(data: StorageObjectResponse?, onClick: (StorageObject) -> Unit) {
+fun XLogListView(data: StorageObjectResponse?) {
     data ?: return
     Div({
         classes(TextStyles.text1)
@@ -34,12 +34,12 @@ fun XLogListView(data: StorageObjectResponse?, onClick: (StorageObject) -> Unit)
         Text("日志列表")
     }
     data.items.forEach {
-        XLogListItemView(it, onClick)
+        XLogListItemView(it)
     }
 }
 
 @Composable
-private fun XLogListItemView(item: StorageObject, onClick: (StorageObject) -> Unit) {
+private fun XLogListItemView(item: StorageObject) {
     VerticalDivider(6.px)
     Div({
         classes(TextStyles.text2)
@@ -56,9 +56,6 @@ private fun XLogListItemView(item: StorageObject, onClick: (StorageObject) -> Un
                 style {
                     paddingLeft(6.px)
                     paddingRight(6.px)
-                }
-                onClick {
-                    onClick(item)
                 }
             }) {
                 A(

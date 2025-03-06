@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.atlasv.android.web.common.constant.AppEnum
+import com.atlasv.android.web.common.constant.getXLogStorageBaseUrl
 import com.atlasv.android.web.data.model.QueryRecord
 import com.atlasv.android.web.data.model.StorageObjectResponse
 import com.atlasv.android.web.data.repo.XLogRepository
@@ -19,14 +20,17 @@ import com.atlasv.android.web.ui.style.TextStyles
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.web.attributes.ATarget
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.attributes.placeholder
+import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.Style
 import org.jetbrains.compose.web.css.paddingBottom
 import org.jetbrains.compose.web.css.paddingLeft
 import org.jetbrains.compose.web.css.paddingRight
 import org.jetbrains.compose.web.css.paddingTop
 import org.jetbrains.compose.web.css.px
+import org.jetbrains.compose.web.dom.A
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Input
 import org.jetbrains.compose.web.dom.Text
@@ -104,6 +108,9 @@ fun Body() {
             if (currentApp == null) {
                 VerticalDivider(height = 6.px)
                 ErrorTip("还没有选择App")
+            } else {
+                VerticalDivider(height = 6.px)
+                Link(text = "所有日志", url = currentApp?.getXLogStorageBaseUrl().orEmpty())
             }
             VerticalDivider(height = 16.px)
             TextInputView(
@@ -126,11 +133,29 @@ fun Body() {
                 }
             }
 
-            XLogListView(xLogResponse, onClick = {
-
-            })
+            XLogListView(xLogResponse)
         }
     )
+}
+
+@Composable
+private fun Link(text: String, url: String) {
+    Div({
+        classes(TextStyles.textBlue, TextStyles.text1)
+        style {
+            paddingLeft(6.px)
+            paddingRight(6.px)
+        }
+    }) {
+        A(
+            attrs = {
+                target(ATarget.Blank)
+            },
+            href = url
+        ) {
+            Text(text)
+        }
+    }
 }
 
 @Composable
