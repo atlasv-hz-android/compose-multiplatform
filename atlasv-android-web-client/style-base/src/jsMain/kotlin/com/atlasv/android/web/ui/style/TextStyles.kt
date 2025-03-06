@@ -30,6 +30,10 @@ object TextStyles : StyleSheet() {
         fontSize(13.px)
     }
 
+    val errorTip by style {
+        color(CommonColors.red)
+        fontSize(15.px)
+    }
 
     val textBlue by style {
         color(Color.blue)
