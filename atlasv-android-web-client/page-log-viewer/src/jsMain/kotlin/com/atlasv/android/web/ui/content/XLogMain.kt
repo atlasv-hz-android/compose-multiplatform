@@ -55,7 +55,7 @@ fun Body() {
     val recentlyUidList = historyUidList.take(10)
     Style(CommonStyles)
     Style(TextStyles)
-    val apps = listOf(AppEnum.Ins3)
+    val apps = listOf(AppEnum.Ins3, AppEnum.Fbd2)
     var inputContent by remember {
         mutableStateOf("")
     }

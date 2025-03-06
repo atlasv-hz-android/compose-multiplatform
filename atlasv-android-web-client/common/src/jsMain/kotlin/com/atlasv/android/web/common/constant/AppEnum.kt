@@ -8,7 +8,7 @@ enum class AppEnum(val packageName: String, val firebaseProjectId: String) {
     MediaSaver(packageName = "instagram.video.downloader.story.saver.ig.insaver", firebaseProjectId = ""),
     Ttd1(packageName = "tiktok.video.downloader.nowatermark.tiktokdownload", firebaseProjectId = ""),
     Ttd2(packageName = "tiktok.video.downloader.nowatermark.tiktokdownload.snaptik", firebaseProjectId = ""),
-    Fbd2(packageName = "facebook.video.downloader.savefrom.fb.saver.fast", firebaseProjectId = ""),
+    Fbd2(packageName = "facebook.video.downloader.savefrom.fb.saver.fast", firebaseProjectId = "fastget-fb-downloader"),
     Twd(packageName = "twittervideodownloader.twitter.videoindir.savegif.twdown", firebaseProjectId = ""),
     Ptd(packageName = "pin.pinterest.video.downloader.forpinterest.pinsaver", firebaseProjectId = ""),
     ShotCut(packageName = "video.editor.videomaker.effects.fx", firebaseProjectId = ""),
