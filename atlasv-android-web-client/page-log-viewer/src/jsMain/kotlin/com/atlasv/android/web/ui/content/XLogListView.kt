@@ -5,12 +5,15 @@ import com.atlasv.android.web.common.HttpEngine
 import com.atlasv.android.web.common.constant.AppEnum
 import com.atlasv.android.web.data.model.StorageObject
 import com.atlasv.android.web.data.model.StorageObjectResponse
+import com.atlasv.android.web.ui.component.HorizontalDivider
 import com.atlasv.android.web.ui.component.VerticalDivider
 import com.atlasv.android.web.ui.style.CommonStyles
 import com.atlasv.android.web.ui.style.TextStyles
 import io.ktor.http.encodeURLQueryComponent
 import org.jetbrains.compose.web.attributes.ATarget
 import org.jetbrains.compose.web.attributes.target
+import org.jetbrains.compose.web.css.paddingLeft
+import org.jetbrains.compose.web.css.paddingRight
 import org.jetbrains.compose.web.css.paddingTop
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.A
@@ -43,20 +46,29 @@ private fun XLogListItemView(item: StorageObject, onClick: (StorageObject) -> Un
         classes(CommonStyles.horizontal)
     }) {
         Text("${item.path}(${item.size} B)")
-        Div({
-            classes(TextStyles.textBlue)
-            onClick {
-                onClick(item)
-            }
-        }) {
-
-            A(
-                attrs = {
-                    target(ATarget.Blank)
-                },
-                href = "${HttpEngine.baseUrl}download_xlog?blob_name=${item.path.encodeURLQueryComponent()}&app_package=${AppEnum.Ins3.packageName}"
-            ) {
-                Text("(下载)")
+        HorizontalDivider(width = 10.px)
+        listOf(
+            "下载文件" to "${HttpEngine.baseUrl}download_xlog?blob_name=${item.path.encodeURLQueryComponent()}&app_package=${AppEnum.Ins3.packageName}&download=1",
+            "在线查看" to "${HttpEngine.baseUrl}download_xlog?blob_name=${item.path.encodeURLQueryComponent()}&app_package=${AppEnum.Ins3.packageName}",
+        ).take(if (item.size < 5 * 1024 * 1024) 2 else 1).forEach { (text, url) ->
+            Div({
+                classes(TextStyles.textBlue, TextStyles.text1)
+                style {
+                    paddingLeft(6.px)
+                    paddingRight(6.px)
+                }
+                onClick {
+                    onClick(item)
+                }
+            }) {
+                A(
+                    attrs = {
+                        target(ATarget.Blank)
+                    },
+                    href = url
+                ) {
+                    Text(text)
+                }
             }
         }
     }
