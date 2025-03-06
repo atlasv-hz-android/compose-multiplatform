@@ -3,6 +3,7 @@ package com.atlasv.android.web.data.repo
 import com.atlasv.android.web.common.Constants
 import com.atlasv.android.web.common.HttpEngine
 import com.atlasv.android.web.common.HttpEngine.baseUrl
+import com.atlasv.android.web.common.constant.AppEnum
 import com.atlasv.android.web.data.model.QueryRecord
 import com.atlasv.android.web.data.model.QueryRecordResponse
 import com.atlasv.android.web.data.model.StorageObjectResponse
@@ -29,20 +30,19 @@ class XLogRepository(private val httpEngine: HttpEngine) {
         )
     }
 
-    suspend fun queryHistoryUidList(appPackage: String?): QueryRecordResponse? {
-        appPackage ?: return null
+    suspend fun queryHistoryUidList(): QueryRecordResponse? {
         if (Constants.DEBUG) {
             return QueryRecordResponse(
-                data = listOf(
+                data = (1..20).map {
                     QueryRecord(
                         uid = "626082852982894592",
-                        appPackage = appPackage
+                        appPackage = AppEnum.Ins3.packageName
                     )
-                )
+                }
             )
         }
         return httpEngine.json.decodeFromString(
-            client.get("${baseUrl}api/xlog/history_uids?app_package=${appPackage}").bodyAsText()
+            client.get("${baseUrl}api/xlog/history_uids").bodyAsText()
         )
     }
 

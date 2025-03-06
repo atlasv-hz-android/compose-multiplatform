@@ -202,4 +202,21 @@ object CommonStyles : StyleSheet() {
         color(Color.black)
         fontWeight(500)
     }
+
+    val historyFlowItem by style {
+        borderRadius(99.px)
+        border {
+            color(Color.darkgray)
+            width(1.px)
+            style(LineStyle.Solid)
+        }
+        backgroundColor(Color.white)
+        color(CommonColors.mainTextColor)
+        fontSize(13.px)
+        paddingTop(6.px)
+        paddingBottom(6.px)
+        paddingLeft(8.px)
+        paddingRight(8.px)
+    }
+
 }
