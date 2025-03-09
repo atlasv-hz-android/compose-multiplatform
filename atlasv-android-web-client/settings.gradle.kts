@@ -11,11 +11,11 @@ pluginManagement {
         id("org.jetbrains.compose").version(extra["compose.version"] as String)
     }
 }
-include(":home")
 include(":common")
 include(":page-home")
 include(":page-perf-overview")
 include(":page-upload-file")
 include(":page-disk-report")
 include(":page-log-viewer")
+include(":page-purchase-products")
 include(":style-base")

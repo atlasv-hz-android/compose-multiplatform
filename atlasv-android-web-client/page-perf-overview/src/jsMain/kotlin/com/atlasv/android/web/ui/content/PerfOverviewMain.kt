@@ -12,6 +12,8 @@ import com.atlasv.android.web.ui.component.Checkbox
 import com.atlasv.android.web.ui.component.HorizontalDivider
 import com.atlasv.android.web.ui.component.PrimaryButton
 import com.atlasv.android.web.ui.component.VerticalDivider
+import com.atlasv.android.web.ui.component.table.TableView
+import com.atlasv.android.web.ui.model.TableModel
 import com.atlasv.android.web.ui.style.CommonStyles
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +35,7 @@ fun Body() {
     var simplifyMode by remember {
         mutableStateOf(true)
     }
-    var screenshotMode by remember {
+    var smallTextMode by remember {
         mutableStateOf(false)
     }
     var appPerfDataList by remember {
@@ -53,13 +55,13 @@ fun Body() {
         content = {
             OptionsView(
                 checked = simplifyMode,
-                screenshotMode = screenshotMode,
+                screenshotMode = smallTextMode,
                 loading = loading,
                 onSimplifyModeChange = {
                     simplifyMode = !simplifyMode
                 },
                 onScreenShotModeChange = {
-                    screenshotMode = !screenshotMode
+                    smallTextMode = !smallTextMode
                 },
                 onClickRefresh = {
                     CoroutineScope(Dispatchers.Default).launch {
@@ -70,7 +72,7 @@ fun Body() {
                 }
             )
             VerticalDivider(height = 12.px)
-            PerfDataTable(appPerfDataList, simplifyMode, screenshotMode, loading)
+            PerfDataTable(appPerfDataList, simplifyMode, smallTextMode)
             VerticalDivider(height = 24.px)
         }
     )
@@ -81,6 +83,22 @@ fun Body() {
             loading = false
         }
     }
+}
+
+@Composable
+fun PerfDataTable(
+    appPerfDataList: List<AppPerfData>,
+    simplifyMode: Boolean,
+    smallTextMode: Boolean
+) {
+    val tableModel = TableModel(
+        rows = listOfNotNull(
+            appPerfDataList.firstOrNull()?.createTableHeadRowModel()
+        ) + appPerfDataList.map { appPerfDataItem ->
+            appPerfDataItem.createDataRowModels(simplifyMode)
+        }.flatten()
+    )
+    TableView(model = tableModel, smallTextMode = smallTextMode)
 }
 
 @Composable

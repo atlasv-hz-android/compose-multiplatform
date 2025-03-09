@@ -1,6 +1,7 @@
 package com.atlasv.android.web.ui.content
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,19 +53,18 @@ fun Body() {
     var historyUidList by remember {
         mutableStateOf<List<QueryRecord>>(emptyList())
     }
-    val recentlyUidList = historyUidList.take(10)
+    val recentlyUidList = historyUidList.filter {
+        it.appPackage == currentApp?.packageName
+    }.take(20)
     Style(CommonStyles)
     Style(TextStyles)
     val apps = listOf(AppEnum.Ins3, AppEnum.Fbd2, AppEnum.Ttd1, AppEnum.Ttd2)
     var inputContent by remember {
         mutableStateOf("")
     }
-    val queryUidAction: (appPackage: String) -> Unit = { appPackage ->
+    val queryUidAction: () -> Unit = {
         CoroutineScope(Dispatchers.Default).launch {
-            historyUidList =
-                historyUidList.takeIf { uidRecord -> uidRecord.any { it.appPackage == appPackage } }.orEmpty()
-            historyUidList =
-                XLogRepository.instance.queryHistoryUidList(appPackage = currentApp?.packageName)?.data.orEmpty()
+            historyUidList = XLogRepository.instance.queryHistoryUidList()?.data.orEmpty()
         }
     }
 
@@ -73,6 +73,9 @@ fun Body() {
             loading = true
             xLogResponse = XLogRepository.instance.queryLogs(uid = uid, currentApp?.packageName)
             loading = false
+            if (!xLogResponse?.items.isNullOrEmpty()) {
+                queryUidAction()
+            }
         }
     }
 
@@ -96,9 +99,6 @@ fun Body() {
                             it.ordinal == id
                         }
                         xLogResponse = null
-                        currentApp?.also {
-                            queryUidAction(it.packageName)
-                        }
                     }
                 },
                 selectedIndex = currentApp?.let {
@@ -126,14 +126,39 @@ fun Body() {
                 VerticalDivider(height = 16.px)
                 Title("历史查询Uid")
                 VerticalDivider(height = 6.px)
-                recentlyUidList.forEach {
-                    HistoryUidItemView(it.uid, onClick = { uid ->
-                        inputContent = uid
-                    })
-                }
+                HistoryUidListView(recentlyUidList, onClick = { uid ->
+                    inputContent = uid
+                })
             }
-
             XLogListView(xLogResponse)
+        }
+    )
+    LaunchedEffect(Unit) {
+        queryUidAction()
+    }
+}
+
+@Composable
+private fun HistoryUidListView(queryRecords: List<QueryRecord>, onClick: (String) -> Unit) {
+    Div(
+        attrs = {
+            classes(CommonStyles.horizontalFlow)
+        },
+        content = {
+            queryRecords.forEach {
+                Div(attrs = {
+                    style {
+                        paddingLeft(4.px)
+                        paddingRight(4.px)
+                        paddingBottom(8.px)
+                    }
+                },
+                    content = {
+                        HistoryUidItemView(it.uid, onClick = { uid ->
+                            onClick(uid)
+                        })
+                    })
+            }
         }
     )
 }
@@ -174,11 +199,7 @@ private fun Title(text: String) {
 private fun HistoryUidItemView(text: String, onClick: (uid: String) -> Unit) {
     Div(
         attrs = {
-            classes(TextStyles.text2)
-            style {
-                paddingTop(3.px)
-                paddingBottom(3.px)
-            }
+            classes(CommonStyles.historyFlowItem)
             onClick {
                 onClick(text)
             }
