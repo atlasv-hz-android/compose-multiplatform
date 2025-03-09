@@ -52,7 +52,23 @@ data class AppPerfData(
             ) + rows.map {
                 it.asTableHeaderCellModel()
             }
-            TableRowModel(headerCells)
+            TableRowModel(headerCells, isHeader = true)
+        }
+    }
+
+    fun createDataRowModels(simplifyMode: Boolean): List<TableRowModel> {
+        val anrData = this.getAnrData(simplifyMode)
+        val crashData = this.getCrashData(simplifyMode)
+        val appName = this.appNickName
+        return listOf(anrData to "ANR", crashData to "Crash").map { (data, perfType) ->
+            val rowModels = data.map {
+                it.asTableRowModel(appName = appName, perfType = perfType)
+            }
+            rowModels
+        }.flatten().toMutableList().apply {
+            lastOrNull()?.also { lastItem ->
+                set(lastIndex, lastItem.copy(isGroupEnd = true))
+            }
         }
     }
 }

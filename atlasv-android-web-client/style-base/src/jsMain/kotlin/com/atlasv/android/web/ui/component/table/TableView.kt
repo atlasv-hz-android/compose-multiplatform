@@ -1,6 +1,8 @@
 package com.atlasv.android.web.ui.component.table
 
 import androidx.compose.runtime.Composable
+import com.atlasv.android.web.ui.component.VerticalDivider
+import com.atlasv.android.web.ui.model.TableModel
 import com.atlasv.android.web.ui.model.TableRowModel
 import com.atlasv.android.web.ui.style.CommonColors
 import com.atlasv.android.web.ui.style.CommonStyles
@@ -26,6 +28,35 @@ import org.w3c.dom.HTMLDivElement
 /**
  * Created by weiping on 2025/3/10
  */
+@Composable
+fun TableView(model: TableModel, smallTextMode: Boolean) {
+    Div(
+        attrs = {
+            classes(CommonStyles.p70, CommonStyles.card, CommonStyles.vertical)
+            style {
+                paddingTop(0.px)
+                paddingBottom(0.px)
+            }
+        },
+        content = {
+            model.rows.forEachIndexed { index, rowModel ->
+                if (!rowModel.isHeader) {
+                    VerticalDivider(
+                        height = 1.px,
+                        color = CommonColors.dividerColorDark
+                    )
+                }
+                TableRowView(rowModel, smallTextMode = smallTextMode, isHeader = rowModel.isHeader)
+                if (rowModel.isGroupEnd && index != model.rows.lastIndex) {
+                    VerticalDivider(
+                        height = if (smallTextMode) 1.5.px else 2.px,
+                        color = CommonColors.dividerColorDark
+                    )
+                }
+            }
+        }
+    )
+}
 
 @Composable
 fun TableRowView(rowModel: TableRowModel, smallTextMode: Boolean, isHeader: Boolean) {
