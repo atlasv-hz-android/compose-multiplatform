@@ -1,5 +1,7 @@
 package com.atlasv.android.web.data.model
 
+import com.atlasv.android.web.ui.model.TableCellModel
+import com.atlasv.android.web.ui.model.TableRowModel
 import kotlinx.serialization.Serializable
 
 /**
@@ -37,6 +39,19 @@ data class VitalPerfRateResponse(val rows: List<VitalPerfRateModel>) {
         return this.copy(rows = this.rows.sortedByDescending {
             it.startTime.getSortWeight()
         })
+    }
+
+    fun asTableRowModel(appName: String, perfType: String): TableRowModel {
+        val cells = listOf(
+            TableCellModel(
+                text = appName, isHeaderCell = true
+            ), TableCellModel(
+                text = perfType
+            ), TableCellModel(
+                text = rows.firstOrNull().asDimensionCell()
+            )
+        ) + rows.map { it.asTableCellModel() }
+        return TableRowModel(cells = cells)
     }
 }
 

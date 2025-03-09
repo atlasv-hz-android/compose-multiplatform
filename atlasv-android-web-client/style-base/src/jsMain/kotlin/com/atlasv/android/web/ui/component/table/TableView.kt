@@ -1,7 +1,7 @@
 package com.atlasv.android.web.ui.component.table
 
 import androidx.compose.runtime.Composable
-import com.atlasv.android.web.ui.model.TableCellModel
+import com.atlasv.android.web.ui.model.TableRowModel
 import com.atlasv.android.web.ui.style.CommonColors
 import com.atlasv.android.web.ui.style.CommonStyles
 import org.jetbrains.compose.web.css.CSSColorValue
@@ -28,7 +28,7 @@ import org.w3c.dom.HTMLDivElement
  */
 
 @Composable
-fun TableRowView(cells: List<TableCellModel>, smallTextMode: Boolean, isHeader: Boolean) {
+fun TableRowView(rowModel: TableRowModel, smallTextMode: Boolean, isHeader: Boolean) {
     Div(
         attrs = {
             classes(CommonStyles.horizontal)
@@ -45,11 +45,11 @@ fun TableRowView(cells: List<TableCellModel>, smallTextMode: Boolean, isHeader: 
             }
         },
         content = {
-            cells.forEachIndexed { index, item ->
+            rowModel.cells.forEachIndexed { index, item ->
                 TableCellView(
                     content = {
                         Text(item.text)
-                    }, fontWeight = if (item.isHeaderCell) 500 else 400, isEndCol = index == cells.lastIndex,
+                    }, fontWeight = if (item.isHeaderCell) 500 else 400, isEndCol = index == rowModel.cells.lastIndex,
                     screenshotMode = smallTextMode
                 )
             }

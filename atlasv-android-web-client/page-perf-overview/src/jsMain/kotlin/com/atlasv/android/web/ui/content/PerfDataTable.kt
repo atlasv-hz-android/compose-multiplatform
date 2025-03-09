@@ -2,11 +2,8 @@ package com.atlasv.android.web.ui.content
 
 import androidx.compose.runtime.Composable
 import com.atlasv.android.web.data.model.AppPerfData
-import com.atlasv.android.web.data.model.VitalPerfRateModel
-import com.atlasv.android.web.data.model.asDimensionCell
 import com.atlasv.android.web.ui.component.VerticalDivider
 import com.atlasv.android.web.ui.component.table.TableRowView
-import com.atlasv.android.web.ui.model.TableCellModel
 import com.atlasv.android.web.ui.style.CommonColors
 import com.atlasv.android.web.ui.style.CommonStyles
 import org.jetbrains.compose.web.css.height
@@ -37,7 +34,10 @@ fun PerfDataTable(
             }
         },
         content = {
-            HeadRow(appPerfDataList, screenshotMode)
+            appPerfDataList.firstOrNull()?.createTableHeadRowModel()?.also { headRowModel ->
+                TableRowView(headRowModel, smallTextMode = screenshotMode, isHeader = true)
+                VerticalDivider(height = 1.px, color = CommonColors.dividerColorDark)
+            }
             appPerfDataList.forEachIndexed { index, appPerfDataItem ->
                 PerfDataContentView(appPerfDataItem, simplifyMode, screenshotMode)
                 if (index != appPerfDataList.lastIndex) {
@@ -63,36 +63,21 @@ private fun PerfDataContentView(appPerfDataItem: AppPerfData, simplifyMode: Bool
     val anrData = appPerfDataItem.getAnrData(simplifyMode)
     val crashData = appPerfDataItem.getCrashData(simplifyMode)
     val appName = appPerfDataItem.appNickName
-    listOf(anrData to "ANR", crashData to "Crash").forEach { (data, type) ->
-        data.forEach { response ->
-            val rows = response.rows
+    listOf(anrData to "ANR", crashData to "Crash").forEach { (data, perfType) ->
+        val rowModels = data.map {
+            it.asTableRowModel(appName = appName, perfType = perfType)
+        }
+        rowModels.forEach { rowModel ->
             VerticalDivider(
                 height = 1.px,
                 color = CommonColors.dividerColorDark
             )
-            val cells = listOf(
-                TableCellModel(
-                    text = appName, isHeaderCell = true
-                ), TableCellModel(
-                    text = type
-                ), TableCellModel(
-                    text = rows.firstOrNull().asDimensionCell()
-                )
-            ) + rows.map { it.asTableCellModel() }
             TableRowView(
-                cells,
+                rowModel,
                 smallTextMode = screenshotMode,
                 isHeader = false
             )
         }
-    }
-}
-
-@Composable
-private fun HeadRow(appPerfData: List<AppPerfData>, screenshotMode: Boolean) {
-    appPerfData.firstOrNull()?.anrNoDimensionData?.rows?.also { anrRows ->
-        PerfDataHeadRow(anrRows, screenshotMode)
-        VerticalDivider(height = 1.px, color = CommonColors.dividerColorDark)
     }
 }
 
@@ -109,20 +94,4 @@ private fun LoadingView(text: String) {
             Text(text)
         }
     )
-}
-
-@Composable
-private fun PerfDataHeadRow(rows: List<VitalPerfRateModel>, screenshotMode: Boolean) {
-    val headerCells = listOf(
-        TableCellModel(
-            text = "App", id = 0, isHeaderCell = true
-        ), TableCellModel(
-            text = "指标", id = 0, isHeaderCell = true
-        ), TableCellModel(
-            text = "设备维度", id = 0, isHeaderCell = true
-        )
-    ) + rows.map {
-        it.asTableHeaderCellModel()
-    }
-    TableRowView(headerCells, smallTextMode = screenshotMode, isHeader = true)
 }

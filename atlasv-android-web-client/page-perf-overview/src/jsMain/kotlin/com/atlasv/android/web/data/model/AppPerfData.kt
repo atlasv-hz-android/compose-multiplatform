@@ -1,5 +1,8 @@
 package com.atlasv.android.web.data.model
 
+import com.atlasv.android.web.ui.model.TableCellModel
+import com.atlasv.android.web.ui.model.TableRowModel
+
 /**
  * Created by weiping on 2025/2/19
  */
@@ -33,6 +36,23 @@ data class AppPerfData(
             listOfNotNull(crashNoDimensionData) + crashDimensionDataFlattened
         } else {
             listOfNotNull(crashNoDimensionData) + listOfNotNull(lowRamCrashData)
+        }
+    }
+
+    fun createTableHeadRowModel(): TableRowModel? {
+        return this.anrNoDimensionData?.rows?.let { rows ->
+            val headerCells = listOf(
+                TableCellModel(
+                    text = "App", id = 0, isHeaderCell = true
+                ), TableCellModel(
+                    text = "指标", id = 0, isHeaderCell = true
+                ), TableCellModel(
+                    text = "设备维度", id = 0, isHeaderCell = true
+                )
+            ) + rows.map {
+                it.asTableHeaderCellModel()
+            }
+            TableRowModel(headerCells)
         }
     }
 }
