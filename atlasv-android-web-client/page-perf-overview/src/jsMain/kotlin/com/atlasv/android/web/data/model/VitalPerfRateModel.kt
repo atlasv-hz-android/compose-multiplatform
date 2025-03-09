@@ -1,6 +1,7 @@
 package com.atlasv.android.web.data.model
 
 import com.atlasv.android.web.common.data.model.DateModel
+import com.atlasv.android.web.ui.model.TableCellModel
 import kotlinx.serialization.Serializable
 
 /**
@@ -20,5 +21,11 @@ data class VitalPerfRateModel(
         return metrics.first().decimalValue.value.toFloat()
     }
 
+    fun asTableHeaderCellModel(): TableCellModel {
+        return TableCellModel(
+            text = "${this.startTime.month}-${this.startTime.day}",
+            id = 0
+        )
+    }
 }
 
