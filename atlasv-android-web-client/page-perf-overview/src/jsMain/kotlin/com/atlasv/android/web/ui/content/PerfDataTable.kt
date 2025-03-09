@@ -3,14 +3,12 @@ package com.atlasv.android.web.ui.content
 import androidx.compose.runtime.Composable
 import com.atlasv.android.web.data.model.AppPerfData
 import com.atlasv.android.web.data.model.VitalPerfRateModel
+import com.atlasv.android.web.data.model.asDimensionCell
 import com.atlasv.android.web.ui.component.VerticalDivider
-import com.atlasv.android.web.ui.component.table.TableCellView
 import com.atlasv.android.web.ui.component.table.TableRowView
 import com.atlasv.android.web.ui.model.TableCellModel
 import com.atlasv.android.web.ui.style.CommonColors
 import com.atlasv.android.web.ui.style.CommonStyles
-import org.jetbrains.compose.web.css.Color
-import org.jetbrains.compose.web.css.color
 import org.jetbrains.compose.web.css.height
 import org.jetbrains.compose.web.css.paddingBottom
 import org.jetbrains.compose.web.css.paddingTop
@@ -44,7 +42,7 @@ fun PerfDataTable(
                 PerfDataContentView(appPerfDataItem, simplifyMode, screenshotMode)
                 if (index != appPerfDataList.lastIndex) {
                     VerticalDivider(
-                        height = if (screenshotMode) 2.5.px else 4.px,
+                        height = if (screenshotMode) 1.5.px else 2.px,
                         color = CommonColors.dividerColorDark
                     )
                 }
@@ -64,28 +62,29 @@ fun PerfDataTable(
 private fun PerfDataContentView(appPerfDataItem: AppPerfData, simplifyMode: Boolean, screenshotMode: Boolean) {
     val anrData = appPerfDataItem.getAnrData(simplifyMode)
     val crashData = appPerfDataItem.getCrashData(simplifyMode)
-    anrData.forEachIndexed { index, anrResponse ->
-        PerfDataRow(
-            appName = appPerfDataItem.appNickName,
-            anrResponse.rows,
-            perfType = "ANR",
-            isFirstRow = index == 0,
-            isLastRow = index == anrData.lastIndex,
-            screenshotMode = screenshotMode
-        )
-    }
-    if (anrData.isNotEmpty() && crashData.isNotEmpty()) {
-        VerticalDivider(height = if (screenshotMode) 1.px else 1.5.px, color = CommonColors.dividerColorDark)
-    }
-    crashData.forEachIndexed { index, crashResponse ->
-        PerfDataRow(
-            appName = appPerfDataItem.appNickName,
-            crashResponse.rows,
-            perfType = "Crash",
-            isFirstRow = index == 0,
-            isLastRow = index == crashData.lastIndex,
-            screenshotMode = screenshotMode
-        )
+    val appName = appPerfDataItem.appNickName
+    listOf(anrData to "ANR", crashData to "Crash").forEach { (data, type) ->
+        data.forEach { response ->
+            val rows = response.rows
+            VerticalDivider(
+                height = 1.px,
+                color = CommonColors.dividerColorDark
+            )
+            val cells = listOf(
+                TableCellModel(
+                    text = appName, isHeaderCell = true
+                ), TableCellModel(
+                    text = type
+                ), TableCellModel(
+                    text = rows.firstOrNull().asDimensionCell()
+                )
+            ) + rows.map { it.asTableCellModel() }
+            TableRowView(
+                cells,
+                smallTextMode = screenshotMode,
+                isHeader = false
+            )
+        }
     }
 }
 
@@ -116,68 +115,14 @@ private fun LoadingView(text: String) {
 private fun PerfDataHeadRow(rows: List<VitalPerfRateModel>, screenshotMode: Boolean) {
     val headerCells = listOf(
         TableCellModel(
-            text = "App", id = 0
+            text = "App", id = 0, isHeaderCell = true
         ), TableCellModel(
-            text = "指标", id = 0
+            text = "指标", id = 0, isHeaderCell = true
         ), TableCellModel(
-            text = "设备维度", id = 0
+            text = "设备维度", id = 0, isHeaderCell = true
         )
     ) + rows.map {
         it.asTableHeaderCellModel()
     }
-    TableRowView(headerCells, smallTextMode = screenshotMode)
-}
-
-@Composable
-private fun PerfDataRow(
-    appName: String,
-    rows: List<VitalPerfRateModel>,
-    perfType: String,
-    isFirstRow: Boolean,
-    isLastRow: Boolean,
-    screenshotMode: Boolean
-) {
-    Div(
-        attrs = {
-            classes(CommonStyles.horizontal)
-        },
-        content = {
-            TableCellView(
-                content = {
-                    Div(
-                        attrs = {
-                            style {
-                                color(if (isFirstRow) Color.black else Color.transparent)
-                            }
-                        },
-                        content = {
-                            Text(appName)
-                        }
-                    )
-                },
-                fontWeight = 500,
-                screenshotMode = screenshotMode
-            )
-            TableCellView(
-                content = {
-                    Text(perfType)
-                }, hasBottomBorder = !isLastRow,
-                screenshotMode = screenshotMode
-            )
-            TableCellView(
-                content = {
-                    Text(rows.firstOrNull()?.dimensions?.firstOrNull()?.valueLabel ?: "全部机型")
-                }, hasBottomBorder = !isLastRow,
-                screenshotMode = screenshotMode
-            )
-            rows.forEachIndexed { index, model ->
-                TableCellView(
-                    content = {
-                        Text(model.metrics.firstOrNull()?.decimalValue?.asPercent()?.toString().orEmpty())
-                    }, isEndCol = index == rows.lastIndex, hasBottomBorder = !isLastRow,
-                    screenshotMode = screenshotMode
-                )
-            }
-        }
-    )
+    TableRowView(headerCells, smallTextMode = screenshotMode, isHeader = true)
 }

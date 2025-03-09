@@ -24,8 +24,20 @@ data class VitalPerfRateModel(
     fun asTableHeaderCellModel(): TableCellModel {
         return TableCellModel(
             text = "${this.startTime.month}-${this.startTime.day}",
+            id = 0, isHeaderCell = true
+        )
+    }
+
+    fun asTableCellModel(): TableCellModel {
+        return TableCellModel(
+            text = this.metrics.firstOrNull()?.decimalValue?.asPercent()?.toString().orEmpty(),
             id = 0
         )
     }
+
+}
+
+fun VitalPerfRateModel?.asDimensionCell(): String {
+    return this?.dimensions?.firstOrNull()?.valueLabel ?: "全部机型"
 }
 

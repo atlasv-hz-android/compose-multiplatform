@@ -28,18 +28,20 @@ import org.w3c.dom.HTMLDivElement
  */
 
 @Composable
-fun TableRowView(cells: List<TableCellModel>, smallTextMode: Boolean) {
+fun TableRowView(cells: List<TableCellModel>, smallTextMode: Boolean, isHeader: Boolean) {
     Div(
         attrs = {
             classes(CommonStyles.horizontal)
-            style {
-                backgroundColor(Color.lightgray)
-                borderRadius(
-                    topLeft = 12.px,
-                    topRight = 12.px,
-                    bottomLeft = 0.px,
-                    bottomRight = 0.px
-                )
+            if (isHeader) {
+                style {
+                    backgroundColor(Color.lightgray)
+                    borderRadius(
+                        topLeft = 12.px,
+                        topRight = 12.px,
+                        bottomLeft = 0.px,
+                        bottomRight = 0.px
+                    )
+                }
             }
         },
         content = {
@@ -47,7 +49,7 @@ fun TableRowView(cells: List<TableCellModel>, smallTextMode: Boolean) {
                 TableCellView(
                     content = {
                         Text(item.text)
-                    }, fontWeight = 500, isEndCol = index == cells.lastIndex,
+                    }, fontWeight = if (item.isHeaderCell) 500 else 400, isEndCol = index == cells.lastIndex,
                     screenshotMode = smallTextMode
                 )
             }
@@ -58,7 +60,6 @@ fun TableRowView(cells: List<TableCellModel>, smallTextMode: Boolean) {
 @Composable
 fun TableCellView(
     isEndCol: Boolean = false,
-    hasBottomBorder: Boolean = false,
     content: ContentBuilder<HTMLDivElement>,
     fontWeight: Int = 400,
     backgroundColor: CSSColorValue = Color.transparent,
@@ -79,7 +80,7 @@ fun TableCellView(
                 borderWidth(
                     top = 0.px,
                     right = if (isEndCol) 0.px else 1.px,
-                    bottom = if (hasBottomBorder) 1.px else 0.px,
+                    bottom = 0.px,
                     left = 0.px,
                 )
                 backgroundColor(backgroundColor)
