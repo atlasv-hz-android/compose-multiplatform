@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.atlasv.android.web.common.constant.AppEnum
+import com.atlasv.android.web.common.constant.getProductApiUrlV2
 import com.atlasv.android.web.data.model.ProductResponse
 import com.atlasv.android.web.data.repo.ProductRepository
 import com.atlasv.android.web.ui.component.AppTabLayout
@@ -17,11 +18,14 @@ import com.atlasv.android.web.ui.style.TextStyles
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.web.attributes.ATarget
+import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.Style
 import org.jetbrains.compose.web.css.paddingLeft
 import org.jetbrains.compose.web.css.paddingRight
 import org.jetbrains.compose.web.css.paddingTop
 import org.jetbrains.compose.web.css.px
+import org.jetbrains.compose.web.dom.A
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.renderComposable
@@ -85,12 +89,35 @@ fun Body() {
                 ErrorTip("还没有选择App")
             } else {
                 VerticalDivider(height = 6.px)
+                Link(text = "所有商品(v2)", url = currentApp?.getProductApiUrlV2().orEmpty())
             }
             VerticalDivider(height = 16.px)
             ProductListView(productResponse)
         }
     )
 }
+
+
+@Composable
+private fun Link(text: String, url: String) {
+    Div({
+        classes(TextStyles.textBlue, TextStyles.text1)
+        style {
+            paddingLeft(6.px)
+            paddingRight(6.px)
+        }
+    }) {
+        A(
+            attrs = {
+                target(ATarget.Blank)
+            },
+            href = url
+        ) {
+            Text(text)
+        }
+    }
+}
+
 
 @Composable
 private fun ProductListView(productResponse: ProductResponse?) {

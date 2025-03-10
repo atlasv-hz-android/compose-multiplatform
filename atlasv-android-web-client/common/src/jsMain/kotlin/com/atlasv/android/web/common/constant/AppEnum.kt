@@ -6,8 +6,14 @@ package com.atlasv.android.web.common.constant
 enum class AppEnum(val packageName: String, val firebaseProjectId: String) {
     Ins3(packageName = "instagram.video.downloader.story.saver.ig", firebaseProjectId = "etm-ins"),
     MediaSaver(packageName = "instagram.video.downloader.story.saver.ig.insaver", firebaseProjectId = ""),
-    Ttd1(packageName = "tiktok.video.downloader.nowatermark.tiktokdownload", firebaseProjectId = "tiktokdownloader-9eb12"),
-    Ttd2(packageName = "tiktok.video.downloader.nowatermark.tiktokdownload.snaptik", firebaseProjectId = "tiktokdownloader-9eb12"),
+    Ttd1(
+        packageName = "tiktok.video.downloader.nowatermark.tiktokdownload",
+        firebaseProjectId = "tiktokdownloader-9eb12"
+    ),
+    Ttd2(
+        packageName = "tiktok.video.downloader.nowatermark.tiktokdownload.snaptik",
+        firebaseProjectId = "tiktokdownloader-9eb12"
+    ),
     Fbd2(packageName = "facebook.video.downloader.savefrom.fb.saver.fast", firebaseProjectId = "fastget-fb-downloader"),
     Twd(packageName = "twittervideodownloader.twitter.videoindir.savegif.twdown", firebaseProjectId = ""),
     Ptd(packageName = "pin.pinterest.video.downloader.forpinterest.pinsaver", firebaseProjectId = ""),
@@ -27,4 +33,8 @@ fun AppEnum.getAppLifecycleStorageUrl(): String {
  */
 fun AppEnum.getXLogStorageBaseUrl(): String {
     return "${getAppLifecycleStorageUrl()}/files/~2F${packageName}~2Fatlasv_log_report"
+}
+
+fun AppEnum.getProductApiUrlV2(): String {
+    return "https://iap.etm.tech/v2/products?app_package_name=${packageName}&app_platform=GooglePlay"
 }
