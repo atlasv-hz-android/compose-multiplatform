@@ -6,11 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.atlasv.android.web.common.constant.AppEnum
-import com.atlasv.android.web.data.model.ProductEntity
 import com.atlasv.android.web.data.model.ProductResponse
 import com.atlasv.android.web.data.repo.ProductRepository
 import com.atlasv.android.web.ui.component.AppTabLayout
 import com.atlasv.android.web.ui.component.VerticalDivider
+import com.atlasv.android.web.ui.component.table.TableView
 import com.atlasv.android.web.ui.model.TabItemData
 import com.atlasv.android.web.ui.style.CommonStyles
 import com.atlasv.android.web.ui.style.TextStyles
@@ -18,10 +18,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.css.Style
-import org.jetbrains.compose.web.css.borderRadius
-import org.jetbrains.compose.web.css.paddingBottom
 import org.jetbrains.compose.web.css.paddingLeft
 import org.jetbrains.compose.web.css.paddingRight
+import org.jetbrains.compose.web.css.paddingTop
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
@@ -98,58 +97,14 @@ private fun ProductListView(productResponse: ProductResponse?) {
     productResponse ?: return
     Div(
         attrs = {
-            classes(CommonStyles.horizontalFlow)
-        },
-        content = {
-            productResponse.products.forEach {
-                Div(attrs = {
-                    style {
-                        paddingLeft(4.px)
-                        paddingRight(4.px)
-                        paddingBottom(8.px)
-                    }
-                },
-                    content = {
-                        ProductItemView(it)
-                    })
-            }
-        }
-    )
-}
-
-@Composable
-private fun ProductItemView(productEntity: ProductEntity) {
-    Div(
-        attrs = {
-            classes(CommonStyles.historyFlowItem)
+            classes(CommonStyles.vertical, CommonStyles.alignItemsCenter)
             style {
-                borderRadius(16.px)
-            }
-            onClick {
-
+                paddingTop(40.px)
             }
         },
         content = {
-            Div(
-                attrs = {
-                    classes(CommonStyles.vertical, CommonStyles.alignItemsCenter)
-                },
-                content = {
-                    Div(attrs = {
-                        classes(TextStyles.text2)
-                    }, content = {
-                        Text(productEntity.productId)
-                    })
-
-                    Div(attrs = {
-                        classes(TextStyles.subText)
-                    }, content = {
-                        Text(productEntity.entitlementId)
-                    })
-                }
-            )
-        }
-    )
+            TableView(model = productResponse.asTableModel(), smallTextMode = false)
+        })
 }
 
 @Composable

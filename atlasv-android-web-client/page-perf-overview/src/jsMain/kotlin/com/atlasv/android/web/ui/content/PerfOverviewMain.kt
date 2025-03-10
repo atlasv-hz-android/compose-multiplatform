@@ -96,7 +96,7 @@ fun PerfDataTable(
             appPerfDataList.firstOrNull()?.createTableHeadRowModel()
         ) + appPerfDataList.map { appPerfDataItem ->
             appPerfDataItem.createDataRowModels(simplifyMode)
-        }.flatten()
+        }.flatten(), spanCount = 11
     )
     TableView(model = tableModel, smallTextMode = smallTextMode)
 }
