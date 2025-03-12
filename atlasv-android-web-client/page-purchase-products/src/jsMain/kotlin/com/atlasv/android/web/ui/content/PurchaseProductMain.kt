@@ -90,6 +90,8 @@ fun Body() {
             } else {
                 VerticalDivider(height = 6.px)
                 Link(text = "所有商品(v2)", url = currentApp?.getProductApiUrlV2().orEmpty())
+                VerticalDivider(height = 6.px)
+                AddProductTip(currentApp)
             }
             VerticalDivider(height = 16.px)
             ProductListView(productResponse)
@@ -97,6 +99,26 @@ fun Body() {
     )
 }
 
+@Composable
+private fun AddProductTip(appEnum: AppEnum?) {
+    appEnum ?: return
+    Div(
+        attrs = {
+            classes(TextStyles.subText)
+        },
+        content = {
+            Text("添加商品使用(填写product_id和entitlement_id)：")
+        }
+    )
+    Div(
+        attrs = {
+            classes(TextStyles.subText)
+        },
+        content = {
+            Text("https://atlasv-android-team.uc.r.appspot.com/api/purchase/add_products?app_package=${appEnum.packageName}&product_id=&entitlement_id=")
+        }
+    )
+}
 
 @Composable
 private fun Link(text: String, url: String) {
