@@ -6,23 +6,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.atlasv.android.web.common.constant.AppEnum
-import com.atlasv.android.web.data.model.ProductEntity
+import com.atlasv.android.web.common.constant.getProductApiUrlV2
 import com.atlasv.android.web.data.model.ProductResponse
 import com.atlasv.android.web.data.repo.ProductRepository
 import com.atlasv.android.web.ui.component.AppTabLayout
 import com.atlasv.android.web.ui.component.VerticalDivider
+import com.atlasv.android.web.ui.component.table.TableView
 import com.atlasv.android.web.ui.model.TabItemData
 import com.atlasv.android.web.ui.style.CommonStyles
 import com.atlasv.android.web.ui.style.TextStyles
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.web.attributes.ATarget
+import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.Style
-import org.jetbrains.compose.web.css.borderRadius
-import org.jetbrains.compose.web.css.paddingBottom
 import org.jetbrains.compose.web.css.paddingLeft
 import org.jetbrains.compose.web.css.paddingRight
+import org.jetbrains.compose.web.css.paddingTop
 import org.jetbrains.compose.web.css.px
+import org.jetbrains.compose.web.dom.A
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.renderComposable
@@ -86,6 +89,9 @@ fun Body() {
                 ErrorTip("还没有选择App")
             } else {
                 VerticalDivider(height = 6.px)
+                Link(text = "所有商品(v2)", url = currentApp?.getProductApiUrlV2().orEmpty())
+                VerticalDivider(height = 6.px)
+                AddProductTip(currentApp)
             }
             VerticalDivider(height = 16.px)
             ProductListView(productResponse)
@@ -94,62 +100,60 @@ fun Body() {
 }
 
 @Composable
-private fun ProductListView(productResponse: ProductResponse?) {
-    productResponse ?: return
+private fun AddProductTip(appEnum: AppEnum?) {
+    appEnum ?: return
     Div(
         attrs = {
-            classes(CommonStyles.horizontalFlow)
+            classes(TextStyles.subText)
         },
         content = {
-            productResponse.products.forEach {
-                Div(attrs = {
-                    style {
-                        paddingLeft(4.px)
-                        paddingRight(4.px)
-                        paddingBottom(8.px)
-                    }
-                },
-                    content = {
-                        ProductItemView(it)
-                    })
-            }
+            Text("添加商品使用(填写product_id和entitlement_id)：")
+        }
+    )
+    Div(
+        attrs = {
+            classes(TextStyles.subText)
+        },
+        content = {
+            Text("https://atlasv-android-team.uc.r.appspot.com/api/purchase/add_products?app_package=${appEnum.packageName}&product_id=&entitlement_id=")
         }
     )
 }
 
 @Composable
-private fun ProductItemView(productEntity: ProductEntity) {
+private fun Link(text: String, url: String) {
+    Div({
+        classes(TextStyles.textBlue, TextStyles.text1)
+        style {
+            paddingLeft(6.px)
+            paddingRight(6.px)
+        }
+    }) {
+        A(
+            attrs = {
+                target(ATarget.Blank)
+            },
+            href = url
+        ) {
+            Text(text)
+        }
+    }
+}
+
+
+@Composable
+private fun ProductListView(productResponse: ProductResponse?) {
+    productResponse ?: return
     Div(
         attrs = {
-            classes(CommonStyles.historyFlowItem)
+            classes(CommonStyles.vertical, CommonStyles.alignItemsCenter)
             style {
-                borderRadius(16.px)
-            }
-            onClick {
-
+                paddingTop(40.px)
             }
         },
         content = {
-            Div(
-                attrs = {
-                    classes(CommonStyles.vertical, CommonStyles.alignItemsCenter)
-                },
-                content = {
-                    Div(attrs = {
-                        classes(TextStyles.text2)
-                    }, content = {
-                        Text(productEntity.productId)
-                    })
-
-                    Div(attrs = {
-                        classes(TextStyles.subText)
-                    }, content = {
-                        Text(productEntity.entitlementId)
-                    })
-                }
-            )
-        }
-    )
+            TableView(model = productResponse.asTableModel(), smallTextMode = false)
+        })
 }
 
 @Composable

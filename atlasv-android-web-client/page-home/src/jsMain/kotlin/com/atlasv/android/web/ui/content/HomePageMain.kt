@@ -1,18 +1,29 @@
 package com.atlasv.android.web.ui.content
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.atlasv.android.web.common.data.model.IapUser
+import com.atlasv.android.web.common.data.repo.IapUserRepository
 import com.atlasv.android.web.ui.component.MaterialCardGrid
 import com.atlasv.android.web.ui.component.VerticalDivider
 import com.atlasv.android.web.ui.style.CommonColors
 import com.atlasv.android.web.ui.style.CommonStyles
 import com.atlasv.android.web.ui.style.TextStyles
 import kotlinx.browser.window
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.attributes.ATarget
 import org.jetbrains.compose.web.css.Style
 import org.jetbrains.compose.web.css.color
 import org.jetbrains.compose.web.css.fontSize
 import org.jetbrains.compose.web.css.height
 import org.jetbrains.compose.web.css.paddingLeft
+import org.jetbrains.compose.web.css.paddingTop
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.css.width
@@ -35,16 +46,44 @@ fun Body() {
 
 @Composable
 private fun HomeModuleGroups() {
+    var iapUser by remember {
+        mutableStateOf<IapUser?>(null)
+    }
     Div(
         attrs = {
             classes(CommonStyles.vertical)
         },
         content = {
+            UserInfoCard(iapUser)
             VerticalDivider(height = 20.px)
             HomeFunctionModuleGroup.homeModuleGroups.forEach {
                 VerticalDivider(height = 36.px)
                 FunctionCardsContainer(it)
             }
+        }
+    )
+    LaunchedEffect(Unit) {
+        CoroutineScope(Dispatchers.Default).launch {
+            iapUser = IapUserRepository.instance.getUser()
+        }
+    }
+}
+
+@Composable
+private fun UserInfoCard(iapUser: IapUser?) {
+    Div(
+        attrs = {
+            classes(CommonStyles.horizontal, TextStyles.text3)
+            style {
+                paddingLeft(16.px)
+                paddingTop(8.px)
+            }
+        },
+        content = {
+            val text = iapUser?.shortEmail?.let {
+                "Welcome, ${iapUser.shortEmail}"
+            } ?: "Welcome"
+            Text(text)
         }
     )
 }

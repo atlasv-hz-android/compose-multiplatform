@@ -18,12 +18,15 @@ import org.jetbrains.compose.web.css.fontSize
 import org.jetbrains.compose.web.css.fontWeight
 import org.jetbrains.compose.web.css.paddingBottom
 import org.jetbrains.compose.web.css.paddingTop
+import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.css.style
+import org.jetbrains.compose.web.css.width
 import org.jetbrains.compose.web.dom.ContentBuilder
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
 import org.w3c.dom.HTMLDivElement
+import kotlin.math.roundToInt
 
 /**
  * Created by weiping on 2025/3/10
@@ -46,7 +49,12 @@ fun TableView(model: TableModel, smallTextMode: Boolean) {
                         color = CommonColors.dividerColorDark
                     )
                 }
-                TableRowView(rowModel, smallTextMode = smallTextMode, isHeader = rowModel.isHeader)
+                TableRowView(
+                    rowModel,
+                    smallTextMode = smallTextMode,
+                    isHeader = rowModel.isHeader,
+                    spanCount = model.spanCount
+                )
                 if (rowModel.isGroupEnd && index != model.rows.lastIndex) {
                     VerticalDivider(
                         height = if (smallTextMode) 1.5.px else 2.px,
@@ -59,7 +67,7 @@ fun TableView(model: TableModel, smallTextMode: Boolean) {
 }
 
 @Composable
-fun TableRowView(rowModel: TableRowModel, smallTextMode: Boolean, isHeader: Boolean) {
+fun TableRowView(rowModel: TableRowModel, smallTextMode: Boolean, isHeader: Boolean, spanCount: Int) {
     Div(
         attrs = {
             classes(CommonStyles.horizontal)
@@ -81,7 +89,8 @@ fun TableRowView(rowModel: TableRowModel, smallTextMode: Boolean, isHeader: Bool
                     content = {
                         Text(item.text)
                     }, fontWeight = if (item.isHeaderCell) 500 else 400, isEndCol = index == rowModel.cells.lastIndex,
-                    screenshotMode = smallTextMode
+                    screenshotMode = smallTextMode,
+                    percent = (100f / spanCount).roundToInt()
                 )
             }
         }
@@ -94,12 +103,14 @@ fun TableCellView(
     content: ContentBuilder<HTMLDivElement>,
     fontWeight: Int = 400,
     backgroundColor: CSSColorValue = Color.transparent,
-    screenshotMode: Boolean
+    screenshotMode: Boolean,
+    percent: Int
 ) {
     Div(
         attrs = {
-            classes(CommonStyles.horizontal, CommonStyles.p10, CommonStyles.justifyContentCenter)
+            classes(CommonStyles.horizontal, CommonStyles.justifyContentCenter)
             style {
+                width(percent.percent)
                 fontSize(if (screenshotMode) 11.px else 13.px)
                 fontWeight(fontWeight)
                 border {

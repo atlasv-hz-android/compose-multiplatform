@@ -1,5 +1,7 @@
 package com.atlasv.android.web.data.model
 
+import com.atlasv.android.web.ui.model.TableCellModel
+import com.atlasv.android.web.ui.model.TableRowModel
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -14,4 +16,17 @@ data class ProductEntity(
     @SerialName("app_platform") val appPlatform: String,
     @SerialName("offering_id") val offeringId: String,
     val iss: String,
-)
+) {
+    fun asRowModel(): TableRowModel {
+        return TableRowModel(
+            cells = listOf(
+                TableCellModel(
+                    text = productId
+                ),
+                TableCellModel(
+                    text = entitlementId
+                )
+            )
+        )
+    }
+}
