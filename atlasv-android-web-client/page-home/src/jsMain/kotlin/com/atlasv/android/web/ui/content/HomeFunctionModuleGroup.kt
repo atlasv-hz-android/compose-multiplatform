@@ -26,6 +26,10 @@ data class HomeFunctionModuleGroup(val title: String, val modules: List<HomeFunc
                 HomeFunctionModuleGroup(
                     title = "研发工具", modules = listOf(
                         HomeFunctionModule(
+                            title = "SonarQube",
+                            desc = "分析和测量代码质量，提升安全性、可靠性和可维护性",
+                            targetUrl = "http://34.55.42.151:9000/projects"
+                        ), HomeFunctionModule(
                             title = "日志查看器",
                             desc = "查看用户上传的日志",
                             targetUrl = "${HttpEngine.baseUrl}log_viewer_page"
