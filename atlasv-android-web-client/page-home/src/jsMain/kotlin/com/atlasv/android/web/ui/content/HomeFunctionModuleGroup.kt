@@ -15,7 +15,7 @@ data class HomeFunctionModuleGroup(val title: String, val modules: List<HomeFunc
                         HomeFunctionModule(
                             title = "性能监控",
                             desc = "Android性能指标，ANR、Crash数据",
-                            targetUrl = "${HttpEngine.baseUrl}perf-overview"
+                            targetUrl = "$COMPUTE_ENGINE_URL:20001/perf-overview"
                         ),
                         HomeFunctionModule(
                             title = "磁盘报告",
