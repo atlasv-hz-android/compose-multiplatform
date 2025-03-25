@@ -45,13 +45,13 @@ class PerfRepo(private val httpEngine: HttpEngine) {
                         it.fileName.endsWith("userPerceivedAnrRate.json")
                     }?.data?.sortedByDateDescending(),
                     anrDimensionData = dataWrappers.find {
-                        it.fileName.endsWith("userPerceivedAnrRate-dms_deviceRamBucket.json")
+                        it.fileName.endsWith("userPerceivedAnrRate-deviceRamBucket.json")
                     }?.data?.sortedByDateDescending(),
                     crashNoDimensionData = dataWrappers.find {
                         it.fileName.endsWith("userPerceivedCrashRate.json")
                     }?.data?.sortedByDateDescending(),
                     crashDimensionData = dataWrappers.find {
-                        it.fileName.endsWith("userPerceivedCrashRate-dms_deviceRamBucket.json")
+                        it.fileName.endsWith("userPerceivedCrashRate-deviceRamBucket.json")
                     }?.data?.sortedByDateDescending()
                 )
             }
