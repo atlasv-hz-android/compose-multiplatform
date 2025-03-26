@@ -15,12 +15,12 @@ data class HomeFunctionModuleGroup(val title: String, val modules: List<HomeFunc
                         HomeFunctionModule(
                             title = "性能监控",
                             desc = "Android性能指标，ANR、Crash数据",
-                            targetUrl = "$COMPUTE_ENGINE_URL:20001/perf-overview"
+                            targetUrl = "$COMPUTE_ENGINE_URL/perf-overview"
                         ),
                         HomeFunctionModule(
                             title = "磁盘报告",
                             desc = "查看用户磁盘占用情况",
-                            targetUrl = "${COMPUTE_ENGINE_URL}:20001/disk-report"
+                            targetUrl = "${COMPUTE_ENGINE_URL}/disk-report"
                         )
                     )
                 ),
