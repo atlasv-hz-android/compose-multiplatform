@@ -3,7 +3,6 @@ plugins {
     id("com.github.ben-manes.versions") version "0.49.0"
 }
 
-
 subprojects {
     repositories {
         gradlePluginPortal()
@@ -23,7 +22,7 @@ subprojects {
 }
 
 subprojects {
-    fun publishWebSite() {
+    fun publishWebSite(backendProjectName: String) {
         val productionExecutableDir = project.file("build/dist/js/productionExecutable/")
         val indexFile = File(productionExecutableDir, "index.html")
         if (!indexFile.exists()) {
@@ -47,7 +46,7 @@ subprojects {
                 }
                 it.writeText(indexContent)
             })
-            into("../../../atlasv-android-web/templates/")
+            into("../../../${backendProjectName}/templates/")
             rename {
                 it.replaceBeforeLast(".", project.name)
             }
@@ -63,7 +62,7 @@ subprojects {
                 }
                 jsFile.writeText(jsFileContent)
             })
-            into("../../../atlasv-android-web/static/js")
+            into("../../../${backendProjectName}/static/js")
         }
         copy {
             from(productionExecutableDir) {
@@ -71,14 +70,20 @@ subprojects {
                 exclude(jsFile.name)
                 exclude(jsFile.name + ".map")
             }
-            into("../../../atlasv-android-web/static/${project.name}")
+            into("../../../${backendProjectName}/static/${project.name}")
         }
     }
 
-    if (project.name != "style-base") {
+    if (project.name != "style-base" && project.name != "page-perf-overview" && project.name != "page-disk-report") {
         project.tasks.create(name = "publishWebSite") {
             group = "atlasv-publish"
-            publishWebSite()
+            publishWebSite(backendProjectName = "atlasv-android-web")
+        }.dependsOn("jsBrowserDistribution")
+    }
+    if (project.name != "style-base" && (project.name == "page-perf-overview" || project.name == "page-disk-report")) {
+        project.tasks.create(name = "publishWebSiteNew") {
+            group = "atlasv-publish"
+            publishWebSite(backendProjectName = "android-team-service")
         }.dependsOn("jsBrowserDistribution")
     }
 }

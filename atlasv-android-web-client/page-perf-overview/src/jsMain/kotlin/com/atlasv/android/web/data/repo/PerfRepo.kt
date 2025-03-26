@@ -1,8 +1,6 @@
 package com.atlasv.android.web.data.repo
 
-import com.atlasv.android.web.common.Constants
 import com.atlasv.android.web.common.HttpEngine
-import com.atlasv.android.web.common.HttpEngine.baseUrl
 import com.atlasv.android.web.common.constant.AppEnum
 import com.atlasv.android.web.data.model.AppPerfData
 import com.atlasv.android.web.data.model.AppPerfDataParent
@@ -16,7 +14,7 @@ import io.ktor.client.statement.bodyAsText
 class PerfRepo(private val httpEngine: HttpEngine) {
     suspend fun getAllVitalsData(): AppPerfDataParent {
         return httpEngine.json.decodeFromString(
-            httpEngine.client.get("${baseUrl}api/perf/get_all_app_vitals_data?debug=${if (Constants.DEBUG) "1" else 0}")
+            httpEngine.client.get("${HttpEngine.COMPUTE_ENGINE_URL}:20001/api/perf/get_all_app_vital_perf")
                 .bodyAsText()
         )
     }
@@ -45,13 +43,13 @@ class PerfRepo(private val httpEngine: HttpEngine) {
                         it.fileName.endsWith("userPerceivedAnrRate.json")
                     }?.data?.sortedByDateDescending(),
                     anrDimensionData = dataWrappers.find {
-                        it.fileName.endsWith("userPerceivedAnrRate-dms_deviceRamBucket.json")
+                        it.fileName.endsWith("userPerceivedAnrRate-deviceRamBucket.json")
                     }?.data?.sortedByDateDescending(),
                     crashNoDimensionData = dataWrappers.find {
                         it.fileName.endsWith("userPerceivedCrashRate.json")
                     }?.data?.sortedByDateDescending(),
                     crashDimensionData = dataWrappers.find {
-                        it.fileName.endsWith("userPerceivedCrashRate-dms_deviceRamBucket.json")
+                        it.fileName.endsWith("userPerceivedCrashRate-deviceRamBucket.json")
                     }?.data?.sortedByDateDescending()
                 )
             }
