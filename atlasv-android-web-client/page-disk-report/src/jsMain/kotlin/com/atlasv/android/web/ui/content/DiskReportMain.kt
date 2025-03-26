@@ -7,7 +7,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.atlasv.android.web.common.HttpEngine
 import com.atlasv.android.web.common.constant.AppEnum
-import com.atlasv.android.web.data.model.DiskReport
 import com.atlasv.android.web.data.model.DiskReportDetail
 import com.atlasv.android.web.data.repo.DiskReportRepo
 import com.atlasv.android.web.ui.component.AppTabLayout
@@ -42,13 +41,9 @@ fun main() {
 
 @Composable
 fun Body() {
-    var allAppData by remember { mutableStateOf<Map<AppEnum, List<DiskReport>>>(emptyMap()) }
     var currentApp by remember {
         mutableStateOf<AppEnum?>(null)
     }
-    val data: List<DiskReport> = currentApp?.let {
-        allAppData[it]
-    }.orEmpty()
     var _reportDetail by remember {
         mutableStateOf<DiskReportDetail?>(null)
     }
@@ -68,27 +63,18 @@ fun Body() {
         },
         content = {
             VerticalDivider(height = 24.px)
-            Reports(data, currentApp,
-                onClickReport = {
-                    CoroutineScope(Dispatchers.Default).launch {
-                        loading = true
-                        _reportDetail = DiskReportRepo.instance.listReportFiles(it)
-                        loading = false
-                    }
-                },
+            Reports(currentApp, onClickReport = { priority ->
+                CoroutineScope(Dispatchers.Default).launch {
+                    loading = true
+                    _reportDetail = DiskReportRepo.instance.listReportFiles(currentApp?.packageName, priority)
+                    loading = false
+                }
+            },
                 onClickApp = {
                     if (loading) {
                         return@Reports
                     }
                     currentApp = it
-                    CoroutineScope(Dispatchers.Default).launch {
-                        loading = true
-                        if (allAppData[it] == null) {
-                            allAppData =
-                                allAppData + (it to DiskReportRepo.instance.getReports(currentApp)?.data.orEmpty())
-                        }
-                        loading = false
-                    }
                 })
             if (loading) {
                 Text("正在加载数据...")
@@ -101,9 +87,8 @@ fun Body() {
 
 @Composable
 private fun Reports(
-    reports: List<DiskReport>,
     currentApp: AppEnum?,
-    onClickReport: (DiskReport) -> Unit,
+    onClickReport: (priority: Int) -> Unit,
     onClickApp: (AppEnum) -> Unit
 ) {
     val apps = listOf(
@@ -121,34 +106,17 @@ private fun Reports(
         } ?: -1
     )
     VerticalDivider(height = 16.px)
-    val versions: List<Pair<Int, String>> =
-        reports.map { it.versionCode to it.versionName }.distinctBy { it.first }.sortedByDescending { it.first }
-    versions.forEach { version ->
-        ReportItem(version, reports.filter { it.versionCode == version.first }.sortedByDescending { it.sizeG },
-            onClickReport = onClickReport
-        )
-        VerticalDivider(height = 20.px)
-    }
+    ReportPriorityItem(onClickReport = onClickReport)
 }
 
 @Composable
-private fun ReportItem(version: Pair<Int, String>, reports: List<DiskReport>, onClickReport: (DiskReport) -> Unit) {
-    val (versionCode, versionName) = version
-    Div(
-        attrs = {
-            classes(TextStyles.text2)
-        },
-        content = {
-            Text("$versionName($versionCode)")
-        }
-    )
-
+private fun ReportPriorityItem(onClickReport: (priority: Int) -> Unit) {
     Div(
         attrs = {
             classes(CommonStyles.horizontalFlow)
         },
         content = {
-            reports.forEach { report ->
+            (0..3).forEach { priority ->
                 MaterialCardGridSmall(
                     content = {
                         Div(
@@ -157,19 +125,19 @@ private fun ReportItem(version: Pair<Int, String>, reports: List<DiskReport>, on
                                 style {
                                     paddingTop(4.px)
                                     paddingBottom(4.px)
-                                    if (report.sizeG >= 5) {
+                                    if (priority == 50) {
                                         color(CommonColors.red)
                                         fontWeight(500)
                                     }
                                 }
                             },
                             content = {
-                                Text("${report.sizeG}G(${report.reportCount}${if (report.reportCount >= 100) "+" else ""})")
+                                Text("P${priority}")
                             }
                         )
                     },
                     onClick = {
-                        onClickReport(report)
+                        onClickReport(priority)
                     }
                 )
             }

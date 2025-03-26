@@ -20,7 +20,7 @@ data class HomeFunctionModuleGroup(val title: String, val modules: List<HomeFunc
                         HomeFunctionModule(
                             title = "磁盘报告",
                             desc = "查看用户磁盘占用情况",
-                            targetUrl = "${HttpEngine.baseUrl}disk-report"
+                            targetUrl = "${COMPUTE_ENGINE_URL}:20001/disk-report"
                         )
                     )
                 ),
