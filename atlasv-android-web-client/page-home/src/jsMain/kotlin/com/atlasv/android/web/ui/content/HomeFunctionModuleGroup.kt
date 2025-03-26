@@ -29,7 +29,7 @@ data class HomeFunctionModuleGroup(val title: String, val modules: List<HomeFunc
                         HomeFunctionModule(
                             title = "SonarQube",
                             desc = "分析和测量代码质量，提升安全性、可靠性和可维护性",
-                            targetUrl = "${COMPUTE_ENGINE_URL}:9000/projects"
+                            targetUrl = "https://android-team-sonar.etm.tech/projects"
                         ), HomeFunctionModule(
                             title = "日志查看器",
                             desc = "查看用户上传的日志",
