@@ -14,7 +14,7 @@ import io.ktor.client.statement.bodyAsText
 class PerfRepo(private val httpEngine: HttpEngine) {
     suspend fun getAllVitalsData(): AppPerfDataParent {
         return httpEngine.json.decodeFromString(
-            httpEngine.client.get("${HttpEngine.COMPUTE_ENGINE_URL}:20001/api/perf/get_all_app_vital_perf")
+            httpEngine.client.get("${HttpEngine.COMPUTE_ENGINE_URL}/api/perf/get_all_app_vital_perf")
                 .bodyAsText()
         )
     }

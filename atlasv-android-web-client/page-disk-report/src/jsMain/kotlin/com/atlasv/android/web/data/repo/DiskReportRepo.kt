@@ -11,7 +11,7 @@ import io.ktor.client.statement.bodyAsText
 class DiskReportRepo(private val httpEngine: HttpEngine) {
 
     /**
-     * [列出磁盘报告](http://34.28.167.123:20001/api/perf/list_disk_report_files?app_package=facebook.video.downloader.savefrom.fb.saver.fast&priory=P1)
+     * [列出磁盘报告](http://34.28.167.123/api/perf/list_disk_report_files?app_package=facebook.video.downloader.savefrom.fb.saver.fast&priory=P1)
      */
     suspend fun listReportFiles(
         appPackage: String?,
@@ -20,7 +20,7 @@ class DiskReportRepo(private val httpEngine: HttpEngine) {
         appPackage ?: return null
         return httpEngine.json.decodeFromString(
             httpEngine.client.get(
-                "${HttpEngine.COMPUTE_ENGINE_URL}:20001/api/perf/list_disk_report_files?" +
+                "${HttpEngine.COMPUTE_ENGINE_URL}/api/perf/list_disk_report_files?" +
                         "app_package=$appPackage" +
                         "&priority=P${priority}"
             ).bodyAsText()
