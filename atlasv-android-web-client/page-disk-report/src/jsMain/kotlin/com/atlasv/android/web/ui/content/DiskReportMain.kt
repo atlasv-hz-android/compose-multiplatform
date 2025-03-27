@@ -1,14 +1,31 @@
 package com.atlasv.android.web.ui.content
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.atlasv.android.web.common.HttpEngine
 import com.atlasv.android.web.common.constant.AppEnum
+import com.atlasv.android.web.data.model.DiskReportDetail
+import com.atlasv.android.web.data.repo.DiskReportRepo
+import com.atlasv.android.web.ui.component.VerticalDivider
 import com.atlasv.android.web.ui.component.tab.TabContainer
 import com.atlasv.android.web.ui.model.TabModel
 import com.atlasv.android.web.ui.style.CommonStyles
 import com.atlasv.android.web.ui.style.TabStyle
 import com.atlasv.android.web.ui.style.TextStyles
+import io.ktor.http.encodeURLQueryComponent
+import kotlinx.browser.window
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.css.Style
+import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.renderComposable
 
 fun main() {
@@ -19,6 +36,17 @@ fun main() {
 
 @Composable
 fun Body() {
+    val cache by remember {
+        mutableStateOf<MutableMap<String, DiskReportDetail>>(mutableMapOf())
+    }
+    var currentApp by remember {
+        mutableStateOf<AppEnum?>(null)
+    }
+    var _reportDetail by remember {
+        mutableStateOf<DiskReportDetail?>(null)
+    }
+    val reportDetail = _reportDetail?.takeIf { it.appPackage == currentApp?.packageName }
+
     Style(CommonStyles)
     Style(TextStyles)
     Style(TabStyle)
@@ -34,7 +62,53 @@ fun Body() {
                             text = it.name,
                             id = it.ordinal
                         )
-                    })
+                    }, onTabClick = { model ->
+                    currentApp = AppEnum.entries.find { it.ordinal == model.id }
+                    CoroutineScope(Dispatchers.Default).launch {
+                        val packageName = currentApp?.packageName ?: return@launch
+                        _reportDetail = cache[packageName]
+                        if (_reportDetail != null) {
+                            return@launch
+                        }
+                        val jobs = (0..1).map {
+                            async {
+                                DiskReportRepo.instance.listReportFiles(currentApp?.packageName, it)
+                            }
+                        }
+                        val reports = jobs.awaitAll()
+                        _reportDetail = reports.firstOrNull()?.let {
+                            it.copy(
+                                files = reports.mapNotNull { report -> report?.files }.flatten()
+                            )
+                        }?.also {
+                            cache[packageName] = it
+                        }
+                    }
+                },
+                tabContentBuilder = {
+                    ReportDetailView(reportDetail)
+                })
         }
     )
+}
+
+@Composable
+private fun ReportDetailView(detail: DiskReportDetail?) {
+    detail ?: return
+    detail.files.forEach { filePath ->
+        Div(
+            attrs = {
+                classes(TextStyles.text3)
+                onClick {
+                    window.open(
+                        url = "${HttpEngine.baseUrl}download_file?file_path=${filePath.encodeURLQueryComponent()}&app_package=${detail.appPackage}&bucket=${detail.bucket}"
+                    )
+                }
+            },
+            content = {
+                Text("${filePath.substringAfterLast("/")} (查看)")
+            }
+        )
+        VerticalDivider(height = 4.px)
+    }
 }

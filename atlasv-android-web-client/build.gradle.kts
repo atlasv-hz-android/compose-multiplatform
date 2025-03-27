@@ -80,7 +80,7 @@ subprojects {
             publishWebSite(backendProjectName = "atlasv-android-web")
         }.dependsOn("jsBrowserDistribution")
     }
-    if (project.name != "style-base" && (project.name == "page-perf-overview" || project.name == "page-disk-report")) {
+    if (project.name != "style-base") {
         project.tasks.create(name = "publishWebSiteNew") {
             group = "atlasv-publish"
             publishWebSite(backendProjectName = "android-team-service")

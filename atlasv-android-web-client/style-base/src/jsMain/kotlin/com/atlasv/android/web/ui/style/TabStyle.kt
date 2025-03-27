@@ -89,11 +89,4 @@ object TabStyle : StyleSheet() {
     val tabContent by style {
         padding(20.px)
     }
-
-    val tabPanel by style {
-        display(DisplayStyle.None)
-    }
-    val tabPanelActive by style {
-        display(DisplayStyle.Block)
-    }
 }

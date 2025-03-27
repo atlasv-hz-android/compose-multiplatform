@@ -8,55 +8,45 @@ import androidx.compose.runtime.setValue
 import com.atlasv.android.web.ui.model.TabModel
 import com.atlasv.android.web.ui.style.TabStyle
 import org.jetbrains.compose.web.dom.Button
+import org.jetbrains.compose.web.dom.ContentBuilder
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
+import org.w3c.dom.HTMLDivElement
 
 /**
  * Created by weiping on 2025/3/27
  */
 @Composable
-fun TabContainer(models: List<TabModel>) {
+fun TabContainer(
+    models: List<TabModel>,
+    onTabClick: (TabModel) -> Unit,
+    tabContentBuilder: ContentBuilder<HTMLDivElement>
+) {
     Div(
         attrs = {
             classes(TabStyle.tabContainer)
         },
         content = {
-            TabHeader(models)
-            TabContent()
+            TabHeader(models, onTabClick)
+            TabContent(tabContentBuilder)
         }
     )
 }
 
 @Composable
-fun TabContent() {
+fun TabContent(tabContentBuilder: ContentBuilder<HTMLDivElement>) {
     Div(
         attrs = {
             classes(
                 TabStyle.tabContent
             )
         },
-        content = {
-            TabPanel()
-            TabPanel()
-            TabPanel()
-        }
+        content = tabContentBuilder
     )
 }
 
 @Composable
-fun TabPanel() {
-    Div(
-        attrs = {
-            classes(TabStyle.tabPanel)
-        },
-        content = {
-            Text("TabPanel")
-        }
-    )
-}
-
-@Composable
-fun TabHeader(models: List<TabModel>) {
+fun TabHeader(models: List<TabModel>, onTabClick: (TabModel) -> Unit) {
     var selectedIndex by remember {
         mutableIntStateOf(0)
     }
@@ -71,6 +61,7 @@ fun TabHeader(models: List<TabModel>) {
                         classes(if (selectedIndex == index) TabStyle.tabButtonActive else TabStyle.tabButton)
                         onClick {
                             selectedIndex = index
+                            onTabClick(tabModel)
                         }
                     },
                     content = {
