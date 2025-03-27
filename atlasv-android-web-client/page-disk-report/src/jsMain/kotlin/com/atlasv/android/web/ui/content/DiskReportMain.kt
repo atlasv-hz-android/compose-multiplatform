@@ -9,25 +9,20 @@ import com.atlasv.android.web.common.HttpEngine
 import com.atlasv.android.web.common.constant.AppEnum
 import com.atlasv.android.web.data.model.DiskReportDetail
 import com.atlasv.android.web.data.repo.DiskReportRepo
-import com.atlasv.android.web.ui.component.AppTabLayout
-import com.atlasv.android.web.ui.component.MaterialCardGridSmall
 import com.atlasv.android.web.ui.component.VerticalDivider
-import com.atlasv.android.web.ui.model.TabItemData
-import com.atlasv.android.web.ui.style.CommonColors
+import com.atlasv.android.web.ui.component.tab.TabContainer
+import com.atlasv.android.web.ui.model.TabModel
 import com.atlasv.android.web.ui.style.CommonStyles
+import com.atlasv.android.web.ui.style.TabStyle
 import com.atlasv.android.web.ui.style.TextStyles
 import io.ktor.http.encodeURLQueryComponent
 import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.css.Style
-import org.jetbrains.compose.web.css.color
-import org.jetbrains.compose.web.css.fontWeight
-import org.jetbrains.compose.web.css.paddingBottom
-import org.jetbrains.compose.web.css.paddingLeft
-import org.jetbrains.compose.web.css.paddingRight
-import org.jetbrains.compose.web.css.paddingTop
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
@@ -41,6 +36,9 @@ fun main() {
 
 @Composable
 fun Body() {
+    val cache by remember {
+        mutableStateOf<MutableMap<String, DiskReportDetail>>(mutableMapOf())
+    }
     var currentApp by remember {
         mutableStateOf<AppEnum?>(null)
     }
@@ -48,99 +46,48 @@ fun Body() {
         mutableStateOf<DiskReportDetail?>(null)
     }
     val reportDetail = _reportDetail?.takeIf { it.appPackage == currentApp?.packageName }
-    var loading by remember {
-        mutableStateOf(false)
-    }
+
     Style(CommonStyles)
     Style(TextStyles)
+    Style(TabStyle)
     Div(
         attrs = {
-            classes(CommonStyles.vertical)
-            style {
-                paddingLeft(16.px)
-                paddingRight(16.px)
-            }
+            classes(CommonStyles.vertical, CommonStyles.alignItemsCenter)
         },
         content = {
-            VerticalDivider(height = 24.px)
-            Reports(currentApp, onClickReport = { priority ->
-                CoroutineScope(Dispatchers.Default).launch {
-                    loading = true
-                    _reportDetail = DiskReportRepo.instance.listReportFiles(currentApp?.packageName, priority)
-                    loading = false
-                }
-            },
-                onClickApp = {
-                    if (loading) {
-                        return@Reports
-                    }
-                    currentApp = it
-                })
-            if (loading) {
-                Text("正在加载数据...")
-            } else {
-                ReportDetailView(reportDetail)
-            }
-        }
-    )
-}
-
-@Composable
-private fun Reports(
-    currentApp: AppEnum?,
-    onClickReport: (priority: Int) -> Unit,
-    onClickApp: (AppEnum) -> Unit
-) {
-    val apps = listOf(
-        AppEnum.Ins3, AppEnum.Ttd1, AppEnum.Ttd2, AppEnum.Fbd2
-    )
-    AppTabLayout(
-        items = apps.map {
-            TabItemData(text = it.name, id = it.ordinal)
-        },
-        onItemClick = { id ->
-            onClickApp(AppEnum.entries.find { it.ordinal == id }!!)
-        },
-        selectedIndex = currentApp?.let {
-            apps.indexOf(it)
-        } ?: -1
-    )
-    VerticalDivider(height = 16.px)
-    ReportPriorityItem(onClickReport = onClickReport)
-}
-
-@Composable
-private fun ReportPriorityItem(onClickReport: (priority: Int) -> Unit) {
-    Div(
-        attrs = {
-            classes(CommonStyles.horizontalFlow)
-        },
-        content = {
-            (0..3).forEach { priority ->
-                MaterialCardGridSmall(
-                    content = {
-                        Div(
-                            attrs = {
-                                classes(CommonStyles.horizontal, CommonStyles.justifyContentCenter)
-                                style {
-                                    paddingTop(4.px)
-                                    paddingBottom(4.px)
-                                    if (priority == 50) {
-                                        color(CommonColors.red)
-                                        fontWeight(500)
-                                    }
-                                }
-                            },
-                            content = {
-                                Text("P${priority}")
-                            }
+            TabContainer(
+                models =
+                    AppEnum.entries.map {
+                        TabModel(
+                            text = it.name,
+                            id = it.ordinal
                         )
-                    },
-                    onClick = {
-                        onClickReport(priority)
+                    }, onTabClick = { model ->
+                    currentApp = AppEnum.entries.find { it.ordinal == model.id }
+                    CoroutineScope(Dispatchers.Default).launch {
+                        val packageName = currentApp?.packageName ?: return@launch
+                        _reportDetail = cache[packageName]
+                        if (_reportDetail != null) {
+                            return@launch
+                        }
+                        val jobs = (0..1).map {
+                            async {
+                                DiskReportRepo.instance.listReportFiles(currentApp?.packageName, it)
+                            }
+                        }
+                        val reports = jobs.awaitAll()
+                        _reportDetail = reports.firstOrNull()?.let {
+                            it.copy(
+                                files = reports.mapNotNull { report -> report?.files }.flatten()
+                            )
+                        }?.also {
+                            cache[packageName] = it
+                        }
                     }
-                )
-            }
+                },
+                tabContentBuilder = {
+                    ReportDetailView(reportDetail)
+                })
         }
     )
 }
@@ -151,7 +98,7 @@ private fun ReportDetailView(detail: DiskReportDetail?) {
     detail.files.forEach { filePath ->
         Div(
             attrs = {
-                classes(TextStyles.text2)
+                classes(TextStyles.text3)
                 onClick {
                     window.open(
                         url = "${HttpEngine.baseUrl}download_file?file_path=${filePath.encodeURLQueryComponent()}&app_package=${detail.appPackage}&bucket=${detail.bucket}"
@@ -159,9 +106,9 @@ private fun ReportDetailView(detail: DiskReportDetail?) {
                 }
             },
             content = {
-                Text("$filePath (查看)")
+                Text("${filePath.substringAfterLast("/")} (查看)")
             }
         )
-        VerticalDivider(height = 3.px)
+        VerticalDivider(height = 4.px)
     }
 }
