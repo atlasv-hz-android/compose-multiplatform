@@ -14,7 +14,7 @@ import kotlinx.serialization.json.Json
  */
 class FileUploadRepository(private val client: HttpClient) {
     suspend fun queryHistory(): UploadRecordData {
-        return Json.decodeFromString(client.get("${COMPUTE_ENGINE_URL}/upload_history").bodyAsText())
+        return HttpEngine.json.decodeFromString(client.get("${HttpEngine.computeEngineUrlIp}/api/upload/history").bodyAsText())
     }
 
     companion object {
