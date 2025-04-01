@@ -1,7 +1,6 @@
 package com.atlasv.android.web.core.network
 
 import com.atlasv.android.web.common.HttpEngine
-import com.atlasv.android.web.common.HttpEngine.baseUrl
 import com.atlasv.android.web.core.util.asMultiPartFormDataContent
 import io.ktor.client.HttpClient
 import io.ktor.client.request.post
@@ -35,7 +34,7 @@ class FileUploader(private val client: HttpClient) {
 
     private suspend fun upload(file: File) {
         // https://ktor.io/docs/client-requests.html#upload_file
-        client.post("${baseUrl}upload_file") {
+        client.post("${HttpEngine.computeEngineUrlIp}/upload_file_to_oss") {
             setBody(file.asMultiPartFormDataContent())
         }
     }
