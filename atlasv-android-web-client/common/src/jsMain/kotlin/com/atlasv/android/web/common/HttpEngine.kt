@@ -15,6 +15,7 @@ object HttpEngine {
         }
     }
     const val COMPUTE_ENGINE_URL = "https://android-team-platform.etm.tech"
+    const val COMPUTE_ENGINE_URL_IP = "http://34.28.167.123:20001"
     val baseUrl = if (Constants.DEBUG) "http://127.0.0.1:8080/" else "https://atlasv-android-team.uc.r.appspot.com/"
 
 }
