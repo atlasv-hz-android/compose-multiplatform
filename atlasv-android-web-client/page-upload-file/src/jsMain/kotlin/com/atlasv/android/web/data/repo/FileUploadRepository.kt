@@ -1,6 +1,7 @@
 package com.atlasv.android.web.data.repo
 
 import com.atlasv.android.web.common.HttpEngine
+import com.atlasv.android.web.common.HttpEngine.COMPUTE_ENGINE_URL
 import com.atlasv.android.web.common.HttpEngine.baseUrl
 import com.atlasv.android.web.data.model.UploadRecordData
 import io.ktor.client.HttpClient
@@ -13,7 +14,7 @@ import kotlinx.serialization.json.Json
  */
 class FileUploadRepository(private val client: HttpClient) {
     suspend fun queryHistory(): UploadRecordData {
-        return Json.decodeFromString(client.get("${baseUrl}upload_history").bodyAsText())
+        return Json.decodeFromString(client.get("${COMPUTE_ENGINE_URL}/upload_history").bodyAsText())
     }
 
     companion object {
