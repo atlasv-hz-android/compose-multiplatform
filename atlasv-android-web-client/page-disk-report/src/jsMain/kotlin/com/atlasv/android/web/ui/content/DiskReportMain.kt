@@ -87,7 +87,8 @@ fun Body() {
                 },
                 tabContentBuilder = {
                     ReportDetailView(reportDetail)
-                })
+                }, initIndex = 0
+            )
         }
     )
 }

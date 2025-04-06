@@ -20,14 +20,15 @@ import org.w3c.dom.HTMLDivElement
 fun TabContainer(
     models: List<TabModel>,
     onTabClick: (TabModel) -> Unit,
-    tabContentBuilder: ContentBuilder<HTMLDivElement>
+    tabContentBuilder: ContentBuilder<HTMLDivElement>,
+    initIndex: Int,
 ) {
     Div(
         attrs = {
             classes(TabStyle.tabContainer)
         },
         content = {
-            TabHeader(models, onTabClick)
+            TabHeader(models, onTabClick, initIndex)
             TabContent(tabContentBuilder)
         }
     )
@@ -46,9 +47,9 @@ fun TabContent(tabContentBuilder: ContentBuilder<HTMLDivElement>) {
 }
 
 @Composable
-fun TabHeader(models: List<TabModel>, onTabClick: (TabModel) -> Unit) {
+fun TabHeader(models: List<TabModel>, onTabClick: (TabModel) -> Unit, initIndex: Int) {
     var selectedIndex by remember {
-        mutableIntStateOf(0)
+        mutableIntStateOf(initIndex)
     }
     Div(
         attrs = {

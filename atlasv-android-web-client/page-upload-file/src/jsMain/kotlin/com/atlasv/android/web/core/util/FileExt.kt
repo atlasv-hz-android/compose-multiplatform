@@ -11,12 +11,15 @@ import org.w3c.files.File
  * Created by weiping on 2025/2/10
  */
 
-suspend fun File.asMultiPartFormDataContent(): MultiPartFormDataContent {
+suspend fun File.asMultiPartFormDataContent(formMap: Map<String, String>): MultiPartFormDataContent {
     val file = this
     val buffer: ArrayBuffer = file.buffer()
     val byteArray = buffer.toByteArray()
     return MultiPartFormDataContent(
         formData {
+            formMap.entries.forEach {
+                append(it.key, it.value)
+            }
             append("file", byteArray, Headers.build {
                 append(HttpHeaders.ContentDisposition, "filename=\"${file.name}\"")
             })

@@ -18,14 +18,20 @@ import org.jetbrains.compose.web.dom.Text
 
 @Composable
 fun UploadHistory(data: UploadRecordData?) {
-    data ?: return
+    data?.items?.takeIf { it.isNotEmpty() } ?: return
     Div({
         classes(TextStyles.text1)
         style { paddingTop(32.px) }
     }) {
         Text("最近上传")
     }
+    VerticalDivider(12.px)
     data.items.forEach {
+        Div({
+            classes(TextStyles.subText)
+        }) {
+            Text(it.createAt)
+        }
         UploadRecordItemView(it, onClick = {
             window.open(url = it.fileUrl, target = ATarget.Blank.targetStr)
         })
@@ -34,7 +40,6 @@ fun UploadHistory(data: UploadRecordData?) {
 
 @Composable
 private fun UploadRecordItemView(item: UploadRecordItem, onClick: () -> Unit) {
-    VerticalDivider(4.px)
     Div(
         attrs = {
             classes(TextStyles.text3)
@@ -45,4 +50,5 @@ private fun UploadRecordItemView(item: UploadRecordItem, onClick: () -> Unit) {
     ) {
         Text(item.fileUrl)
     }
+    VerticalDivider(12.px)
 }
