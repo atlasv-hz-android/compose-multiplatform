@@ -5,7 +5,7 @@ package com.atlasv.android.web.common.constant
  */
 enum class AppEnum(val packageName: String, val firebaseProjectId: String) {
     Ins3(packageName = "instagram.video.downloader.story.saver.ig", firebaseProjectId = "etm-ins"),
-    MediaSaver(packageName = "instagram.video.downloader.story.saver.ig.insaver", firebaseProjectId = ""),
+    MediaSaver(packageName = "instagram.video.downloader.story.saver.ig.insaver", firebaseProjectId = "etm-ins"),
     Ttd1(
         packageName = "tiktok.video.downloader.nowatermark.tiktokdownload",
         firebaseProjectId = "tiktokdownloader-9eb12"
@@ -15,8 +15,8 @@ enum class AppEnum(val packageName: String, val firebaseProjectId: String) {
         firebaseProjectId = "tiktokdownloader-9eb12"
     ),
     Fbd2(packageName = "facebook.video.downloader.savefrom.fb.saver.fast", firebaseProjectId = "fastget-fb-downloader"),
-    Twd(packageName = "twittervideodownloader.twitter.videoindir.savegif.twdown", firebaseProjectId = ""),
-    Ptd(packageName = "pin.pinterest.video.downloader.forpinterest.pinsaver", firebaseProjectId = ""),
+    Twd(packageName = "twittervideodownloader.twitter.videoindir.savegif.twdown", firebaseProjectId = "twdown-35e94"),
+    Ptd(packageName = "pin.pinterest.video.downloader.forpinterest.pinsaver", firebaseProjectId = "instasaver-45ff5"),
     ShotCut(packageName = "video.editor.videomaker.effects.fx", firebaseProjectId = "fx-editor"),
 }
 

@@ -58,7 +58,7 @@ fun Body() {
     }.take(20)
     Style(CommonStyles)
     Style(TextStyles)
-    val apps = listOf(AppEnum.Ins3, AppEnum.Fbd2, AppEnum.Ttd1, AppEnum.Ttd2, AppEnum.ShotCut)
+    val apps = AppEnum.entries
     var inputContent by remember {
         mutableStateOf("")
     }
