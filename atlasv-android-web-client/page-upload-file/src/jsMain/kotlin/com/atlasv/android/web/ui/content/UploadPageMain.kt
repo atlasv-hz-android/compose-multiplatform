@@ -43,7 +43,7 @@ fun main() {
 
 @Composable
 fun Body() {
-    var uploadRecordData by remember { mutableStateOf<UploadRecordData?>(null) }
+    var _uploadRecordData by remember { mutableStateOf<Pair<BucketType, UploadRecordData>?>(null) }
     var loading by remember { mutableStateOf(false) }
     val tabModels = BucketType.entries.map {
         TabModel(
@@ -54,6 +54,7 @@ fun Body() {
     var currentUploadType by remember {
         mutableStateOf<BucketType?>(null)
     }
+    val uploadRecordData = _uploadRecordData?.takeIf { it.first == currentUploadType }?.second
     val onFileInputChange: (FileList?) -> Unit = {
         val files: List<File> = it?.asList().orEmpty()
         if (!loading && files.isNotEmpty()) {
@@ -62,7 +63,7 @@ fun Body() {
                 loading = true
                 FileUploader.instance.upload(files, currentUploadType)
                 loading = false
-                uploadRecordData = FileUploadRepository.instance.queryHistory(currentUploadType)
+                _uploadRecordData = FileUploadRepository.instance.queryHistory(currentUploadType)
             }
         }
     }
@@ -85,7 +86,7 @@ fun Body() {
                         it.ordinal == tabModel.id
                     }
                     CoroutineScope(Dispatchers.Default).launch {
-                        uploadRecordData = FileUploadRepository.instance.queryHistory(currentUploadType)
+                        _uploadRecordData = FileUploadRepository.instance.queryHistory(currentUploadType)
                     }
                 },
                 tabContentBuilder = {
@@ -99,11 +100,6 @@ fun Body() {
             )
         }
     )
-    LaunchedEffect(Unit) {
-        CoroutineScope(Dispatchers.Default).launch {
-            uploadRecordData = FileUploadRepository.instance.queryHistory(currentUploadType)
-        }
-    }
 }
 
 @Composable
