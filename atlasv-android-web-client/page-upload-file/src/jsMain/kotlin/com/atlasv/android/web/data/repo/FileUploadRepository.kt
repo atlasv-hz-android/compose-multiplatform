@@ -11,11 +11,13 @@ import io.ktor.client.statement.bodyAsText
  * Created by weiping on 2025/2/11
  */
 class FileUploadRepository(private val client: HttpClient) {
-    suspend fun queryHistory(type: BucketType?): UploadRecordData? {
+    suspend fun queryHistory(type: BucketType?): Pair<BucketType, UploadRecordData>? {
         type ?: return null
-        return HttpEngine.json.decodeFromString(
+        return HttpEngine.json.decodeFromString<UploadRecordData>(
             client.get("${HttpEngine.computeEngineUrlIp}/api/upload/history?bucket_type=${type.name}").bodyAsText()
-        )
+        ).let {
+            type to it
+        }
     }
 
     companion object {
