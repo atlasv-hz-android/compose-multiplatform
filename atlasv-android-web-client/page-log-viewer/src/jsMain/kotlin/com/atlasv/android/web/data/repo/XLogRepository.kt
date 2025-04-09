@@ -24,7 +24,7 @@ class XLogRepository(private val httpEngine: HttpEngine) {
             return null
         }
         return httpEngine.json.decodeFromString<StorageObjectResponse?>(
-            client.get("${baseUrl}list_logs?uid=$uid&app_package=${appPackage}").bodyAsText()
+            client.get("${HttpEngine.computeEngineUrl}/api/log/list_logs?uid=$uid&app_package=${appPackage}").bodyAsText()
         )?.copy(
             appPackage = appPackage
         )

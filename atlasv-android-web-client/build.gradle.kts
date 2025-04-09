@@ -74,7 +74,12 @@ subprojects {
         }
     }
 
-    if (project.name != "style-base" && project.name != "page-perf-overview" && project.name != "page-disk-report" && project.name != "page-upload-file") {
+    if (project.name != "style-base"
+        && project.name != "page-perf-overview"
+        && project.name != "page-disk-report"
+        && project.name != "page-upload-file"
+        && project.name != "page-log-viewer"
+        ) {
         project.tasks.create(name = "publishWebSite") {
             group = "atlasv-publish"
             publishWebSite(backendProjectName = "atlasv-android-web")
