@@ -31,21 +31,10 @@ class XLogRepository(private val httpEngine: HttpEngine) {
     }
 
     suspend fun queryHistoryUidList(): QueryRecordResponse? {
-        if (Constants.DEBUG) {
-            return QueryRecordResponse(
-                data = (1..20).map {
-                    QueryRecord(
-                        uid = "626082852982894592",
-                        appPackage = AppEnum.Ins3.packageName
-                    )
-                }
-            )
-        }
         return httpEngine.json.decodeFromString(
-            client.get("${baseUrl}api/xlog/history_uids").bodyAsText()
+            client.get("${HttpEngine.computeEngineUrl}/api/log/history_uids").bodyAsText()
         )
     }
-
 
     companion object {
         val instance by lazy {
