@@ -5,8 +5,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.atlasv.android.web.common.HttpEngine
 import com.atlasv.android.web.common.constant.AppEnum
 import com.atlasv.android.web.common.constant.getProductApiUrlV2
+import com.atlasv.android.web.data.model.ProductOperationRecord
+import com.atlasv.android.web.data.model.ProductOperationRecordResponse
 import com.atlasv.android.web.data.model.ProductResponse
 import com.atlasv.android.web.data.repo.ProductRepository
 import com.atlasv.android.web.ui.component.AppTabLayout
@@ -42,16 +45,24 @@ private fun queryProducts(appPackage: String?, onResult: (ProductResponse) -> Un
         onResult(ProductRepository.instance.queryProducts(appPackage))
     }
 }
+private fun getProductOperationRecords(appPackage: String?, onResult: (ProductOperationRecordResponse) -> Unit) {
+    appPackage ?: return
+    CoroutineScope(Dispatchers.Default).launch {
+        onResult(ProductRepository.instance.getProductOperationRecords(appPackage))
+    }
+}
 
 @Composable
 fun Body() {
     var productResponse by remember { mutableStateOf<ProductResponse?>(null) }
-    Style(CommonStyles)
-    Style(TextStyles)
+    var _operationRecords by remember { mutableStateOf<ProductOperationRecordResponse?>(null) }
     val apps = AppEnum.entries
     var currentApp by remember {
         mutableStateOf<AppEnum?>(null)
     }
+    val operationRecords = _operationRecords?.takeIf { it.appPackage == currentApp?.packageName }?.records
+    Style(CommonStyles)
+    Style(TextStyles)
     Div(
         attrs = {
             classes(CommonStyles.vertical)
@@ -78,6 +89,9 @@ fun Body() {
                                 productResponse = it
                             }
                         )
+                        getProductOperationRecords(currentApp?.packageName) {
+                            _operationRecords = it
+                        }
                     }
                 },
                 selectedIndex = currentApp?.let {
@@ -95,8 +109,41 @@ fun Body() {
             }
             VerticalDivider(height = 16.px)
             ProductListView(productResponse)
+            ProductOperationListView(operationRecords)
         }
     )
+}
+
+@Composable
+private fun ProductOperationListView(records: List<ProductOperationRecord>?) {
+    records?.takeIf { it.isNotEmpty() } ?: return
+    Div({
+        classes(TextStyles.text1)
+        style { paddingTop(32.px) }
+    }) {
+        Text("最近上传")
+    }
+    VerticalDivider(12.px)
+    records.forEach {
+        Div({
+            classes(TextStyles.subText)
+        }) {
+            Text(it.createAt)
+        }
+        OperationRecordItemView(it)
+    }
+}
+
+@Composable
+private fun OperationRecordItemView(item: ProductOperationRecord) {
+    Div(
+        attrs = {
+            classes(TextStyles.text3)
+        },
+    ) {
+        Text(item.description)
+    }
+    VerticalDivider(4.px)
 }
 
 @Composable
@@ -115,7 +162,7 @@ private fun AddProductTip(appEnum: AppEnum?) {
             classes(TextStyles.subText)
         },
         content = {
-            Text("https://atlasv-android-team.uc.r.appspot.com/api/purchase/add_products?app_package=${appEnum.packageName}&product_id=&entitlement_id=")
+            Text("${HttpEngine.computeEngineUrl}/api/purchase/add_products?app_package=${appEnum.packageName}&product_id=&entitlement_id=")
         }
     )
 }

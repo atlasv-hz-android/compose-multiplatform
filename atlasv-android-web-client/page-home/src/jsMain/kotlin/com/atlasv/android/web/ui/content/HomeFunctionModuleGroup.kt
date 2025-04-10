@@ -37,7 +37,7 @@ data class HomeFunctionModuleGroup(val title: String, val modules: List<HomeFunc
                         ), HomeFunctionModule(
                             title = "商品管理",
                             desc = "查看应用内订阅项、商品项",
-                            targetUrl = "${HttpEngine.baseUrl}purchase_products_page"
+                            targetUrl = "${HttpEngine.computeEngineUrl}/purchase_products_page"
                         )
                     )
                 ),

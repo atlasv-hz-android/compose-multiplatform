@@ -79,6 +79,7 @@ subprojects {
         && project.name != "page-disk-report"
         && project.name != "page-upload-file"
         && project.name != "page-log-viewer"
+        && project.name != "page-purchase-products"
         ) {
         project.tasks.create(name = "publishWebSite") {
             group = "atlasv-publish"
