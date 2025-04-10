@@ -20,7 +20,7 @@ class DiskReportRepo(private val httpEngine: HttpEngine) {
         appPackage ?: return null
         return httpEngine.json.decodeFromString(
             httpEngine.client.get(
-                "${HttpEngine.COMPUTE_ENGINE_URL}/api/perf/list_disk_report_files?" +
+                "${HttpEngine.computeEngineUrl}/api/perf/list_disk_report_files?" +
                         "app_package=$appPackage" +
                         "&priority=P${priority}"
             ).bodyAsText()

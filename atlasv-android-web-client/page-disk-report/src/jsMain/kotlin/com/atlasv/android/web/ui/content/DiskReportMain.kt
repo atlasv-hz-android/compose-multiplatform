@@ -19,8 +19,6 @@ import io.ktor.http.encodeURLQueryComponent
 import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.css.Style
 import org.jetbrains.compose.web.css.px
@@ -70,24 +68,14 @@ fun Body() {
                         if (_reportDetail != null) {
                             return@launch
                         }
-                        val jobs = (0..1).map {
-                            async {
-                                DiskReportRepo.instance.listReportFiles(currentApp?.packageName, it)
-                            }
-                        }
-                        val reports = jobs.awaitAll()
-                        _reportDetail = reports.firstOrNull()?.let {
-                            it.copy(
-                                files = reports.mapNotNull { report -> report?.files }.flatten()
-                            )
-                        }?.also {
+                        _reportDetail = DiskReportRepo.instance.listReportFiles(currentApp?.packageName, 0)?.also {
                             cache[packageName] = it
                         }
                     }
                 },
                 tabContentBuilder = {
                     ReportDetailView(reportDetail)
-                }, initIndex = 0
+                }, initIndex = -1
             )
         }
     )
