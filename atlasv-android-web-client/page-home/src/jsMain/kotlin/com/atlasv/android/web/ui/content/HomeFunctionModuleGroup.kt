@@ -33,7 +33,7 @@ data class HomeFunctionModuleGroup(val title: String, val modules: List<HomeFunc
                         ), HomeFunctionModule(
                             title = "日志查看器",
                             desc = "查看用户上传的日志",
-                            targetUrl = "${HttpEngine.baseUrl}log_viewer_page"
+                            targetUrl = "${HttpEngine.computeEngineUrl}/log_viewer_page"
                         ), HomeFunctionModule(
                             title = "商品管理",
                             desc = "查看应用内订阅项、商品项",

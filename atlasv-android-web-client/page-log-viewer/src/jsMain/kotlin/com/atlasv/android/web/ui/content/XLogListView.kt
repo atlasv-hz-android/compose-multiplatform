@@ -46,9 +46,10 @@ private fun XLogListItemView(item: StorageObject, appPackage: String?) {
     }) {
         Text("${item.path}(${item.size} B)")
         HorizontalDivider(width = 10.px)
+        val downloadBaseUrl = "${HttpEngine.computeEngineUrl}/api/log/download_xlog"
         listOf(
-            "下载文件" to "${HttpEngine.baseUrl}download_xlog?blob_name=${item.path.encodeURLQueryComponent()}&app_package=${appPackage}&download=1",
-            "在线查看" to "${HttpEngine.baseUrl}download_xlog?blob_name=${item.path.encodeURLQueryComponent()}&app_package=${appPackage}",
+            "下载文件" to "$downloadBaseUrl?blob_name=${item.path.encodeURLQueryComponent()}&app_package=${appPackage}&download=1",
+            "在线查看" to "$downloadBaseUrl?blob_name=${item.path.encodeURLQueryComponent()}&app_package=${appPackage}",
         ).take(if (item.size < 5 * 1024 * 1024) 2 else 1).forEach { (text, url) ->
             Div({
                 classes(TextStyles.textBlue, TextStyles.text1)
