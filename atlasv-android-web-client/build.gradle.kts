@@ -74,20 +74,8 @@ subprojects {
         }
     }
 
-    if (project.name != "style-base"
-        && project.name != "page-perf-overview"
-        && project.name != "page-disk-report"
-        && project.name != "page-upload-file"
-        && project.name != "page-log-viewer"
-        && project.name != "page-purchase-products"
-        ) {
-        project.tasks.create(name = "publishWebSite") {
-            group = "atlasv-publish"
-            publishWebSite(backendProjectName = "atlasv-android-web")
-        }.dependsOn("jsBrowserDistribution")
-    }
     if (project.name != "style-base") {
-        project.tasks.create(name = "publishWebSiteNew") {
+        project.tasks.create(name = "publishWebSite") {
             group = "atlasv-publish"
             publishWebSite(backendProjectName = "android-team-service")
         }.dependsOn("jsBrowserDistribution")

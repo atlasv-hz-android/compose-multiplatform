@@ -5,4 +5,3 @@
 ./gradlew :page-perf-overview:jsBrowserDistribution
 ./gradlew :page-disk-report:jsBrowserDistribution
 ./gradlew publishWebSite
-./gradlew publishWebSiteNew
