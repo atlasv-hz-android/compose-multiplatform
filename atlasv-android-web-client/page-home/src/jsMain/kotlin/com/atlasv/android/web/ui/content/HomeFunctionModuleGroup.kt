@@ -44,7 +44,7 @@ data class HomeFunctionModuleGroup(val title: String, val modules: List<HomeFunc
                 HomeFunctionModuleGroup(
                     title = "通用工具", modules = listOf(
                         HomeFunctionModule(
-                            title = "文件上传(新)",
+                            title = "文件上传",
                             desc = "通用的文件上传",
                             targetUrl = "${HttpEngine.COMPUTE_ENGINE_URL_IP}/upload_file_page"
                         )

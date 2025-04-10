@@ -6,8 +6,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.atlasv.android.web.common.data.model.IapUser
-import com.atlasv.android.web.common.data.repo.IapUserRepository
+import com.atlasv.android.web.common.HttpEngine
+import com.atlasv.android.web.common.data.model.User
+import com.atlasv.android.web.common.data.repo.UserRepository
+import com.atlasv.android.web.ui.component.HorizontalDivider
 import com.atlasv.android.web.ui.component.MaterialCardGrid
 import com.atlasv.android.web.ui.component.VerticalDivider
 import com.atlasv.android.web.ui.style.CommonColors
@@ -27,6 +29,7 @@ import org.jetbrains.compose.web.css.paddingTop
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.css.width
+import org.jetbrains.compose.web.dom.A
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.renderComposable
@@ -46,15 +49,15 @@ fun Body() {
 
 @Composable
 private fun HomeModuleGroups() {
-    var iapUser by remember {
-        mutableStateOf<IapUser?>(null)
+    var user by remember {
+        mutableStateOf<User?>(null)
     }
     Div(
         attrs = {
             classes(CommonStyles.vertical)
         },
         content = {
-            UserInfoCard(iapUser)
+            UserInfoCard(user)
             VerticalDivider(height = 20.px)
             HomeFunctionModuleGroup.homeModuleGroups.forEach {
                 VerticalDivider(height = 36.px)
@@ -64,13 +67,13 @@ private fun HomeModuleGroups() {
     )
     LaunchedEffect(Unit) {
         CoroutineScope(Dispatchers.Default).launch {
-            iapUser = IapUserRepository.instance.getUser()
+            user = UserRepository.instance.getUser()
         }
     }
 }
 
 @Composable
-private fun UserInfoCard(iapUser: IapUser?) {
+private fun UserInfoCard(user: User?) {
     Div(
         attrs = {
             classes(CommonStyles.horizontal, TextStyles.text3)
@@ -80,12 +83,23 @@ private fun UserInfoCard(iapUser: IapUser?) {
             }
         },
         content = {
-            val text = iapUser?.shortEmail?.let {
-                "Welcome, ${iapUser.shortEmail}"
+            val text = user?.name?.let {
+                "Welcome, ${user.name}"
             } ?: "Welcome"
             Text(text)
+            if (user != null) {
+                HorizontalDivider(width = 6.px)
+                LogoutView()
+            }
         }
     )
+}
+
+@Composable
+private fun LogoutView() {
+    A(href = "${HttpEngine.computeEngineUrl}/logout") {
+        Text("登出")
+    }
 }
 
 @Composable
