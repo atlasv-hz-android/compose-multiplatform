@@ -90,7 +90,7 @@ private fun ReportDetailView(detail: DiskReportDetail?) {
                 classes(TextStyles.text3)
                 onClick {
                     window.open(
-                        url = "${HttpEngine.baseUrl}download_file?file_path=${filePath.encodeURLQueryComponent()}&app_package=${detail.appPackage}&bucket=${detail.bucket}"
+                        url = "${HttpEngine.computeEngineUrl}/download_file?file_path=${filePath.encodeURLQueryComponent()}&app_package=${detail.appPackage}&bucket=${detail.bucket}"
                     )
                 }
             },
