@@ -21,6 +21,8 @@ subprojects {
     }
 }
 
+private val webVersion = 2
+
 subprojects {
     fun publishWebSite(backendProjectName: String) {
         val productionExecutableDir = project.file("build/dist/js/productionExecutable/")
@@ -32,10 +34,11 @@ subprojects {
         if (!jsFile.exists()) {
             return
         }
+        val targetJsFileName = "${project.name}_${webVersion}.js"
         copy {
             from(indexFile.also {
                 var indexContent = indexFile.readText()
-                indexContent = indexContent.replace("\"${project.name}.js\"", "\"static/js/${project.name}.js\"")
+                indexContent = indexContent.replace("\"${project.name}.js\"", "\"static/js/${targetJsFileName}\"")
                 productionExecutableDir.listFiles { file ->
                     file.name.endsWith(".css")
                 }?.forEach { cssFile ->
@@ -63,6 +66,7 @@ subprojects {
                 jsFile.writeText(jsFileContent)
             })
             into("../../../${backendProjectName}/static/js")
+            rename(jsFile.name, targetJsFileName)
         }
         copy {
             from(productionExecutableDir) {
@@ -78,6 +82,6 @@ subprojects {
         project.tasks.create(name = "publishWebSite") {
             group = "atlasv-publish"
             publishWebSite(backendProjectName = "android-team-service")
-        }.dependsOn("jsBrowserDistribution")
+        }
     }
 }
