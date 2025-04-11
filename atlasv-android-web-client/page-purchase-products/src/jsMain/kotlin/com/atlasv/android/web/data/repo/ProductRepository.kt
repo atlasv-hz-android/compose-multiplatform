@@ -25,6 +25,15 @@ class ProductRepository(private val httpEngine: HttpEngine) {
         )
     }
 
+    suspend fun addProduct(
+        appPackage: String,
+        productId: String,
+        entitlementId: String
+    ): String {
+        return httpEngine.client.get("${HttpEngine.computeEngineUrl}/api/purchase/add_product?app_package=$appPackage&product_id=$productId&entitlement_id=$entitlementId")
+            .bodyAsText()
+    }
+
     companion object {
         val instance by lazy {
             ProductRepository(HttpEngine)

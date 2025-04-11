@@ -14,6 +14,7 @@ import org.jetbrains.compose.web.css.border
 import org.jetbrains.compose.web.css.borderRadius
 import org.jetbrains.compose.web.css.boxSizing
 import org.jetbrains.compose.web.css.color
+import org.jetbrains.compose.web.css.cursor
 import org.jetbrains.compose.web.css.display
 import org.jetbrains.compose.web.css.flexDirection
 import org.jetbrains.compose.web.css.flexFlow
@@ -147,6 +148,10 @@ object CommonStyles : StyleSheet() {
     }
 
     val primaryButton by style {
+        display(DisplayStyle.Flex)
+        flexDirection(FlexDirection.Row)
+        alignItems(AlignItems.Center)
+        justifyContent(JustifyContent.Center)
         boxSizing("border-box")
         borderRadius(12.px)
         backgroundColor(CommonColors.primaryBlue)
@@ -158,6 +163,7 @@ object CommonStyles : StyleSheet() {
         paddingLeft(16.px)
         paddingRight(16.px)
         property("box-shadow", "1px 1px ${rgba(0, 0, 0, .2)}")
+        cursor("pointer")
     }
 
     val checkBox by style {
