@@ -34,6 +34,14 @@ class ProductRepository(private val httpEngine: HttpEngine) {
             .bodyAsText()
     }
 
+    suspend fun deleteProduct(
+        appPackage: String,
+        productId: String,
+    ): String {
+        return httpEngine.client.get("${HttpEngine.computeEngineUrl}/api/purchase/delete_product?app_package=$appPackage&product_id=$productId")
+            .bodyAsText()
+    }
+
     companion object {
         val instance by lazy {
             ProductRepository(HttpEngine)

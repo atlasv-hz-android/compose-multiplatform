@@ -17,6 +17,7 @@ import com.atlasv.android.web.ui.component.VerticalDivider
 import com.atlasv.android.web.ui.component.dialog.ModalDialog
 import com.atlasv.android.web.ui.component.table.TableView
 import com.atlasv.android.web.ui.model.TabItemData
+import com.atlasv.android.web.ui.model.TableCellModel
 import com.atlasv.android.web.ui.style.CommonColors
 import com.atlasv.android.web.ui.style.CommonStyles
 import com.atlasv.android.web.ui.style.TextStyles
@@ -29,6 +30,7 @@ import org.jetbrains.compose.web.attributes.required
 import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.Style
 import org.jetbrains.compose.web.css.color
+import org.jetbrains.compose.web.css.cursor
 import org.jetbrains.compose.web.css.fontSize
 import org.jetbrains.compose.web.css.fontWeight
 import org.jetbrains.compose.web.css.paddingBottom
@@ -76,6 +78,16 @@ private fun addProduct(
     }
 }
 
+private fun deleteProduct(
+    appPackage: String,
+    productId: String,
+    onResult: (String) -> Unit
+) {
+    CoroutineScope(Dispatchers.Default).launch {
+        onResult(ProductRepository.instance.deleteProduct(appPackage, productId))
+    }
+}
+
 @Composable
 fun Body() {
     var productResponse by remember { mutableStateOf<ProductResponse?>(null) }
@@ -87,6 +99,10 @@ fun Body() {
     val operationRecords = _operationRecords?.takeIf { it.appPackage == currentApp?.packageName }?.records
     var showAddProductDialog by remember {
         mutableStateOf(false)
+    }
+
+    var showDetailProductId by remember {
+        mutableStateOf("")
     }
     Style(CommonStyles)
     Style(TextStyles)
@@ -134,7 +150,9 @@ fun Body() {
                 VerticalDivider(height = 6.px)
             }
             VerticalDivider(height = 16.px)
-            ProductListView(productResponse)
+            ProductListView(productResponse, onClickProduct = {
+                showDetailProductId = it
+            })
             if (currentApp != null) {
                 AddProductButton(onClick = {
                     showAddProductDialog = true
@@ -148,12 +166,102 @@ fun Body() {
             addProduct(appPackage, productId, entitlementId) {
                 getProductOperationRecords(appPackage) {
                     _operationRecords = it
+                    showAddProductDialog = false
                 }
             }
-            showAddProductDialog = false
         }, onDismiss = {
             showAddProductDialog = false
         })
+    }
+    if (showDetailProductId.isNotEmpty()) {
+        ProductDetailDialog(currentApp?.packageName, showDetailProductId, onConfirm = { appPackage, productId ->
+            deleteProduct(appPackage, productId) {
+                getProductOperationRecords(appPackage) {
+                    _operationRecords = it
+                    showDetailProductId = ""
+                }
+            }
+        }, onDismiss = {
+            showDetailProductId = ""
+        })
+    }
+}
+
+@Composable
+private fun ProductDetailDialog(
+    appPackage: String?,
+    productId: String,
+    onConfirm: (String, String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    appPackage ?: return
+    ModalDialog {
+        Div(
+            attrs = {
+                classes(CommonStyles.vertical, CommonStyles.alignItemsCenter)
+                style {
+                    width(480.px)
+                }
+            },
+            content = {
+                Label(
+                    attrs = {
+                        style {
+                            color(CommonColors.red)
+                            fontSize(24.px)
+                            fontWeight(500)
+                        }
+                    },
+                    content = {
+                        Text("删除商品")
+                    }
+                )
+                Label(
+                    attrs = {
+                        classes(TextStyles.text3)
+                    },
+                    content = {
+                        Text(appPackage)
+                    })
+
+                VerticalDivider(height = 16.px)
+
+                Label(
+                    attrs = {
+                        classes(TextStyles.text1)
+                    },
+                    content = {
+                        Text("确认删除商品${productId}?")
+                    })
+
+                VerticalDivider(height = 32.px)
+                PrimaryButton(
+                    text = "确定",
+                    enabled = true,
+                    onClick = {
+                        if (productId.isNotEmpty()) {
+                            onConfirm(appPackage, productId)
+                        }
+                    },
+                    customStyle = {
+                        width(360.px)
+                        paddingTop(8.px)
+                        paddingBottom(8.px)
+                    }
+                )
+                VerticalDivider(height = 16.px)
+                PrimaryButton(
+                    text = "取消",
+                    enabled = true,
+                    onClick = onDismiss,
+                    customStyle = {
+                        width(360.px)
+                        paddingTop(8.px)
+                        paddingBottom(8.px)
+                    }
+                )
+            }
+        )
     }
 }
 
@@ -309,9 +417,9 @@ private fun ProductOperationListView(records: List<ProductOperationRecord>?) {
         classes(TextStyles.text1)
         style { paddingTop(32.px) }
     }) {
-        Text("最近上传")
+        Text("操作记录")
     }
-    VerticalDivider(12.px)
+    VerticalDivider(6.px)
     records.forEach {
         Div({
             classes(TextStyles.subText)
@@ -331,7 +439,7 @@ private fun OperationRecordItemView(item: ProductOperationRecord) {
     ) {
         Text(item.description)
     }
-    VerticalDivider(4.px)
+    VerticalDivider(8.px)
 }
 
 @Composable
@@ -356,7 +464,7 @@ private fun Link(text: String, url: String) {
 
 
 @Composable
-private fun ProductListView(productResponse: ProductResponse?) {
+private fun ProductListView(productResponse: ProductResponse?, onClickProduct: (productId: String) -> Unit) {
     productResponse ?: return
     Div(
         attrs = {
@@ -366,8 +474,35 @@ private fun ProductListView(productResponse: ProductResponse?) {
             }
         },
         content = {
-            TableView(model = productResponse.asTableModel(), smallTextMode = false)
+            TableView(
+                model = productResponse.asTableModel(),
+                smallTextMode = false,
+                cellContentBuilder = { index, item ->
+                    CellContent(index, item, onClick = { onClickProduct(item.text) })
+                })
         })
+}
+
+@Composable
+private fun CellContent(index: Int, model: TableCellModel, onClick: () -> Unit) {
+    if (index == 0) { // 商品列
+        Div(
+            attrs = {
+                style {
+                    fontSize(14.px)
+                    cursor("pointer")
+                }
+                onClick {
+                    onClick()
+                }
+            },
+            content = {
+                Text(model.text)
+            }
+        )
+    } else {
+        Text(model.text)
+    }
 }
 
 @Composable

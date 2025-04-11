@@ -21,7 +21,7 @@ subprojects {
     }
 }
 
-private val webVersion = 3
+private val webVersion = 4
 
 subprojects {
     fun publishWebSite(backendProjectName: String) {
