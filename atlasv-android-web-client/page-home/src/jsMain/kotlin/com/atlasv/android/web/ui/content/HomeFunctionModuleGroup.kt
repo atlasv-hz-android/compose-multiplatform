@@ -37,21 +37,16 @@ data class HomeFunctionModuleGroup(val title: String, val modules: List<HomeFunc
                         ), HomeFunctionModule(
                             title = "商品管理",
                             desc = "查看应用内订阅项、商品项",
-                            targetUrl = "${HttpEngine.baseUrl}purchase_products_page"
+                            targetUrl = "${HttpEngine.computeEngineUrl}/purchase_products_page"
                         )
                     )
                 ),
                 HomeFunctionModuleGroup(
                     title = "通用工具", modules = listOf(
                         HomeFunctionModule(
-                            title = "文件上传(新)",
-                            desc = "通用的文件上传",
-                            targetUrl = "${HttpEngine.COMPUTE_ENGINE_URL_IP}/upload_file_page"
-                        ),
-                        HomeFunctionModule(
                             title = "文件上传",
                             desc = "通用的文件上传",
-                            targetUrl = "${HttpEngine.baseUrl}upload_file_page"
+                            targetUrl = "${HttpEngine.COMPUTE_ENGINE_URL_IP}/upload_file_page"
                         )
                     )
                 )

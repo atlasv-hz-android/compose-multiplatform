@@ -2,6 +2,7 @@ package com.atlasv.android.web.ui.component.table
 
 import androidx.compose.runtime.Composable
 import com.atlasv.android.web.ui.component.VerticalDivider
+import com.atlasv.android.web.ui.model.TableCellModel
 import com.atlasv.android.web.ui.model.TableModel
 import com.atlasv.android.web.ui.model.TableRowModel
 import com.atlasv.android.web.ui.style.CommonColors
@@ -32,7 +33,13 @@ import kotlin.math.roundToInt
  * Created by weiping on 2025/3/10
  */
 @Composable
-fun TableView(model: TableModel, smallTextMode: Boolean) {
+fun TableView(
+    model: TableModel,
+    smallTextMode: Boolean,
+    cellContentBuilder: @Composable (index: Int, item: TableCellModel) -> Unit = { _, item ->
+        Text(item.text)
+    }
+) {
     Div(
         attrs = {
             classes(CommonStyles.p70, CommonStyles.card, CommonStyles.vertical)
@@ -53,7 +60,8 @@ fun TableView(model: TableModel, smallTextMode: Boolean) {
                     rowModel,
                     smallTextMode = smallTextMode,
                     isHeader = rowModel.isHeader,
-                    spanCount = model.spanCount
+                    spanCount = model.spanCount,
+                    cellContentBuilder = cellContentBuilder
                 )
                 if (rowModel.isGroupEnd && index != model.rows.lastIndex) {
                     VerticalDivider(
@@ -67,7 +75,13 @@ fun TableView(model: TableModel, smallTextMode: Boolean) {
 }
 
 @Composable
-fun TableRowView(rowModel: TableRowModel, smallTextMode: Boolean, isHeader: Boolean, spanCount: Int) {
+fun TableRowView(
+    rowModel: TableRowModel,
+    smallTextMode: Boolean,
+    isHeader: Boolean,
+    spanCount: Int,
+    cellContentBuilder: @Composable (index: Int, item: TableCellModel) -> Unit
+) {
     Div(
         attrs = {
             classes(CommonStyles.horizontal)
@@ -87,7 +101,7 @@ fun TableRowView(rowModel: TableRowModel, smallTextMode: Boolean, isHeader: Bool
             rowModel.cells.forEachIndexed { index, item ->
                 TableCellView(
                     content = {
-                        Text(item.text)
+                        cellContentBuilder(index, item)
                     }, fontWeight = if (item.isHeaderCell) 500 else 400, isEndCol = index == rowModel.cells.lastIndex,
                     screenshotMode = smallTextMode,
                     percent = (100f / spanCount).roundToInt()

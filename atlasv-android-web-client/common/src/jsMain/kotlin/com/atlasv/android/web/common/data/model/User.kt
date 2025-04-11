@@ -9,9 +9,4 @@ import kotlinx.serialization.Serializable
  * Created by weiping on 2025/3/12
  */
 @Serializable
-data class IapUser(
-    val email: String,
-    val id: String
-) {
-    val shortEmail = email.substringAfter("accounts.google.com:")
-}
+data class User(val name: String)

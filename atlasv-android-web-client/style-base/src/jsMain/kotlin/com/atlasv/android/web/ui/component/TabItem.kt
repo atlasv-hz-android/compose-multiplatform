@@ -3,7 +3,6 @@ package com.atlasv.android.web.ui.component
 import androidx.compose.runtime.Composable
 import com.atlasv.android.web.ui.model.TabItemData
 import com.atlasv.android.web.ui.style.CommonStyles
-import org.jetbrains.compose.web.css.StyleScope
 import org.jetbrains.compose.web.css.fontWeight
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.width

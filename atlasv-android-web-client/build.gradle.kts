@@ -21,6 +21,8 @@ subprojects {
     }
 }
 
+private val webVersion = 4
+
 subprojects {
     fun publishWebSite(backendProjectName: String) {
         val productionExecutableDir = project.file("build/dist/js/productionExecutable/")
@@ -32,10 +34,11 @@ subprojects {
         if (!jsFile.exists()) {
             return
         }
+        val targetJsFileName = "${project.name}_${webVersion}.js"
         copy {
             from(indexFile.also {
                 var indexContent = indexFile.readText()
-                indexContent = indexContent.replace("\"${project.name}.js\"", "\"static/js/${project.name}.js\"")
+                indexContent = indexContent.replace("\"${project.name}.js\"", "\"static/js/${targetJsFileName}\"")
                 productionExecutableDir.listFiles { file ->
                     file.name.endsWith(".css")
                 }?.forEach { cssFile ->
@@ -63,6 +66,7 @@ subprojects {
                 jsFile.writeText(jsFileContent)
             })
             into("../../../${backendProjectName}/static/js")
+            rename(jsFile.name, targetJsFileName)
         }
         copy {
             from(productionExecutableDir) {
@@ -74,21 +78,10 @@ subprojects {
         }
     }
 
-    if (project.name != "style-base"
-        && project.name != "page-perf-overview"
-        && project.name != "page-disk-report"
-        && project.name != "page-upload-file"
-        && project.name != "page-log-viewer"
-        ) {
+    if (project.name != "style-base") {
         project.tasks.create(name = "publishWebSite") {
             group = "atlasv-publish"
-            publishWebSite(backendProjectName = "atlasv-android-web")
-        }.dependsOn("jsBrowserDistribution")
-    }
-    if (project.name != "style-base") {
-        project.tasks.create(name = "publishWebSiteNew") {
-            group = "atlasv-publish"
             publishWebSite(backendProjectName = "android-team-service")
-        }.dependsOn("jsBrowserDistribution")
+        }
     }
 }
