@@ -10,6 +10,7 @@ import com.atlasv.android.web.common.constant.AppEnum
 import com.atlasv.android.web.common.constant.getXLogStorageBaseUrl
 import com.atlasv.android.web.data.model.QueryRecord
 import com.atlasv.android.web.data.model.StorageObjectResponse
+import com.atlasv.android.web.data.model.VipInfo
 import com.atlasv.android.web.data.repo.XLogRepository
 import com.atlasv.android.web.ui.component.AppTabLayout
 import com.atlasv.android.web.ui.component.HorizontalDivider
@@ -32,6 +33,7 @@ import org.jetbrains.compose.web.css.paddingRight
 import org.jetbrains.compose.web.css.paddingTop
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.A
+import org.jetbrains.compose.web.dom.Br
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Input
 import org.jetbrains.compose.web.dom.Text
@@ -46,6 +48,7 @@ fun main() {
 @Composable
 fun Body() {
     var xLogResponse by remember { mutableStateOf<StorageObjectResponse?>(null) }
+    var vipInfo by remember { mutableStateOf<VipInfo?>(null) }
     var loading by remember { mutableStateOf(false) }
     var currentApp by remember {
         mutableStateOf<AppEnum?>(null)
@@ -68,6 +71,12 @@ fun Body() {
         }
     }
 
+    val queryVipInfoAction: (String) -> Unit = { uid: String ->
+        CoroutineScope(Dispatchers.Default).launch {
+            vipInfo = XLogRepository.instance.queryVipInfo(userId = uid)
+        }
+    }
+
     val queryLogsAction: (String) -> Unit = { uid: String ->
         CoroutineScope(Dispatchers.Default).launch {
             loading = true
@@ -76,6 +85,7 @@ fun Body() {
             if (!xLogResponse?.items.isNullOrEmpty()) {
                 queryUidAction()
             }
+            queryVipInfoAction(uid)
         }
     }
 
@@ -121,7 +131,7 @@ fun Body() {
                 loading = loading,
                 enable = !loading && currentApp != null
             )
-
+            VipInfo(vipInfo)
             if (recentlyUidList.isNotEmpty()) {
                 VerticalDivider(height = 16.px)
                 Title("历史查询Uid")
@@ -139,6 +149,44 @@ fun Body() {
 }
 
 @Composable
+private fun VipInfo(info: VipInfo?) {
+    info ?: return
+    VerticalDivider(height = 16.px)
+    Div(
+        attrs = {
+            classes(TextStyles.text2)
+        },
+        content = {
+            Text("订单号：${info.TransactionID}")
+            Br()
+            Text("初始订单号：${info.original_transaction_id}")
+            Br()
+            Text("购买时间：${info.purchase_date}")
+            Br()
+            Text("过期时间：${info.expires_date}")
+            Br()
+            Text("退款时间：${info.cancellation_date_ms}")
+            Br()
+            Text("权益ID：${info.entitlement_id}")
+            Br()
+            Text("自动续订：${info.auto_renew}")
+            Br()
+            Text("自动续订状态变更时间：${info.auto_renew_status_change_date_ms}")
+            Br()
+            Text("是否处于体验价：${info.is_in_intro_offer_period}")
+            Br()
+            Text("是否处于试用期：${info.is_in_trial_period}")
+            Br()
+            Text("支付状态：${info.payment_state}")
+            Br()
+            Text("商品ID：${info.product_identifier}")
+            Br()
+            Text("用户ID：${info.user_id}")
+        }
+    )
+}
+
+@Composable
 private fun HistoryUidListView(queryRecords: List<QueryRecord>, onClick: (String) -> Unit) {
     Div(
         attrs = {
@@ -146,13 +194,14 @@ private fun HistoryUidListView(queryRecords: List<QueryRecord>, onClick: (String
         },
         content = {
             queryRecords.forEach {
-                Div(attrs = {
-                    style {
-                        paddingLeft(4.px)
-                        paddingRight(4.px)
-                        paddingBottom(8.px)
-                    }
-                },
+                Div(
+                    attrs = {
+                        style {
+                            paddingLeft(4.px)
+                            paddingRight(4.px)
+                            paddingBottom(8.px)
+                        }
+                    },
                     content = {
                         HistoryUidItemView(it.uid, onClick = { uid ->
                             onClick(uid)
