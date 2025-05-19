@@ -18,6 +18,7 @@ enum class AppEnum(val packageName: String, val firebaseProjectId: String) {
     Twd(packageName = "twittervideodownloader.twitter.videoindir.savegif.twdown", firebaseProjectId = "twdown-35e94"),
     Ptd(packageName = "pin.pinterest.video.downloader.forpinterest.pinsaver", firebaseProjectId = "instasaver-45ff5"),
     ShotCut(packageName = "video.editor.videomaker.effects.fx", firebaseProjectId = "fx-editor"),
+    Collart(packageName = "free.ai.photo.generator.collart.ai", firebaseProjectId = "fx-editor"),
 }
 
 fun AppEnum.getFirebaseStorageUrl(): String {

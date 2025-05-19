@@ -3,6 +3,8 @@ package com.atlasv.android.web.data.repo
 import com.atlasv.android.web.common.HttpEngine
 import com.atlasv.android.web.data.model.QueryRecordResponse
 import com.atlasv.android.web.data.model.StorageObjectResponse
+import com.atlasv.android.web.data.model.VipInfo
+import com.atlasv.android.web.data.model.VipUserInfo
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 
@@ -30,6 +32,18 @@ class XLogRepository(private val httpEngine: HttpEngine) {
     suspend fun queryHistoryUidList(): QueryRecordResponse? {
         return httpEngine.json.decodeFromString(
             client.get("${HttpEngine.computeEngineUrl}/api/log/history_uids").bodyAsText()
+        )
+    }
+
+    suspend fun queryVipInfo(userId: String): VipInfo? {
+        return httpEngine.json.decodeFromString(
+            client.get("${HttpEngine.computeEngineUrl}/api/vip/query_vip_info?user_id=$userId").bodyAsText()
+        )
+    }
+
+    suspend fun queryVipUserInfo(orderId: String): VipUserInfo? {
+        return httpEngine.json.decodeFromString(
+            client.get("${HttpEngine.computeEngineUrl}/api/vip/query_vip_user_info?order_id=$orderId").bodyAsText()
         )
     }
 
