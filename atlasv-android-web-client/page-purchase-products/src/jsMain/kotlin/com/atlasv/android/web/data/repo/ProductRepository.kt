@@ -13,7 +13,7 @@ class ProductRepository(private val httpEngine: HttpEngine, private val baseUrl:
 
     suspend fun queryProducts(appPackage: String): ProductResponse {
         return httpEngine.json.decodeFromString(
-            httpEngine.client.get("${baseUrl}/api/purchase/get_products?app_package=$appPackage")
+            httpEngine.client.get("${baseUrl}/purchase/api/get_products?app_package=$appPackage")
                 .bodyAsText()
         )
     }
