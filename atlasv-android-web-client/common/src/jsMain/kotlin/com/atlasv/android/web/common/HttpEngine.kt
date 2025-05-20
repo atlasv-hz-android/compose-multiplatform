@@ -19,4 +19,11 @@ object HttpEngine {
     const val LOCAL_HOST = "http://127.0.0.1:20001"
     val computeEngineUrlIp = if (Constants.DEBUG) LOCAL_HOST else COMPUTE_ENGINE_URL_IP
     val computeEngineUrl = if (Constants.DEBUG) LOCAL_HOST else COMPUTE_ENGINE_URL
+
+    fun createApiBaseUrlByWindowHref(windowHref: String): String {
+        if (windowHref.startsWith("http://localhost")) {
+            return LOCAL_HOST
+        }
+        return COMPUTE_ENGINE_URL
+    }
 }
