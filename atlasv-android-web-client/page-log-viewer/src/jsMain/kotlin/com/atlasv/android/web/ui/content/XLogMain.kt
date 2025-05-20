@@ -19,6 +19,7 @@ import com.atlasv.android.web.ui.component.VerticalDivider
 import com.atlasv.android.web.ui.model.TabItemData
 import com.atlasv.android.web.ui.style.CommonStyles
 import com.atlasv.android.web.ui.style.TextStyles
+import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,6 +48,9 @@ fun main() {
 
 @Composable
 fun Body() {
+    val xLogRepository by remember {
+        mutableStateOf(XLogRepository.create(windowHrefUrl = window.location.href))
+    }
     var xLogResponse by remember { mutableStateOf<StorageObjectResponse?>(null) }
     var vipInfo by remember { mutableStateOf<VipInfo?>(null) }
     var loading by remember { mutableStateOf(false) }
@@ -67,20 +71,20 @@ fun Body() {
     }
     val queryUidAction: () -> Unit = {
         CoroutineScope(Dispatchers.Default).launch {
-            historyUidList = XLogRepository.instance.queryHistoryUidList()?.data.orEmpty()
+            historyUidList = xLogRepository.queryHistoryUidList()?.data.orEmpty()
         }
     }
 
     val queryVipInfoAction: (String) -> Unit = { uid: String ->
         CoroutineScope(Dispatchers.Default).launch {
-            vipInfo = XLogRepository.instance.queryVipInfo(userId = uid)
+            vipInfo = xLogRepository.queryVipInfo(userId = uid)
         }
     }
 
     val queryLogsAction: (String) -> Unit = { uid: String ->
         CoroutineScope(Dispatchers.Default).launch {
             loading = true
-            xLogResponse = XLogRepository.instance.queryLogs(uid = uid, currentApp?.packageName)
+            xLogResponse = xLogRepository.queryLogs(uid = uid, currentApp?.packageName)
             loading = false
             if (!xLogResponse?.items.isNullOrEmpty()) {
                 queryUidAction()
@@ -140,7 +144,7 @@ fun Body() {
                     inputContent = uid
                 })
             }
-            XLogListView(xLogResponse)
+            XLogListView(xLogResponse, buildDownloadUrl = xLogRepository::buildDownloadUrl)
         }
     )
     LaunchedEffect(Unit) {

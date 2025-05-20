@@ -5,13 +5,15 @@ import com.atlasv.android.web.data.model.QueryRecordResponse
 import com.atlasv.android.web.data.model.StorageObjectResponse
 import com.atlasv.android.web.data.model.VipInfo
 import com.atlasv.android.web.data.model.VipUserInfo
+import com.atlasv.android.web.data.model.XlogStorageItem
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.encodeURLQueryComponent
 
 /**
  * Created by weiping on 2025/2/12
  */
-class XLogRepository(private val httpEngine: HttpEngine) {
+class XLogRepository(private val httpEngine: HttpEngine, private val baseUrl: String) {
     private val client by lazy {
         httpEngine.client
     }
@@ -22,7 +24,7 @@ class XLogRepository(private val httpEngine: HttpEngine) {
             return null
         }
         return httpEngine.json.decodeFromString<StorageObjectResponse?>(
-            client.get("${HttpEngine.computeEngineUrl}/api/log/list_logs?uid=$uid&app_package=${appPackage}")
+            client.get("${baseUrl}/xlog/api/list_logs?uid=$uid&app_package=${appPackage}")
                 .bodyAsText()
         )?.copy(
             appPackage = appPackage
@@ -30,26 +32,32 @@ class XLogRepository(private val httpEngine: HttpEngine) {
     }
 
     suspend fun queryHistoryUidList(): QueryRecordResponse? {
+        console.log("queryHistoryUidList: baseUrl=$baseUrl")
         return httpEngine.json.decodeFromString(
-            client.get("${HttpEngine.computeEngineUrl}/api/log/history_uids").bodyAsText()
+            client.get("${baseUrl}/xlog/api/history_uids").bodyAsText()
         )
     }
 
     suspend fun queryVipInfo(userId: String): VipInfo? {
         return httpEngine.json.decodeFromString(
-            client.get("${HttpEngine.computeEngineUrl}/api/vip/query_vip_info?user_id=$userId").bodyAsText()
+            client.get("${baseUrl}/xlog/api/query_vip_info?user_id=$userId").bodyAsText()
         )
     }
 
     suspend fun queryVipUserInfo(orderId: String): VipUserInfo? {
         return httpEngine.json.decodeFromString(
-            client.get("${HttpEngine.computeEngineUrl}/api/vip/query_vip_user_info?order_id=$orderId").bodyAsText()
+            client.get("${baseUrl}/xlog/api/query_vip_user_info?order_id=$orderId").bodyAsText()
         )
     }
 
+    fun buildDownloadUrl(storageItem: XlogStorageItem, asAttachment: Boolean): String {
+        val downloadBaseUrl = "${baseUrl}/xlog/api/download_xlog"
+        return "$downloadBaseUrl?blob_name=${storageItem.path.encodeURLQueryComponent()}&app_package=${storageItem.appPackage}&download=${if (asAttachment) "1" else "0"}"
+    }
+
     companion object {
-        val instance by lazy {
-            XLogRepository(HttpEngine)
+        fun create(windowHrefUrl: String): XLogRepository {
+            return XLogRepository(HttpEngine, HttpEngine.createApiBaseUrlByWindowHref(windowHrefUrl))
         }
     }
 }

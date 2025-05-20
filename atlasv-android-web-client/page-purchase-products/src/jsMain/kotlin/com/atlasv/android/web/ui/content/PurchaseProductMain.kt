@@ -21,6 +21,7 @@ import com.atlasv.android.web.ui.model.TableCellModel
 import com.atlasv.android.web.ui.style.CommonColors
 import com.atlasv.android.web.ui.style.CommonStyles
 import com.atlasv.android.web.ui.style.TextStyles
+import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,43 +54,59 @@ fun main() {
     }
 }
 
-private fun queryProducts(appPackage: String?, onResult: (ProductResponse) -> Unit) {
+private fun queryProducts(
+    productRepository: ProductRepository,
+    appPackage: String?,
+    onResult: (ProductResponse) -> Unit
+) {
     appPackage ?: return
     CoroutineScope(Dispatchers.Default).launch {
-        onResult(ProductRepository.instance.queryProducts(appPackage))
+        onResult(productRepository.queryProducts(appPackage))
     }
 }
 
-private fun getProductOperationRecords(appPackage: String?, onResult: (ProductOperationRecordResponse) -> Unit) {
+private fun getProductOperationRecords(
+    productRepository: ProductRepository,
+    appPackage: String?,
+    onResult: (ProductOperationRecordResponse) -> Unit
+) {
     appPackage ?: return
     CoroutineScope(Dispatchers.Default).launch {
-        onResult(ProductRepository.instance.getProductOperationRecords(appPackage))
+        onResult(productRepository.getProductOperationRecords(appPackage))
     }
 }
 
 private fun addProduct(
+    productRepository: ProductRepository,
     appPackage: String,
     productId: String,
     entitlementId: String,
     onResult: (String) -> Unit
 ) {
     CoroutineScope(Dispatchers.Default).launch {
-        onResult(ProductRepository.instance.addProduct(appPackage, productId, entitlementId))
+        onResult(productRepository.addProduct(appPackage, productId, entitlementId))
     }
 }
 
 private fun deleteProduct(
+    productRepository: ProductRepository,
     appPackage: String,
     productId: String,
     onResult: (String) -> Unit
 ) {
     CoroutineScope(Dispatchers.Default).launch {
-        onResult(ProductRepository.instance.deleteProduct(appPackage, productId))
+        onResult(productRepository.deleteProduct(appPackage, productId))
     }
 }
 
 @Composable
 fun Body() {
+    val productRepository by remember {
+        mutableStateOf(
+            ProductRepository.create(windowHref = window.location.href)
+        )
+    }
+
     var productResponse by remember { mutableStateOf<ProductResponse?>(null) }
     var _operationRecords by remember { mutableStateOf<ProductOperationRecordResponse?>(null) }
     val apps = AppEnum.entries
@@ -127,12 +144,13 @@ fun Body() {
                         }
                         productResponse = null
                         queryProducts(
+                            productRepository,
                             currentApp?.packageName,
                             onResult = {
                                 productResponse = it
                             }
                         )
-                        getProductOperationRecords(currentApp?.packageName) {
+                        getProductOperationRecords(productRepository, currentApp?.packageName) {
                             _operationRecords = it
                         }
                     }
@@ -163,8 +181,8 @@ fun Body() {
     )
     if (showAddProductDialog) {
         AddProductDialog(currentApp?.packageName, onConfirm = { appPackage, productId, entitlementId ->
-            addProduct(appPackage, productId, entitlementId) {
-                getProductOperationRecords(appPackage) {
+            addProduct(productRepository, appPackage, productId, entitlementId) {
+                getProductOperationRecords(productRepository, appPackage) {
                     _operationRecords = it
                     showAddProductDialog = false
                 }
@@ -175,8 +193,8 @@ fun Body() {
     }
     if (showDetailProductId.isNotEmpty()) {
         ProductDetailDialog(currentApp?.packageName, showDetailProductId, onConfirm = { appPackage, productId ->
-            deleteProduct(appPackage, productId) {
-                getProductOperationRecords(appPackage) {
+            deleteProduct(productRepository, appPackage, productId) {
+                getProductOperationRecords(productRepository, appPackage) {
                     _operationRecords = it
                     showDetailProductId = ""
                 }

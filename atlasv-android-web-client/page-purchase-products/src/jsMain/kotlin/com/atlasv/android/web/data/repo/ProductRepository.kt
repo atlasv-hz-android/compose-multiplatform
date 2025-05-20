@@ -9,18 +9,18 @@ import io.ktor.client.statement.bodyAsText
 /**
  * Created by weiping on 2025/2/12
  */
-class ProductRepository(private val httpEngine: HttpEngine) {
+class ProductRepository(private val httpEngine: HttpEngine, private val baseUrl: String) {
 
     suspend fun queryProducts(appPackage: String): ProductResponse {
         return httpEngine.json.decodeFromString(
-            httpEngine.client.get("${HttpEngine.computeEngineUrl}/api/purchase/get_products?app_package=$appPackage")
+            httpEngine.client.get("${baseUrl}/purchase/api/get_products?app_package=$appPackage")
                 .bodyAsText()
         )
     }
 
     suspend fun getProductOperationRecords(appPackage: String): ProductOperationRecordResponse {
         return httpEngine.json.decodeFromString(
-            httpEngine.client.get("${HttpEngine.computeEngineUrl}/api/purchase/get_product_operation_records?app_package=$appPackage")
+            httpEngine.client.get("${baseUrl}/api/purchase/get_product_operation_records?app_package=$appPackage")
                 .bodyAsText()
         )
     }
@@ -30,7 +30,7 @@ class ProductRepository(private val httpEngine: HttpEngine) {
         productId: String,
         entitlementId: String
     ): String {
-        return httpEngine.client.get("${HttpEngine.computeEngineUrl}/api/purchase/add_product?app_package=$appPackage&product_id=$productId&entitlement_id=$entitlementId")
+        return httpEngine.client.get("${baseUrl}/api/purchase/add_product?app_package=$appPackage&product_id=$productId&entitlement_id=$entitlementId")
             .bodyAsText()
     }
 
@@ -38,13 +38,13 @@ class ProductRepository(private val httpEngine: HttpEngine) {
         appPackage: String,
         productId: String,
     ): String {
-        return httpEngine.client.get("${HttpEngine.computeEngineUrl}/api/purchase/delete_product?app_package=$appPackage&product_id=$productId")
+        return httpEngine.client.get("${baseUrl}/api/purchase/delete_product?app_package=$appPackage&product_id=$productId")
             .bodyAsText()
     }
 
     companion object {
-        val instance by lazy {
-            ProductRepository(HttpEngine)
+        fun create(windowHref: String): ProductRepository {
+            return ProductRepository(HttpEngine, HttpEngine.createApiBaseUrlByWindowHref(windowHref))
         }
     }
 }
