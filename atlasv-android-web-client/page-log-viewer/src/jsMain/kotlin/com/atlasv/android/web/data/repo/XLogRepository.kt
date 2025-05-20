@@ -32,6 +32,7 @@ class XLogRepository(private val httpEngine: HttpEngine, private val baseUrl: St
     }
 
     suspend fun queryHistoryUidList(): QueryRecordResponse? {
+        console.log("queryHistoryUidList: baseUrl=$baseUrl")
         return httpEngine.json.decodeFromString(
             client.get("${baseUrl}/xlog/api/history_uids").bodyAsText()
         )
