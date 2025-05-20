@@ -133,9 +133,6 @@ fun Body() {
         },
         content = {
             VerticalDivider(height = 20.px)
-            Text(
-                value = window.location.href
-            )
             AppTabLayout(
                 items = apps.map {
                     TabItemData(text = it.name, id = it.ordinal)
