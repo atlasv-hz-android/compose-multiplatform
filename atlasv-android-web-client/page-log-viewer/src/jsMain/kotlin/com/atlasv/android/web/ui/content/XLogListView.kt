@@ -1,14 +1,13 @@
 package com.atlasv.android.web.ui.content
 
 import androidx.compose.runtime.Composable
-import com.atlasv.android.web.common.HttpEngine
 import com.atlasv.android.web.data.model.StorageObject
 import com.atlasv.android.web.data.model.StorageObjectResponse
+import com.atlasv.android.web.data.model.XlogStorageItem
 import com.atlasv.android.web.ui.component.HorizontalDivider
 import com.atlasv.android.web.ui.component.VerticalDivider
 import com.atlasv.android.web.ui.style.CommonStyles
 import com.atlasv.android.web.ui.style.TextStyles
-import io.ktor.http.encodeURLQueryComponent
 import org.jetbrains.compose.web.attributes.ATarget
 import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.css.paddingLeft
@@ -24,7 +23,7 @@ import org.jetbrains.compose.web.dom.Text
  */
 
 @Composable
-fun XLogListView(data: StorageObjectResponse?) {
+fun XLogListView(data: StorageObjectResponse?, buildDownloadUrl: (XlogStorageItem, asAttachment: Boolean) -> String) {
     data ?: return
     Div({
         classes(TextStyles.text1)
@@ -33,12 +32,16 @@ fun XLogListView(data: StorageObjectResponse?) {
         Text("日志列表")
     }
     data.items.forEach {
-        XLogListItemView(it, data.appPackage)
+        XLogListItemView(it, data.appPackage, buildDownloadUrl)
     }
 }
 
 @Composable
-private fun XLogListItemView(item: StorageObject, appPackage: String?) {
+private fun XLogListItemView(
+    item: StorageObject,
+    appPackage: String?,
+    buildDownloadUrl: (XlogStorageItem, asAttachment: Boolean) -> String
+) {
     VerticalDivider(6.px)
     Div({
         classes(TextStyles.text2)
@@ -46,10 +49,9 @@ private fun XLogListItemView(item: StorageObject, appPackage: String?) {
     }) {
         Text("${item.path}(${item.size} B)")
         HorizontalDivider(width = 10.px)
-        val downloadBaseUrl = "${HttpEngine.computeEngineUrl}/api/log/download_xlog"
         listOf(
-            "下载文件" to "$downloadBaseUrl?blob_name=${item.path.encodeURLQueryComponent()}&app_package=${appPackage}&download=1",
-            "在线查看" to "$downloadBaseUrl?blob_name=${item.path.encodeURLQueryComponent()}&app_package=${appPackage}",
+            "下载文件" to buildDownloadUrl(XlogStorageItem(appPackage.orEmpty(), item.path), true),
+            "在线查看" to buildDownloadUrl(XlogStorageItem(appPackage.orEmpty(), item.path), false),
         ).take(if (item.size < 5 * 1024 * 1024) 2 else 1).forEach { (text, url) ->
             Div({
                 classes(TextStyles.textBlue, TextStyles.text1)
