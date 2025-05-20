@@ -1,6 +1,10 @@
+
+
 plugins {
-    kotlin("multiplatform") apply false
-    id("com.github.ben-manes.versions") version "0.49.0"
+    id("com.github.ben-manes.versions") version "0.51.0"
+    alias(libs.plugins.composeMultiplatform) apply false
+    alias(libs.plugins.composeCompiler) apply false
+    alias(libs.plugins.kotlinMultiplatform) apply false
 }
 
 subprojects {

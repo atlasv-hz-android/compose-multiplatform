@@ -1,27 +1,36 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+
+// Kotlin Multiplatform Wizard
+// https://kmp.jetbrains.com/?web=true&includeTests=true
+
 plugins {
-    kotlin("multiplatform")
-    kotlin("plugin.compose")
-    id("org.jetbrains.compose")
-    kotlin("plugin.serialization") version "1.8.22" // 插件版本需要和 Kotlin 版本匹配
+    kotlin("plugin.serialization") version libs.versions.kotlin // 插件版本需要和 Kotlin 版本匹配
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
 }
 
 kotlin {
-    jvm()
     js(IR) {
         browser()
         binaries.executable()
     }
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-            }
-        }
 
-        val jsMain by getting {
-            dependencies {
-                implementation(compose.html.core)
-                implementation(compose.runtime)
-            }
+    sourceSets {
+        commonMain.dependencies {
+            api(compose.runtime)
+//            api(compose.foundation)
+//            api(compose.material3)
+//            api(compose.ui)
+            api(compose.components.resources)
+            api(compose.components.uiToolingPreview)
+            api(libs.androidx.lifecycle.viewmodel)
+            api(libs.androidx.lifecycle.runtimeCompose)
+        }
+        jsMain.dependencies {
+            implementation(compose.html.core)
+            implementation(compose.runtime)
         }
     }
 }
