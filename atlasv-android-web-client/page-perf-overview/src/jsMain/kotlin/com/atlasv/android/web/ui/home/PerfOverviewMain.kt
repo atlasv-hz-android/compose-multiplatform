@@ -1,4 +1,4 @@
-package com.atlasv.android.web.ui.content
+package com.atlasv.android.web.ui.home
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

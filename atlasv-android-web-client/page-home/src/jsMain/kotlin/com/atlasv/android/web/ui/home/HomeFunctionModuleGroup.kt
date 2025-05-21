@@ -1,4 +1,4 @@
-package com.atlasv.android.web.ui.content
+package com.atlasv.android.web.ui.home
 
 import com.atlasv.android.web.common.HttpEngine
 import com.atlasv.android.web.common.HttpEngine.COMPUTE_ENGINE_URL

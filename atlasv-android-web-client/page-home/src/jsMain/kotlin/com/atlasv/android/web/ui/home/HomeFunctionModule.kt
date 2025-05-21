@@ -1,4 +1,4 @@
-package com.atlasv.android.web.ui.content
+package com.atlasv.android.web.ui.home
 
 /**
  * Created by weiping on 2025/2/28
