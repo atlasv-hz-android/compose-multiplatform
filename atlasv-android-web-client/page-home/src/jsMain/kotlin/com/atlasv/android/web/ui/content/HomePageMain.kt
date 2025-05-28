@@ -91,6 +91,8 @@ private fun UserInfoCard(user: User?) {
                 HorizontalDivider(width = 6.px)
                 LogoutView()
             }
+            HorizontalDivider(width = 8.px)
+            Wasm()
         }
     )
 }
@@ -101,6 +103,14 @@ private fun LogoutView() {
         Text("登出")
     }
 }
+
+@Composable
+private fun Wasm() {
+    A(href = "${HttpEngine.createApiBaseUrlByWindowHref(window.location.href)}/home/index.html") {
+        Text("切到Wasm版本(Alpha)")
+    }
+}
+
 
 @Composable
 private fun GroupTitle(text: String) {

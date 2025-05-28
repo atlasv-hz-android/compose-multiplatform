@@ -1,6 +1,6 @@
-cd ../../android-team-service/
+cd ../../android-team-service/ || return
 rm -rf static/js
-cd ../compose-multiplatform/atlasv-android-web-client/
+cd ../compose-multiplatform/atlasv-android-web-client/ || return
 ./gradlew :page-home:jsBrowserDistribution
 ./gradlew :page-upload-file:jsBrowserDistribution
 ./gradlew :page-log-viewer:jsBrowserDistribution
