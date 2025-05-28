@@ -106,7 +106,7 @@ private fun LogoutView() {
 
 @Composable
 private fun Wasm() {
-    A(href = "${HttpEngine.createApiBaseUrlByWindowHref(window.location.href)}/home/index.html") {
+    A(href = "${HttpEngine.createApiBaseUrlByWindowHref(window.location.href)}/home/") {
         Text("切到Wasm版本(Alpha)")
     }
 }
